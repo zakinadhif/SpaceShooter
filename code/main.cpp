@@ -4,5 +4,6 @@
 
 int main()
 {
-	
+	astro::Game game;
+	game.run();
 }
