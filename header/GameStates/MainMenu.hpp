@@ -1,7 +1,9 @@
 #pragma once
 
 #include "GameStates/GameState.hpp"
+
 #include "GameStateManager.hpp"
+#include "UserInterface/Widgets/Button.hpp"
 
 namespace astro
 {
@@ -12,11 +14,13 @@ public:
 	MainMenu(zfge::GameStateManager& gameStateManager);
 
 	void handleEvent(sf::Event event) override;
-	void update(const sf::Time& time) override;
+	void update(float deltaTime) override;
 	void draw(sf::RenderTarget& target) const override;
 
 private:
 	zfge::GameStateManager& m_gameStateManager;
+	
+	Button m_startButton;
 };
 
 }
