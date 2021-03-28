@@ -2,8 +2,6 @@
 
 #include "GameStates/GameState.hpp"
 
-#include <SFML/Graphics.hpp>
-
 #include <memory>
 #include <stack>
 
@@ -26,10 +24,15 @@ public:
 	std::size_t getStatesCount() const;
 
 	void handleEvent(sf::Event event);
-	void update(const sf::Time& elapsed);
+	void update(float deltaTime);
 	void draw(sf::RenderTarget& target) const;
 
+	void safePop();
+	void tryPop();
+
 private:
+	bool m_shouldPop = false;
+
 	std::stack<std::unique_ptr<GameState>> m_states;
 };
 

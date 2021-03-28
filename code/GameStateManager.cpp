@@ -35,6 +35,20 @@ void GameStateManager::pop()
 	m_states.pop();
 }
 
+void GameStateManager::safePop()
+{
+	m_shouldPop = true;
+}
+
+void GameStateManager::tryPop()
+{
+	if (m_shouldPop) 
+	{
+		m_shouldPop = false;
+		pop();
+	}
+}
+
 void GameStateManager::handleEvent(sf::Event event)
 {
 	assert(!m_states.empty());
@@ -42,11 +56,11 @@ void GameStateManager::handleEvent(sf::Event event)
 	peek().handleEvent(event);
 }
 
-void GameStateManager::update(const sf::Time& time)
+void GameStateManager::update(float deltaTime)
 {
 	assert(!m_states.empty());
 	
-	peek().update(time);
+	peek().update(deltaTime);
 }
 
 void GameStateManager::draw(sf::RenderTarget &target) const
