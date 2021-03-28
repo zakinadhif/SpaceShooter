@@ -13,7 +13,7 @@ void GameState::handleEvent([[maybe_unused]] sf::Event event)
 
 }
 
-void GameState::update([[maybe_unused]] const sf::Time& time)
+void GameState::update([[maybe_unused]] float deltaTime)
 {
 
 }
