@@ -13,41 +13,30 @@ Game::Game()
 
 void Game::run()
 {
+	m_gameStateManager.update();
+
 	sf::Clock timer;
 	sf::Time elapsed = sf::Time::Zero;
 
 	while (m_window.isOpen() && !m_gameStateManager.isEmpty())
 	{
+		zfge::GameState& currentState = m_gameStateManager.peek();
+		
 		elapsed = timer.restart();
 
 		for (sf::Event event; m_window.pollEvent(event);)
 		{
-			handleEvent(event);
+			currentState.handleEvent(event);
 		}
 
-		update(elapsed.asSeconds());
+		currentState.update(elapsed.asSeconds());
 
 		m_window.clear();
-		draw();
+		currentState.draw(m_window);
 		m_window.display();
 
-		m_gameStateManager.tryPop();
+		m_gameStateManager.update();
 	}
-}
-
-void Game::handleEvent(sf::Event event)
-{
-	m_gameStateManager.handleEvent(event);
-}
-
-void Game::update(float deltaTime)
-{
-	m_gameStateManager.update(deltaTime);
-}
-
-void Game::draw()
-{
-	m_gameStateManager.draw(m_window);
 }
 
 }

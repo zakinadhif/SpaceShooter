@@ -11,11 +11,8 @@ public:
 	Game();
 
 	void run();
-private:
-	void handleEvent(sf::Event event);
-	void update(float deltaTime);
-	void draw();
 
+private:
 	zfge::GameStateManager m_gameStateManager;
 	sf::RenderWindow m_window;
 };
