@@ -14,7 +14,7 @@ void PlayState::handleEvent(sf::Event event)
 	{
 		case sf::Event::KeyReleased:
 			if (event.key.code == sf::Keyboard::Key::Escape)
-				m_gameStateManager.safePop();
+				m_gameStateManager.pop();
 			break;
 		default:
 			break;

@@ -12,12 +12,12 @@ GameStateManager::GameStateManager()
 
 GameState& GameStateManager::peek()
 {
-	return *(m_states.top().get());
+	return *(m_states.back().get());
 }
 
 const GameState& GameStateManager::peek() const
 {
-	return *(m_states.top().get());
+	return *(m_states.back().get());
 }
 
 bool GameStateManager::isEmpty() const
@@ -32,42 +32,45 @@ std::size_t GameStateManager::getStatesCount() const
 
 void GameStateManager::pop()
 {
-	m_states.pop();
+	Action& action = m_actionQueue.emplace();
+	action.type = Action::Type::Pop;
 }
 
-void GameStateManager::safePop()
+void GameStateManager::clear()
 {
-	m_shouldPop = true;
+	Action& action = m_actionQueue.emplace();
+	action.type = Action::Type::Clear;
 }
 
-void GameStateManager::tryPop()
+void GameStateManager::update()
 {
-	if (m_shouldPop) 
+	while (!m_actionQueue.empty())
 	{
-		m_shouldPop = false;
-		pop();
+		Action& action = m_actionQueue.front();
+		
+		assert(action.type != Action::Type::None);
+
+		switch (action.type)
+		{
+			case Action::Type::Push:
+				m_states.push_back(std::move(action.state));
+				break;
+			case Action::Type::Pop:
+				m_states.pop_back();
+				break;
+			case Action::Type::Change:
+				m_states.pop_back();
+				m_states.push_back(std::move(action.state));
+				break;
+			case Action::Type::Clear:
+				m_states.clear();
+				break;
+			default:
+				break;
+		}
+
+		m_actionQueue.pop();
 	}
-}
-
-void GameStateManager::handleEvent(sf::Event event)
-{
-	assert(!m_states.empty());
-
-	peek().handleEvent(event);
-}
-
-void GameStateManager::update(float deltaTime)
-{
-	assert(!m_states.empty());
-	
-	peek().update(deltaTime);
-}
-
-void GameStateManager::draw(sf::RenderTarget &target) const
-{
-	assert(!m_states.empty());
-
-	peek().draw(target);
 }
 
 }
