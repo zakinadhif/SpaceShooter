@@ -8,15 +8,21 @@
 namespace astro
 {
 
+class b2Body;
+class PhysicsComponent;
+
 class ShipGraphics final : public GraphicsComponent
 {
 public:
-	ShipGraphics(thor::ResourceHolder<sf::Texture, std::string>& textureHolder);
+	ShipGraphics(
+			thor::ResourceHolder<sf::Texture, std::string>& textureHolder,
+			PhysicsComponent* physics);
 
 	void update(Entity& entity) override;
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 private:
 	sf::Sprite m_sprite;
+	const b2Body* m_physicsBody;
 };
 
 }
