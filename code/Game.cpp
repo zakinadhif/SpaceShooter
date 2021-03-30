@@ -1,6 +1,7 @@
 #include "Game.hpp"
 
 #include "GameStates/MainMenu.hpp"
+#include "Utility/Keyboard.hpp"
 
 namespace astro
 {
@@ -26,6 +27,11 @@ void Game::run()
 
 		for (sf::Event event; m_window.pollEvent(event);)
 		{
+			if (event.type == sf::Event::KeyPressed)
+				Keyboard::setKey(event.key.code, true);
+			else if (event.type == sf::Event::KeyReleased)
+				Keyboard::setKey(event.key.code, false);
+
 			currentState.handleEvent(event);
 		}
 
