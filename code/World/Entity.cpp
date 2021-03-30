@@ -1,8 +1,8 @@
-#include "Entities/Entity.hpp"
+#include "World/Entity.hpp"
 
-#include "Entities/Components/InputComponent.hpp"
-#include "Entities/Components/GraphicsComponent.hpp"
-#include "Entities/Components/PhysicsComponent.hpp"
+#include "World/Components/Interfaces/InputComponent.hpp"
+#include "World/Components/Interfaces/GraphicsComponent.hpp"
+#include "World/Components/Interfaces/PhysicsComponent.hpp"
 
 namespace astro
 {
