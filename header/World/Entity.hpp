@@ -13,6 +13,8 @@ class GraphicsComponent;
 
 class World;
 
+struct EntityEvent;
+
 class Entity : public sf::Drawable
 {
 public:
@@ -23,10 +25,8 @@ public:
 		Asteroid
 	};
 
-	sf::Vector2f position;
-	sf::Vector2f velocity;
-
 public:
+
 	Entity(
 		World& world,
 		Type type,
