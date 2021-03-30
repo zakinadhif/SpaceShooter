@@ -18,6 +18,7 @@ set_target_properties(
 
 list(APPEND CMAKE_MODULE_PATH "/usr/local/cmake/Modules/")
 
+find_package(box2d::box2d 2.4 REQUIRED)
 find_package(Thor 2 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(yaml-cpp REQUIRED)
@@ -39,4 +40,5 @@ target_link_libraries(
 	sfml-window
 	sfml-system
 	spdlog::spdlog
+	box2d::box2d
 	)
