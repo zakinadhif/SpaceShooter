@@ -30,6 +30,7 @@ void Entity::handleEvent(sf::Event event)
 
 void Entity::update(float deltaTime)
 {
+	m_graphics->update(*this);
 	m_physics->update(*this, m_world);
 }
 
