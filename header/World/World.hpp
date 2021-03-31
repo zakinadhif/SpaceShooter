@@ -3,6 +3,7 @@
 #include "World/Entity.hpp"
 
 #include <box2d/b2_world.h>
+#include <SFML/Graphics/Texture.hpp>
 #include <Thor/Resources.hpp>
 
 namespace astro
