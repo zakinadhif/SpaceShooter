@@ -5,10 +5,11 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <Thor/Resources/ResourceHolder.hpp>
 
+class b2Body;
+
 namespace astro
 {
 
-class b2Body;
 class PhysicsComponent;
 
 class ShipGraphics final : public GraphicsComponent
