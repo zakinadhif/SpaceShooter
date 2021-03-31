@@ -8,7 +8,6 @@ namespace astro
 
 void ShipInput::handleEvent(Entity &entity, sf::Event event)
 {
-	using Key = sf::Keyboard::Key;
 }
 
 }
