@@ -2,8 +2,10 @@
 
 #include "World/Components/Interfaces/GraphicsComponent.hpp"
 
-#include <SFML/Graphics/Sprite.hpp>
-#include <Thor/Resources/ResourceHolder.hpp>
+#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+
+#include <array>
 
 class b2Body;
 
@@ -15,14 +17,15 @@ class PhysicsComponent;
 class ShipGraphics final : public GraphicsComponent
 {
 public:
-	ShipGraphics(
-			thor::ResourceHolder<sf::Texture, std::string>& textureHolder,
-			PhysicsComponent* physics);
+	ShipGraphics(PhysicsComponent* physics);
 
 	void update(Entity& entity) override;
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
 private:
-	sf::Sprite m_sprite;
+	std::array<sf::Vertex, 3> m_model;
+	sf::Transformable m_transform;
+
 	const b2Body* m_physicsBody;
 };
 
