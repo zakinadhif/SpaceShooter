@@ -22,9 +22,19 @@ void PlayState::handleEvent(sf::Event event)
 }
 
 void PlayState::update(float deltaTime) {}
+void PlayState::update(float deltaTime)
+{
+	m_world.update(deltaTime);
+}
+
+void PlayState::fixedUpdate(float deltaTime)
+{
+	m_world.fixedUpdate(deltaTime);
+}
 
 void PlayState::draw(sf::RenderTarget& target) const
 {
+	m_world.draw(target, sf::RenderStates::Default);
 }
 
 }

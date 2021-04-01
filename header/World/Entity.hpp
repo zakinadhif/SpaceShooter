@@ -38,8 +38,12 @@ public:
 	Entity(Entity&& entity);
 	Entity(Entity& copy) = delete;
 
-	void handleEvent(sf::Event event);
+	Entity& operator=(const Entity& other) = delete;
+	Entity& operator=(Entity&& other) = delete;
+
 	void update(float deltaTime);
+	void fixedUpdate(float deltaTime);
+
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	void sendEvent(EntityEvent event);
@@ -54,9 +58,9 @@ public:
 private:
 	Type m_type { Type::Nothing };
 
-	InputComponent* m_input;
-	PhysicsComponent* m_physics;
-	GraphicsComponent* m_graphics;
+	InputComponent* m_input = nullptr;
+	PhysicsComponent* m_physics = nullptr;
+	GraphicsComponent* m_graphics = nullptr;
 
 	World& m_world;
 };

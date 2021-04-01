@@ -16,12 +16,9 @@ ShipPhysics::ShipPhysics(b2Body* body)
 
 }
 
-void ShipPhysics::update(Entity &entity)
+void ShipPhysics::fixedUpdate(Entity &entity, float deltaTime)
 {
-	// Normalize m_direction setted by handleDirectionEvent
-	m_direction = thor::unitVector(m_direction);
-
-	m_body->ApplyForceToCenter(sfVec2ToB2Vec(m_direction *  m_moveForceMultiplier), true);
+	m_body->ApplyForceToCenter(sfVec2ToB2Vec(m_direction *  m_moveForceMultiplier * deltaTime), true);
 
 	// Reset direction vector, because handleDirectionEvent doesn't reset the
 	// direction when key press is released
@@ -59,6 +56,8 @@ void ShipPhysics::handleDirectionEvent(EntityEvent::Direction direction)
 			m_direction.x += 1.0f;
 			break;
 	}
+	
+	if (m_direction != sf::Vector2f(0,0)) m_direction = thor::unitVector(m_direction);
 }
 
 const b2Body* ShipPhysics::getBody() const

@@ -25,15 +25,28 @@ Entity::Entity(
 
 }
 
-void Entity::handleEvent(sf::Event event)
+Entity::Entity(Entity&& other)
+: m_type { other.m_type }
+, m_input { other.m_input }
+, m_physics { other.m_physics }
+, m_graphics { other.m_graphics }
+, m_world { other.m_world }
 {
-	m_input->handleEvent(*this, event);
+	other.m_type = Type::Nothing;
+	other.m_input = nullptr;
+	other.m_physics = nullptr;
+	other.m_graphics = nullptr;
 }
 
 void Entity::update(float deltaTime)
 {
-	m_physics->update(*this);
+	m_input->update(*this);
 	m_graphics->update(*this);
+}
+
+void Entity::fixedUpdate(float deltaTime)
+{
+	m_physics->fixedUpdate(*this, deltaTime);
 }
 
 void Entity::sendEvent(EntityEvent event)

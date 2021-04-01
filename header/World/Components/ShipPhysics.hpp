@@ -14,7 +14,8 @@ class ShipPhysics : public PhysicsComponent
 public:
 	ShipPhysics(b2Body* body);
 
-	void update(Entity& entity) override;
+	void fixedUpdate(Entity& entity, float deltaTime) override;
+
 	void recieve(EntityEvent& event) override;
 
 	const b2Body* getBody() const override;
@@ -23,7 +24,7 @@ private:
 	void handleDirectionEvent(EntityEvent::Direction direction);
 
 	sf::Vector2f m_direction;
-	float m_moveForceMultiplier = 1.0f;
+	float m_moveForceMultiplier = 10.0f;
 
 	b2Body* m_body;
 };
