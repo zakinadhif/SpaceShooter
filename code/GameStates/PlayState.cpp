@@ -16,12 +16,13 @@ void PlayState::handleEvent(sf::Event event)
 			if (event.key.code == sf::Keyboard::Key::Escape)
 				m_gameStateManager.pop();
 			break;
+		case sf::Event::Closed:
+			m_gameStateManager.clear();
 		default:
 			break;
 	}
 }
 
-void PlayState::update(float deltaTime) {}
 void PlayState::update(float deltaTime)
 {
 	m_world.update(deltaTime);
