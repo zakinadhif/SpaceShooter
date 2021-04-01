@@ -14,7 +14,7 @@ class EntityEvent;
 class PhysicsComponent
 {
 public:
-	virtual void update(Entity& entity) = 0;
+	virtual void fixedUpdate(Entity& entity, float deltaTime) = 0;
 	virtual void recieve(EntityEvent& event) {};
 
 	virtual const b2Body* getBody() const = 0;
