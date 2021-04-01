@@ -30,16 +30,26 @@ public:
 	Entity(
 		World& world,
 		Type type,
-		InputComponent& input,
-		PhysicsComponent& physics,
-		GraphicsComponent& graphics
+		InputComponent* input,
+		PhysicsComponent* physics,
+		GraphicsComponent* graphics
 	);
+
+	Entity(Entity&& entity);
+	Entity(Entity& copy) = delete;
 
 	void handleEvent(sf::Event event);
 	void update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+	void sendEvent(EntityEvent event);
+
 	Type getType() const;
+
+	World& getWorld();
+	const World& getWorld() const;
+
+	~Entity();
 
 private:
 	Type m_type { Type::Nothing };
