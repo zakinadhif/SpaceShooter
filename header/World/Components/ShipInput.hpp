@@ -12,7 +12,7 @@ class Entity;
 class ShipInput final : public InputComponent
 {
 public:
-	void handleEvent(Entity& entity, sf::Event event) override;
+	void update(Entity& entity) override;
 };
 
 }

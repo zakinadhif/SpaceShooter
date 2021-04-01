@@ -7,7 +7,7 @@
 namespace astro
 {
 
-void ShipInput::handleEvent(Entity &entity, sf::Event event)
+void ShipInput::update(Entity& entity)
 {
 	using EntityEventType = EntityEvent::Type;
 	using ShipDirection = EntityEvent::Direction;
