@@ -5,14 +5,15 @@
 
 #include <Thor/Resources/ResourceHolder.hpp>
 
+class b2World;
+
 namespace astro
 {
 
-typedef thor::ResourceHolder<sf::Texture, std::string> TextureHolder;
-
 class Entity;
+class World;
 
-Entity createPlayerShip(const sf::Vector2f& position, TextureHolder& textureHolder);
+Entity createPlayerShip(World& world, const sf::Vector2f& position, b2World* physicalWorld);
 Entity createAsteroid(const sf::Vector2f& position);
 
 }
