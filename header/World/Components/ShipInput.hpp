@@ -1,6 +1,7 @@
 #pragma once
 
 #include "World/Components/Interfaces/InputComponent.hpp"
+
 #include <SFML/Window/Keyboard.hpp>
 
 namespace astro
@@ -15,3 +16,4 @@ public:
 };
 
 }
+
