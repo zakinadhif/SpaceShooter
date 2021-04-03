@@ -39,7 +39,7 @@ void World::fixedUpdate(float deltaTime)
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	sf::View lastView = target.getView();
-	sf::View worldView({0.f, 0.f}, {16, 9});
+	sf::View worldView({0.f, 0.f}, {12, 12});
 
 	target.setView(worldView);
 
