@@ -24,8 +24,9 @@ private:
 	void handleDirectionEvent(EntityEvent::Direction direction);
 
 	sf::Vector2f m_direction;
-	float m_moveForceMultiplier = 10.0f;
 
+	float m_maxSpeed = 5.f;
+	
 	b2Body* m_body;
 };
 

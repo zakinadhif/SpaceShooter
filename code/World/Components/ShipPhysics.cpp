@@ -18,7 +18,13 @@ ShipPhysics::ShipPhysics(b2Body* body)
 
 void ShipPhysics::fixedUpdate(Entity &entity, float deltaTime)
 {
-	m_body->ApplyForceToCenter(sfVec2ToB2Vec(m_direction *  m_moveForceMultiplier * deltaTime), true);
+	b2Vec2 velocity = m_body->GetLinearVelocity();
+	b2Vec2 desiredVelocity = sfVec2ToB2Vec(m_direction * m_maxSpeed);
+	
+	b2Vec2 velocityChange = desiredVelocity - velocity;
+	b2Vec2 impulse = m_body->GetMass() * velocityChange;
+
+	m_body->ApplyLinearImpulseToCenter(impulse, true);
 
 	// Reset direction vector, because handleDirectionEvent doesn't reset the
 	// direction when key press is released
