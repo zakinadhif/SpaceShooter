@@ -18,9 +18,15 @@ ShipPhysics::ShipPhysics(b2Body* body)
 
 void ShipPhysics::fixedUpdate(Entity &entity, float deltaTime)
 {
+	b2Vec2 direction = sfVec2ToB2Vec(m_direction);
+
+	b2Vec2 acceleration {direction.x * 0.1f, direction.y * 0.1f};
+	b2Vec2 maxVelocity {direction.x * m_maxSpeed, direction.y * m_maxSpeed};
+
 	b2Vec2 velocity = m_body->GetLinearVelocity();
-	b2Vec2 desiredVelocity = sfVec2ToB2Vec(m_direction * m_maxSpeed);
-	
+	b2Vec2 velocityAfterAcceleration = velocity + acceleration;
+	b2Vec2 desiredVelocity = velocityAfterAcceleration.LengthSquared() < maxVelocity.LengthSquared() ? velocityAfterAcceleration : maxVelocity;
+
 	b2Vec2 velocityChange = desiredVelocity - velocity;
 	b2Vec2 impulse = m_body->GetMass() * velocityChange;
 
