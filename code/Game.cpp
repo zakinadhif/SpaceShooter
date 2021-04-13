@@ -9,6 +9,8 @@ namespace astro
 Game::Game()
 	: m_window(sf::VideoMode(600, 600), "SpaceShooter")
 {
+	m_window.setFramerateLimit(60);
+
 	m_gameStateManager.push<MainMenu>(m_gameStateManager);
 }
 
