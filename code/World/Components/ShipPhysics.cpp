@@ -26,25 +26,24 @@ void ShipPhysics::fixedUpdate(Entity &entity, float deltaTime)
 
 	b2Vec2 force { direction.x * m_maxSpeed, direction.y * m_maxSpeed };
 	m_body->ApplyForceToCenter(force, true);
-
-	// Reset direction vector, because handleDirectionEvent doesn't reset the
-	// direction when key press is released
-	m_direction = {};
 }
 
 void ShipPhysics::recieve(EntityEvent& event)
 {
 	switch (event.type)
 	{
-		case EntityEvent::Type::Direction:
-			handleDirectionEvent(event.direction);
+		case EntityEvent::Type::Move:
+			handleMoveEvent(event.direction);
+			break;
+		case EntityEvent::Type::StopMove:
+			handleStopEvent(event.direction);
 			break;
 		default:
 			break;
 	}
 }
 
-void ShipPhysics::handleDirectionEvent(EntityEvent::Direction direction)
+void ShipPhysics::handleMoveEvent(EntityEvent::Direction direction)
 {
 	using Direction = EntityEvent::Direction;
 
@@ -61,6 +60,33 @@ void ShipPhysics::handleDirectionEvent(EntityEvent::Direction direction)
 			break;
 		case Direction::RIGHT:
 			m_direction.x += 1.0f;
+			break;
+	}
+	
+	if (m_direction != sf::Vector2f(0,0)) m_direction = thor::unitVector(m_direction);
+}
+
+void ShipPhysics::handleStopEvent(EntityEvent::Direction direction)
+{
+	using Direction = EntityEvent::Direction;
+
+	switch (direction)
+	{
+		case Direction::UP:
+			if (m_direction.y < 0)
+				m_direction.y = 0;
+			break;
+		case Direction::DOWN:
+			if (m_direction.y > 0)
+				m_direction.y = 0;
+			break;
+		case Direction::LEFT:
+			if (m_direction.x < 0)
+				m_direction.x = 0;
+			break;
+		case Direction::RIGHT:
+			if (m_direction.x > 0)
+				m_direction.x = 0;
 			break;
 	}
 	

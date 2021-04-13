@@ -18,6 +18,14 @@ void World::createPlayerShip(const sf::Vector2f &position)
 	m_entities.push_back(std::move(entity));
 }
 
+void World::handleEvent(const sf::Event& event)
+{
+	for (auto& entity : m_entities)
+	{
+		entity.handleEvent(event);
+	}
+}
+
 void World::update(float deltaTime)
 {
 	for (auto& entity : m_entities)

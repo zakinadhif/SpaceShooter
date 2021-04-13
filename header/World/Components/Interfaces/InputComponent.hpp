@@ -11,7 +11,7 @@ class EntityEvent;
 class InputComponent
 {
 public:
-	virtual void update(Entity& entity) = 0;
+	virtual void handleEvent(const sf::Event& event, Entity& entity) = 0;
 	virtual void recieve(EntityEvent& event) {};
 
 	virtual ~InputComponent() = default;

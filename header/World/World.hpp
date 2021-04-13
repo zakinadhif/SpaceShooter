@@ -22,6 +22,7 @@ public:
 	void createPlayerShip(const sf::Vector2f& position);
 	void createAsteroid(const sf::Vector2f& position);
 
+	void handleEvent(const sf::Event& handleEvent);
 	void update(float deltaTime);
 	void fixedUpdate(float deltaTime);
 

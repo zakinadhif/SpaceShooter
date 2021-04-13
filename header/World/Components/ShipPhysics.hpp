@@ -21,7 +21,8 @@ public:
 	const b2Body* getBody() const override;
 
 private:
-	void handleDirectionEvent(EntityEvent::Direction direction);
+	void handleMoveEvent(EntityEvent::Direction direction);
+	void handleStopEvent(EntityEvent::Direction direction);
 
 	sf::Vector2f m_direction;
 

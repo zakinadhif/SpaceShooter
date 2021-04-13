@@ -38,9 +38,13 @@ Entity::Entity(Entity&& other)
 	other.m_graphics = nullptr;
 }
 
+void Entity::handleEvent(const sf::Event &event)
+{
+	m_input->handleEvent(event, *this);
+}
+
 void Entity::update(float deltaTime)
 {
-	m_input->update(*this);
 	m_graphics->update(*this);
 }
 

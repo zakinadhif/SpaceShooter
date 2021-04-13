@@ -4,44 +4,90 @@
 #include "World/Entity.hpp"
 #include "World/EntityEvent.hpp"
 
+namespace
+{
+	void instructMove(astro::Entity& entity, astro::EntityEvent::Direction direction)
+	{
+		astro::EntityEvent event
+		{
+			.type = astro::EntityEvent::Type::Move,
+			.direction = direction
+		};
+		entity.sendEvent(event);
+	}
+
+	void instructStop(astro::Entity& entity, astro::EntityEvent::Direction direction)
+	{
+		astro::EntityEvent event
+		{
+			.type = astro::EntityEvent::Type::StopMove,
+			.direction = direction
+		};
+		entity.sendEvent(event);
+	}
+}
+
 namespace astro
 {
 
-void ShipInput::update(Entity& entity)
+void ShipInput::handleEvent(const sf::Event& event, Entity& entity)
 {
-	using EntityEventType = EntityEvent::Type;
-	using ShipDirection = EntityEvent::Direction;
-
-	if (Keyboard::isKeyPressed(sf::Keyboard::Up))
+	switch (event.type)
 	{
-		EntityEvent event;
-		event.type = EntityEventType::Direction;
-		event.direction = ShipDirection::UP;
-		entity.sendEvent(event);
+		case sf::Event::KeyPressed:
+			handleKeyPress(event.key.code, entity);
+			break;
+		case sf::Event::KeyReleased:
+			handleKeyRelease(event.key.code, entity);
+			break;
+		default:
+			break;
 	}
-	
-	if (Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		EntityEvent event;
-		event.type = EntityEventType::Direction;
-		event.direction = ShipDirection::DOWN;
-		entity.sendEvent(event);
-	}
+}
 
-	if (Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		EntityEvent event;
-		event.type = EntityEventType::Direction;
-		event.direction = ShipDirection::LEFT;
-		entity.sendEvent(event);
-	}
+void ShipInput::handleKeyPress(sf::Keyboard::Key key, Entity& entity)
+{
+	using Direction = EntityEvent::Direction;
+	using Key = sf::Keyboard::Key;
 
-	if (Keyboard::isKeyPressed(sf::Keyboard::Right))
+	switch (key)
 	{
-		EntityEvent event;
-		event.type = EntityEventType::Direction;
-		event.direction = ShipDirection::RIGHT;
-		entity.sendEvent(event);
+		case Key::Up:
+			instructMove(entity, Direction::UP);
+			break;
+		case Key::Down:
+			instructMove(entity, Direction::DOWN);
+			break;
+		case Key::Left:
+			instructMove(entity, Direction::LEFT);
+			break;
+		case Key::Right:
+			instructMove(entity, Direction::RIGHT);
+			break;
+		default: break;
+	}
+}
+
+void ShipInput::handleKeyRelease(sf::Keyboard::Key key, Entity& entity)
+{
+	using Direction = EntityEvent::Direction;
+	using Key = sf::Keyboard::Key;
+
+	switch (key)
+	{
+		case Key::Up:
+			instructStop(entity, Direction::UP);
+			break;
+		case Key::Down:
+			instructStop(entity, Direction::DOWN);
+			break;
+		case Key::Left:
+			instructStop(entity, Direction::LEFT);
+			break;
+		case Key::Right:
+			instructStop(entity, Direction::RIGHT);
+			break;
+		default: break;
 	}
 }
 

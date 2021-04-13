@@ -12,7 +12,11 @@ class Entity;
 class ShipInput final : public InputComponent
 {
 public:
-	void update(Entity& entity) override;
+	void handleEvent(const sf::Event& event, Entity& entity) override;
+
+private:
+	void handleKeyPress(sf::Keyboard::Key key, Entity& entity);
+	void handleKeyRelease(sf::Keyboard::Key key, Entity& entity);
 };
 
 }

@@ -10,6 +10,8 @@ PlayState::PlayState(zfge::GameStateManager& gameStateManager)
 
 void PlayState::handleEvent(sf::Event event)
 {
+	m_world.handleEvent(event);
+
 	switch (event.type)
 	{
 		case sf::Event::KeyReleased:

@@ -41,6 +41,7 @@ public:
 	Entity& operator=(const Entity& other) = delete;
 	Entity& operator=(Entity&& other) = delete;
 
+	void handleEvent(const sf::Event& event);
 	void update(float deltaTime);
 	void fixedUpdate(float deltaTime);
 
