@@ -20,17 +20,12 @@ void ShipPhysics::fixedUpdate(Entity &entity, float deltaTime)
 {
 	b2Vec2 direction = sfVec2ToB2Vec(m_direction);
 
-	b2Vec2 acceleration {direction.x * 0.1f, direction.y * 0.1f};
-	b2Vec2 maxVelocity {direction.x * m_maxSpeed, direction.y * m_maxSpeed};
+	const b2Vec2& shipLinearVelocity = m_body->GetLinearVelocity();
+	b2Vec2 friction { -shipLinearVelocity.x * m_frictionConstant, -shipLinearVelocity.y *  m_frictionConstant };
+	m_body->ApplyForceToCenter(friction, false);
 
-	b2Vec2 velocity = m_body->GetLinearVelocity();
-	b2Vec2 velocityAfterAcceleration = velocity + acceleration;
-	b2Vec2 desiredVelocity = velocityAfterAcceleration.LengthSquared() < maxVelocity.LengthSquared() ? velocityAfterAcceleration : maxVelocity;
-
-	b2Vec2 velocityChange = desiredVelocity - velocity;
-	b2Vec2 impulse = m_body->GetMass() * velocityChange;
-
-	m_body->ApplyLinearImpulseToCenter(impulse, true);
+	b2Vec2 force { direction.x * m_maxSpeed, direction.y * m_maxSpeed };
+	m_body->ApplyForceToCenter(force, true);
 
 	// Reset direction vector, because handleDirectionEvent doesn't reset the
 	// direction when key press is released

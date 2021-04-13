@@ -26,7 +26,8 @@ private:
 	sf::Vector2f m_direction;
 
 	float m_maxSpeed = 5.f;
-	
+	float m_frictionConstant = 1.f;
+
 	b2Body* m_body;
 };
 
