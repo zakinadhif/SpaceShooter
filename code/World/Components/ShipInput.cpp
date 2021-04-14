@@ -25,6 +25,16 @@ namespace
 		};
 		entity.sendEvent(event);
 	}
+
+	void instructLookAt(astro::Entity& entity, sf::Vector2f point)
+	{
+		astro::EntityEvent event
+		{
+			.type = astro::EntityEvent::Type::PointTo,
+			.point = point
+		};
+		entity.sendEvent(event);
+	}
 }
 
 namespace astro
@@ -39,6 +49,9 @@ void ShipInput::handleEvent(const sf::Event& event, Entity& entity)
 			break;
 		case sf::Event::KeyReleased:
 			handleKeyRelease(event.key.code, entity);
+			break;
+		case sf::Event::MouseMoved:
+			handleMouseMove({event.mouseMove.x, event.mouseMove.y}, entity);
 			break;
 		default:
 			break;
@@ -89,6 +102,11 @@ void ShipInput::handleKeyRelease(sf::Keyboard::Key key, Entity& entity)
 			break;
 		default: break;
 	}
+}
+
+void ShipInput::handleMouseMove(sf::Vector2i position, Entity& entity)
+{
+	instructLookAt(entity, static_cast<sf::Vector2f>(position));
 }
 
 }

@@ -21,6 +21,7 @@ public:
 	const b2Body* getBody() const override;
 
 private:
+	void handlePointToEvent(const sf::Vector2f& point);
 	void handleMoveEvent(EntityEvent::Direction direction);
 	void handleStopEvent(EntityEvent::Direction direction);
 

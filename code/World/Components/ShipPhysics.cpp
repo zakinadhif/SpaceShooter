@@ -38,9 +38,16 @@ void ShipPhysics::recieve(EntityEvent& event)
 		case EntityEvent::Type::StopMove:
 			handleStopEvent(event.direction);
 			break;
+		case EntityEvent::Type::PointTo:
+			handlePointToEvent(event.point);
 		default:
 			break;
 	}
+}
+
+void ShipPhysics::handlePointToEvent(const sf::Vector2f& point)
+{
+	
 }
 
 void ShipPhysics::handleMoveEvent(EntityEvent::Direction direction)

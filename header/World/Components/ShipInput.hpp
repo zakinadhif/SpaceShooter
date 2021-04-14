@@ -17,6 +17,7 @@ public:
 private:
 	void handleKeyPress(sf::Keyboard::Key key, Entity& entity);
 	void handleKeyRelease(sf::Keyboard::Key key, Entity& entity);
+	void handleMouseMove(sf::Vector2i position, Entity& entity);
 };
 
 }
