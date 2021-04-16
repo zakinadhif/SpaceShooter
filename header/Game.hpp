@@ -12,6 +12,8 @@ public:
 
 	void run();
 
+	~Game();
+
 private:
 	void handleEvent();
 
