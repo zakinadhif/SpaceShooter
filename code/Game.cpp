@@ -3,6 +3,9 @@
 #include "GameStates/MainMenu.hpp"
 #include "Utility/Keyboard.hpp"
 
+#include <imgui.h>
+#include <imgui-SFML.h>
+
 namespace astro
 {
 
@@ -11,6 +14,8 @@ Game::Game()
 {
 	m_window.setKeyRepeatEnabled(false);
 	m_window.setFramerateLimit(60);
+
+	ImGui::SFML::Init(m_window);
 
 	m_gameStateManager.push<MainMenu>(m_gameStateManager);
 }
@@ -27,6 +32,8 @@ void Game::run()
 
 	while (m_window.isOpen() && !m_gameStateManager.isEmpty())
 	{
+		ImGui::SFML::Update(m_window, elapsed);
+		
 		zfge::GameState& currentState = m_gameStateManager.peek();
 		
 		elapsed = timer.restart();
@@ -44,6 +51,7 @@ void Game::run()
 
 		m_window.clear();
 		currentState.draw(m_window);
+		ImGui::SFML::Render(m_window);
 		m_window.display();
 
 		m_gameStateManager.update();
@@ -56,6 +64,8 @@ void Game::handleEvent()
 
 	for (sf::Event event; m_window.pollEvent(event);)
 	{
+		ImGui::SFML::ProcessEvent(event);
+
 		if (event.type == sf::Event::KeyPressed)
 			Keyboard::setKey(event.key.code, true);
 		else if (event.type == sf::Event::KeyReleased)
@@ -63,6 +73,11 @@ void Game::handleEvent()
 
 		currentState.handleEvent(event);
 	}
+}
+
+Game::~Game()
+{
+	ImGui::SFML::Shutdown();
 }
 
 }
