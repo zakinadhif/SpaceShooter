@@ -25,7 +25,8 @@ private:
 	void handleMoveEvent(EntityEvent::Direction direction);
 	void handleStopEvent(EntityEvent::Direction direction);
 
-	sf::Vector2f m_direction;
+	b2Vec2 m_direction;
+	b2Vec2 m_pointToLookAt;
 
 	float m_maxSpeed = 5.f;
 	float m_frictionConstant = 1.f;

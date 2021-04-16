@@ -6,6 +6,8 @@
 
 #include <Thor/Vectors.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <cmath>
+#include <imgui.h>
 
 namespace astro
 {
@@ -18,14 +20,34 @@ ShipPhysics::ShipPhysics(b2Body* body)
 
 void ShipPhysics::fixedUpdate(Entity &entity, float deltaTime)
 {
-	b2Vec2 direction = sfVec2ToB2Vec(m_direction);
-
 	const b2Vec2& shipLinearVelocity = m_body->GetLinearVelocity();
+	const b2Vec2& shipPosition = m_body->GetPosition();
+	float shipAngularVelocity = m_body->GetAngularVelocity();
+	float shipAngle = m_body->GetAngle();
+
 	b2Vec2 friction { -shipLinearVelocity.x * m_frictionConstant, -shipLinearVelocity.y *  m_frictionConstant };
 	m_body->ApplyForceToCenter(friction, false);
 
-	b2Vec2 force { direction.x * m_maxSpeed, direction.y * m_maxSpeed };
+	b2Vec2 force { m_direction.x * m_maxSpeed, m_direction.y * m_maxSpeed };
 	m_body->ApplyForceToCenter(force, true);
+
+	b2Vec2 lookAtVector = m_pointToLookAt - shipPosition;
+	float desiredAngle = std::atan2(lookAtVector.y, lookAtVector.x);
+
+	float nextAngle = shipAngle + shipAngularVelocity / 60.0f;
+	float totalRotation = desiredAngle - nextAngle;
+
+	while (totalRotation < -3.14159f) totalRotation += 3.14159f;
+	while (totalRotation >  3.14159f) totalRotation -= 3.14159f;
+
+	float desiredAngularVelocity = totalRotation * 60.f;
+	float impulse = m_body->GetInertia() * desiredAngularVelocity;
+
+	m_body->ApplyAngularImpulse(impulse, true);
+	
+	ImGui::Begin("ShipInfo");
+	ImGui::LabelText("Rotation", "%f", desiredAngle);
+	ImGui::End();
 }
 
 void ShipPhysics::recieve(EntityEvent& event)
@@ -47,7 +69,7 @@ void ShipPhysics::recieve(EntityEvent& event)
 
 void ShipPhysics::handlePointToEvent(const sf::Vector2f& point)
 {
-	
+	m_pointToLookAt = sfVec2ToB2Vec(point);
 }
 
 void ShipPhysics::handleMoveEvent(EntityEvent::Direction direction)
@@ -70,7 +92,7 @@ void ShipPhysics::handleMoveEvent(EntityEvent::Direction direction)
 			break;
 	}
 	
-	if (m_direction != sf::Vector2f(0,0)) m_direction = thor::unitVector(m_direction);
+	if (m_direction != b2Vec2(0,0)) m_direction.Normalize();
 }
 
 void ShipPhysics::handleStopEvent(EntityEvent::Direction direction)
@@ -96,8 +118,8 @@ void ShipPhysics::handleStopEvent(EntityEvent::Direction direction)
 				m_direction.x = 0;
 			break;
 	}
-	
-	if (m_direction != sf::Vector2f(0,0)) m_direction = thor::unitVector(m_direction);
+
+	if (m_direction != b2Vec2(0,0)) m_direction.Normalize();
 }
 
 const b2Body* ShipPhysics::getBody() const
