@@ -23,6 +23,8 @@ find_package(Thor 2 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
+find_package(ImGui-SFML REQUIRED)
+
 
 target_include_directories(
 	"${PROJECT_NAME}" PRIVATE
@@ -40,5 +42,6 @@ target_link_libraries(
 	sfml-window
 	sfml-system
 	spdlog::spdlog
+	ImGui-SFML::ImGui-SFML
 	box2d::box2d
 	)
