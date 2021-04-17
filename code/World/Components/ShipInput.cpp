@@ -1,6 +1,7 @@
 #include "World/Components/ShipInput.hpp"
 
 #include "Utility/Keyboard.hpp"
+#include "World/CoordinateSpaceMapper.hpp"
 #include "World/Entity.hpp"
 #include "World/EntityEvent.hpp"
 
@@ -39,6 +40,12 @@ namespace
 
 namespace astro
 {
+
+ShipInput::ShipInput(const CoordinateSpaceMapper& worldSpaceMapper)
+	: m_worldSpaceMapper(worldSpaceMapper)
+{
+
+}
 
 void ShipInput::handleEvent(const sf::Event& event, Entity& entity)
 {
@@ -106,7 +113,7 @@ void ShipInput::handleKeyRelease(sf::Keyboard::Key key, Entity& entity)
 
 void ShipInput::handleMouseMove(sf::Vector2i position, Entity& entity)
 {
-	instructLookAt(entity, static_cast<sf::Vector2f>(position));
+	instructLookAt(entity, m_worldSpaceMapper.mapToViewSpace(position));
 }
 
 }

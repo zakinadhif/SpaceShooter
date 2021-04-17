@@ -6,13 +6,14 @@
 namespace astro
 {
 
-MainMenu::MainMenu(zfge::GameStateManager& gameStateManager)
+MainMenu::MainMenu(zfge::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow)
 	: m_gameStateManager(gameStateManager)
 	, m_startButton({225, 275}, {150, 50})
+	, m_mainWindow(mainWindow)
 {
 	m_startButton.setText("Start Game");
 	m_startButton.onClick([this](){
-		m_gameStateManager.push<PlayState>(m_gameStateManager);
+		m_gameStateManager.push<PlayState>(m_gameStateManager, m_mainWindow);
 	});
 }
 

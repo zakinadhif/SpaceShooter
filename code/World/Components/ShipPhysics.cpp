@@ -32,19 +32,10 @@ void ShipPhysics::fixedUpdate(Entity &entity, float deltaTime)
 	m_body->ApplyForceToCenter(force, true);
 
 	b2Vec2 lookAtVector = m_pointToLookAt - shipPosition;
-	float desiredAngle = std::atan2(lookAtVector.y, lookAtVector.x);
+	float desiredAngle = std::atan2(lookAtVector.y, lookAtVector.x) + thor::toRadian(90.f);
 
-	float nextAngle = shipAngle + shipAngularVelocity / 60.0f;
-	float totalRotation = desiredAngle - nextAngle;
+	m_body->SetTransform(shipPosition, desiredAngle);
 
-	while (totalRotation < -3.14159f) totalRotation += 3.14159f;
-	while (totalRotation >  3.14159f) totalRotation -= 3.14159f;
-
-	float desiredAngularVelocity = totalRotation * 60.f;
-	float impulse = m_body->GetInertia() * desiredAngularVelocity;
-
-	m_body->ApplyAngularImpulse(impulse, true);
-	
 	ImGui::Begin("ShipInfo");
 	ImGui::LabelText("Rotation", "%f", desiredAngle);
 	ImGui::End();

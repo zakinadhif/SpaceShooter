@@ -19,7 +19,7 @@ Entity createPlayerShip(World& world, const sf::Vector2f &position, b2World* phy
 
 	ShipPhysics* shipPhysics = new ShipPhysics(physicalShipBody);
 	ShipGraphics* shipGraphics = new ShipGraphics(shipPhysics);
-	ShipInput* shipInput = new ShipInput();
+	ShipInput* shipInput = new ShipInput(world.getWorldSpaceMapper());
 
 	return Entity(world, Entity::Type::Ship, shipInput, shipPhysics, shipGraphics);
 }

@@ -17,7 +17,7 @@ Game::Game()
 
 	ImGui::SFML::Init(m_window);
 
-	m_gameStateManager.push<MainMenu>(m_gameStateManager);
+	m_gameStateManager.push<MainMenu>(m_gameStateManager, m_window);
 }
 
 void Game::run()

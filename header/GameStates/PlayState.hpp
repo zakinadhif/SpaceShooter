@@ -11,7 +11,7 @@ namespace astro
 class PlayState final : public zfge::GameState
 {
 public:
-	PlayState(zfge::GameStateManager& gameStateManager);
+	PlayState(zfge::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow);
 
 	void handleEvent(sf::Event event) override;
 	

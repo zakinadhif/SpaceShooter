@@ -5,10 +5,18 @@
 namespace astro
 {
 
-World::World()
+World::World(sf::RenderTarget& mainWindow)
 	: m_physicsWorld({0,0})
+	, m_worldView({0.f, 0.f}, {12, 12})
+	, m_mainWindow(mainWindow)
+	, m_worldSpaceMapper(mainWindow, m_worldView)
 {
 	createPlayerShip({0,0});	
+}
+
+const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
+{
+	return m_worldSpaceMapper;
 }
 
 void World::createPlayerShip(const sf::Vector2f &position)
@@ -47,9 +55,8 @@ void World::fixedUpdate(float deltaTime)
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	sf::View lastView = target.getView();
-	sf::View worldView({0.f, 0.f}, {12, 12});
 
-	target.setView(worldView);
+	target.setView(m_worldView);
 
 	for (auto& entity : m_entities)
 	{

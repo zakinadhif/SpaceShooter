@@ -1,6 +1,7 @@
 #pragma once
 
 #include "World/Entity.hpp"
+#include "World/CoordinateSpaceMapper.hpp"
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
@@ -17,7 +18,9 @@ class Entity;
 class World : public sf::Drawable
 {
 public:
-	World();
+	World(sf::RenderTarget& mainWindow);
+
+	const CoordinateSpaceMapper& getWorldSpaceMapper() const;
 
 	void createPlayerShip(const sf::Vector2f& position);
 	void createAsteroid(const sf::Vector2f& position);
@@ -33,6 +36,11 @@ private:
 	const int m_positionIterations = 2;
 	
 	b2World m_physicsWorld;
+	sf::View m_worldView;
+
+	sf::RenderTarget& m_mainWindow;
+
+	CoordinateSpaceMapper m_worldSpaceMapper;
 
 	std::vector<Entity> m_entities;
 };

@@ -3,8 +3,9 @@
 namespace astro
 {
 
-PlayState::PlayState(zfge::GameStateManager& gameStateManager)
+PlayState::PlayState(zfge::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow)
 	: m_gameStateManager(gameStateManager)
+	, m_world(mainWindow)
 {
 }
 
