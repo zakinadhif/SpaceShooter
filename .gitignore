@@ -6,6 +6,9 @@ bin/*
 .vscode
 .cache
 
+.gdb_history
+imgui.ini
+
 Debug
 compile_commands.json
 
