@@ -33,7 +33,7 @@ public:
 private:
 	void update();
 
-	sf::Vector2f m_size;	
+	sf::Vector2f m_size;
 
 	sf::RectangleShape m_buttonFrame;
 	sf::Text m_text;

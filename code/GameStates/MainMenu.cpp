@@ -19,7 +19,7 @@ MainMenu::MainMenu(zfge::GameStateManager& gameStateManager, sf::RenderTarget& m
 
 void MainMenu::handleEvent(sf::Event event)
 {
-	m_startButton.handleEvent(event);	
+	m_startButton.handleEvent(event);
 
 	switch (event.type)
 	{

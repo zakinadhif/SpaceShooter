@@ -5,7 +5,7 @@ namespace zfge
 
 GameState::GameState()
 {
-	
+
 }
 
 void GameState::update([[maybe_unused]] float deltaTime)

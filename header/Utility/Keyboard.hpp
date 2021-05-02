@@ -16,7 +16,7 @@ public:
 
 private:
 	static void setKey(sf::Keyboard::Key key, bool pressed);
-	
+
 	static std::array<bool, static_cast<std::size_t>(sf::Keyboard::Key::KeyCount)> m_states;
 
 	friend class Game;

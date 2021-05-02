@@ -33,14 +33,14 @@ void Game::run()
 	while (m_window.isOpen() && !m_gameStateManager.isEmpty())
 	{
 		ImGui::SFML::Update(m_window, elapsed);
-		
+
 		zfge::GameState& currentState = m_gameStateManager.peek();
-		
+
 		elapsed = timer.restart();
 		lag += elapsed;
-	
+
 		handleEvent();
-		
+
 		currentState.update(elapsed.asSeconds());
 
 		while (lag >= fixedUpdateInterval)

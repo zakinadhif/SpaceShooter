@@ -17,7 +17,7 @@ public:
 	template<typename S, typename ...Args>
 	void push(Args&&... args);
 	void pop();
-	
+
 	template<typename S, typename ...Args>
 	void change(Args&&... args);
 
@@ -25,7 +25,7 @@ public:
 
 	GameState& peek();
 	const GameState& peek() const;
-	
+
 	bool isEmpty() const;
 	std::size_t getStatesCount() const;
 

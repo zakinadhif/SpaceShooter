@@ -47,7 +47,7 @@ void GameStateManager::update()
 	while (!m_actionQueue.empty())
 	{
 		Action& action = m_actionQueue.front();
-		
+
 		assert(action.type != Action::Type::None);
 
 		switch (action.type)

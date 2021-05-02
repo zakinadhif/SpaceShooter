@@ -11,7 +11,7 @@ World::World(sf::RenderTarget& mainWindow)
 	, m_mainWindow(mainWindow)
 	, m_worldSpaceMapper(mainWindow, m_worldView)
 {
-	createPlayerShip({0,0});	
+	createPlayerShip({0,0});
 }
 
 const CoordinateSpaceMapper& World::getWorldSpaceMapper() const

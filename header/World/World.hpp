@@ -34,7 +34,7 @@ public:
 private:
 	const int m_velocityIterations = 6;
 	const int m_positionIterations = 2;
-	
+
 	b2World m_physicsWorld;
 	sf::View m_worldView;
 

@@ -82,7 +82,7 @@ void ShipPhysics::handleMoveEvent(EntityEvent::Direction direction)
 			m_direction.x += 1.0f;
 			break;
 	}
-	
+
 	if (m_direction != b2Vec2(0,0)) m_direction.Normalize();
 }
 

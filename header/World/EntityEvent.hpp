@@ -8,14 +8,14 @@ namespace astro
 struct EntityEvent
 {
 	enum class Direction { UP, DOWN, LEFT, RIGHT };
-	
+
 	enum class Type
 	{
 		Move,
 		StopMove,
 		PointTo
 	};
-	
+
 	Type type;
 
 	union

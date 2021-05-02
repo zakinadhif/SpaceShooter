@@ -14,7 +14,7 @@ public:
 	PlayState(zfge::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow);
 
 	void handleEvent(sf::Event event) override;
-	
+
 	void update(float deltaTime) override;
 	void fixedUpdate(float deltaTime) override;
 

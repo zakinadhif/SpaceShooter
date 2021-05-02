@@ -19,7 +19,7 @@ public:
 
 private:
 	zfge::GameStateManager& m_gameStateManager;
-	
+
 	Button m_startButton;
 	sf::RenderTarget& m_mainWindow;
 };
