@@ -15,7 +15,7 @@ public:
 	~Game();
 
 private:
-	void handleEvent();
+	void handleEvents();
 
 	zfge::GameStateManager m_gameStateManager;
 	sf::RenderWindow m_window;

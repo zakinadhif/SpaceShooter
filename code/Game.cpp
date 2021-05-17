@@ -32,14 +32,14 @@ void Game::run()
 
 	while (m_window.isOpen() && !m_gameStateManager.isEmpty())
 	{
-		ImGui::SFML::Update(m_window, elapsed);
-
 		zfge::GameState& currentState = m_gameStateManager.peek();
 
 		elapsed = timer.restart();
 		lag += elapsed;
 
-		handleEvent();
+		handleEvents();
+
+		ImGui::SFML::Update(m_window, elapsed);
 
 		currentState.update(elapsed.asSeconds());
 
@@ -49,6 +49,10 @@ void Game::run()
 			currentState.fixedUpdate(fixedUpdateInterval.asSeconds());
 		}
 
+		ImGui::Begin("Game Loop Stats");
+		ImGui::LabelText("FPS", "%f", 1 / elapsed.asSeconds());
+		ImGui::End();
+
 		m_window.clear();
 		currentState.draw(m_window);
 		ImGui::SFML::Render(m_window);
@@ -56,9 +60,12 @@ void Game::run()
 
 		m_gameStateManager.update();
 	}
+
+	if (m_window.isOpen())
+		m_window.close();
 }
 
-void Game::handleEvent()
+void Game::handleEvents()
 {
 	zfge::GameState& currentState = m_gameStateManager.peek();
 
