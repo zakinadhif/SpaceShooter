@@ -1,9 +1,10 @@
 #include "Asteroid/PolygonsGenerator.hpp"
+#include "Utility/Random.hpp"
 
 #include <Thor/Math/Triangulation.hpp>
 #include <cmath>
 
-std::vector<float> generateAsteroidHeights(std::size_t pointsCount, float increment)
+std::vector<float> generateAsteroidHeights(std::size_t pointsCount, float scale, float perlinIncrement)
 {
 	static siv::PerlinNoise perlinNoise;
 
@@ -13,9 +14,9 @@ std::vector<float> generateAsteroidHeights(std::size_t pointsCount, float increm
 
 	for (auto& height : asteroidHeights)
 	{
-		height = perlinNoise.noise1D(x);
+		height = perlinNoise.noise1D(x) * scale;
 
-		x += increment;
+		x += perlinIncrement;
 	}
 
 	return asteroidHeights;
@@ -30,7 +31,7 @@ std::vector<sf::Vector2f> generateAsteroidOuterVertices(const std::vector<float>
 
 	for (std::size_t x = 0; x < vertices.size(); ++x)
 	{
-		vertices[x] = {std::cos(angle) * heights[x], std::sin(angle) * heights[x]};
+		vertices[x] = {std::cos(angle) * heights[x] + baseHeight, std::sin(angle) * heights[x] + baseHeight};
 
 		angle += angleIncrement;
 	}
