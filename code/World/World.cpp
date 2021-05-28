@@ -1,6 +1,10 @@
 #include "World/World.hpp"
 
 #include "World/EntityFactory.hpp"
+#include "Asteroid/PolygonsGenerator.hpp"
+
+#include <imgui.h>
+#include <iostream>
 
 namespace astro
 {
@@ -12,6 +16,21 @@ World::World(sf::RenderTarget& mainWindow)
 	, m_worldSpaceMapper(mainWindow, m_worldView)
 {
 	createPlayerShip({0,0});
+
+	auto asteroidHeights = generateAsteroidHeights(22, 0.5, 0.3);
+	auto asteroidOuterVertices = generateAsteroidOuterVertices(
+			asteroidHeights, 1);
+	// auto asteroidTriangles = generateAsteroidTriangleVertices(asteroidOuterVertices);
+
+	m_asteroid.setPointCount(asteroidOuterVertices.size());
+
+	for (std::size_t x = 0; x < m_asteroid.getPointCount(); ++x)
+	{
+		m_asteroid.setPoint(x, asteroidOuterVertices[x]);
+	}
+
+	m_asteroid.setFillColor(sf::Color::White);
+	m_asteroid.setPosition(0.f, 0.f);
 }
 
 const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
@@ -40,6 +59,36 @@ void World::update(float deltaTime)
 	{
 		entity.update(deltaTime);
 	}
+
+	static float ridgesScaleFactor = 0.5f;
+	static float perlinIncrement = 0.3f;
+	static float baseHeight = 1.0f;
+	static int verticesCount = 22;
+	static bool regenerateAsteroid = false;
+
+	ImGui::Begin("Asteroid Generator");
+	ImGui::InputFloat("Ridges Scale Factor", &ridgesScaleFactor);
+	ImGui::InputFloat("Perlin Increment", &perlinIncrement);
+	ImGui::InputFloat("Base Height", &baseHeight);
+	ImGui::InputInt("Vertices Count", &verticesCount);
+
+	regenerateAsteroid = ImGui::Button("Regenerate");
+	ImGui::End();
+
+	if (regenerateAsteroid)
+	{
+		auto asteroidHeights = generateAsteroidHeights(static_cast<std::size_t>(verticesCount), ridgesScaleFactor, perlinIncrement);
+		auto asteroidOuterVertices = generateAsteroidOuterVertices(
+				asteroidHeights, baseHeight);
+		// auto asteroidTriangles = generateAsteroidTriangleVertices(asteroidOuterVertices);
+
+		m_asteroid.setPointCount(asteroidOuterVertices.size());
+
+		for (std::size_t x = 0; x < m_asteroid.getPointCount(); ++x)
+		{
+			m_asteroid.setPoint(x, asteroidOuterVertices[x]);
+		}
+	}
 }
 
 void World::fixedUpdate(float deltaTime)
@@ -62,6 +111,8 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		entity.draw(target, states);
 	}
+
+	target.draw(m_asteroid, states);
 
 	target.setView(lastView);
 }

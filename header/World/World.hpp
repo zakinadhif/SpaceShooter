@@ -3,6 +3,8 @@
 #include "World/Entity.hpp"
 #include "World/CoordinateSpaceMapper.hpp"
 
+#include <Thor/Shapes/ConcaveShape.hpp>
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Drawable.hpp>
@@ -43,6 +45,8 @@ private:
 	CoordinateSpaceMapper m_worldSpaceMapper;
 
 	std::vector<Entity> m_entities;
+
+	thor::ConcaveShape m_asteroid;
 };
 
 }
