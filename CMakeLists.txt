@@ -25,7 +25,6 @@ find_package(yaml-cpp REQUIRED)
 find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
 find_package(ImGui-SFML REQUIRED)
 
-
 target_include_directories(
 	"${PROJECT_NAME}" PRIVATE
 	"${YAML_CPP_INCLUDE_DIR}"
