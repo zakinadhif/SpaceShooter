@@ -18,9 +18,9 @@ World::World(sf::RenderTarget& mainWindow)
 	createPlayerShip({0,0});
 
 	auto asteroidHeights = generateAsteroidHeights(22, 0.5, 0.3);
-	auto asteroidOuterVertices = generateAsteroidOuterVertices(
+	auto asteroidOuterVertices = generateAsteroidOuterVertices<sf::Vector2f>(
 			asteroidHeights, 1);
-	// auto asteroidTriangles = generateAsteroidTriangleVertices(asteroidOuterVertices);
+	auto asteroidTriangles = generateAsteroidTriangleVertices<b2Vec2, sf::Vector2f>(asteroidOuterVertices);
 
 	m_asteroid.setPointCount(asteroidOuterVertices.size());
 
@@ -78,9 +78,9 @@ void World::update(float deltaTime)
 	if (regenerateAsteroid)
 	{
 		auto asteroidHeights = generateAsteroidHeights(static_cast<std::size_t>(verticesCount), ridgesScaleFactor, perlinIncrement);
-		auto asteroidOuterVertices = generateAsteroidOuterVertices(
+		auto asteroidOuterVertices = generateAsteroidOuterVertices<sf::Vector2f>(
 				asteroidHeights, baseHeight);
-		// auto asteroidTriangles = generateAsteroidTriangleVertices(asteroidOuterVertices);
+		auto asteroidTriangles = generateAsteroidTriangleVertices<b2Vec2, sf::Vector2f>(asteroidOuterVertices);
 
 		m_asteroid.setPointCount(asteroidOuterVertices.size());
 
