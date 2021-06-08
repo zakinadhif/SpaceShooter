@@ -36,8 +36,10 @@ World::World(sf::RenderTarget& mainWindow)
 	, m_mainWindow(mainWindow)
 	, m_worldSpaceMapper(mainWindow, m_worldView)
 {
-	createPlayerShip({0,0});
+	createPlayerShip({5,0});
+	createAsteroid({0,0});
 
+	/*
 	auto asteroidHeights = generateAsteroidHeights(22, 0.5, 0.3);
 	auto asteroidOuterVertices = generateAsteroidOuterVertices<sf::Vector2f>(
 			asteroidHeights, 1);
@@ -52,6 +54,7 @@ World::World(sf::RenderTarget& mainWindow)
 
 	m_asteroid.setFillColor(sf::Color::White);
 	m_asteroid.setPosition(0.f, 0.f);
+	*/
 }
 
 const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
@@ -62,6 +65,13 @@ const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
 void World::createPlayerShip(const sf::Vector2f &position)
 {
 	Entity entity = ::astro::createPlayerShip(*this, position, &m_physicsWorld);
+
+	m_entities.push_back(std::move(entity));
+}
+
+void World::createAsteroid(const sf::Vector2f &position)
+{
+	Entity entity = ::astro::createAsteroid(*this, position, &m_physicsWorld);
 
 	m_entities.push_back(std::move(entity));
 }
@@ -81,6 +91,7 @@ void World::update(float deltaTime)
 		entity.update(deltaTime);
 	}
 
+	/*
 	static float ridgesScaleFactor = 0.5f;
 	static float perlinIncrement = 0.3f;
 	static float baseHeight = 1.0f;
@@ -110,6 +121,7 @@ void World::update(float deltaTime)
 			m_asteroid.setPoint(x, asteroidOuterVertices[x]);
 		}
 	}
+	*/
 }
 
 void World::fixedUpdate(float deltaTime)
@@ -133,7 +145,7 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		entity.draw(target, states);
 	}
 
-	target.draw(m_asteroid, states);
+	// target.draw(m_asteroid, states);
 
 	target.setView(lastView);
 }
