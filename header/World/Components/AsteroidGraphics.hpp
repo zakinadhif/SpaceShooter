@@ -12,7 +12,7 @@ namespace astro
 class AsteroidGraphics final : public GraphicsComponent
 {
 public:
-	AsteroidGraphics(const std::vector<sf::Vector2f>& outerVertices, PhysicsComponent& physics);
+	AsteroidGraphics(const std::vector<sf::Vector2f>& outerVertices, PhysicsComponent* physics);
 
 	void update(Entity& entity) override;
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
