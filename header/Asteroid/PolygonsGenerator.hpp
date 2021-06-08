@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Utility/PerlinNoise.hpp"
-#include "Utility/delaunator-header-only.hpp"
+#include "Utility/delaunator.hpp"
 
 #include <SFML/System/Vector2.hpp>
 #include <box2d/b2_math.h>
