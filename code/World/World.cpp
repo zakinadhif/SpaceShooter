@@ -4,7 +4,28 @@
 #include "Asteroid/PolygonsGenerator.hpp"
 
 #include <imgui.h>
+#include <spdlog/fmt/fmt.h>
+
 #include <iostream>
+
+template <>
+struct fmt::formatter<b2Vec2>
+{
+	constexpr auto parse(format_parse_context& ctx)
+	{
+		auto it = ctx.begin(), end = ctx.end();
+		if (it != end && *it != '}')
+			throw format_error("Invalid sf::Vector2f format.");
+
+		return it;
+	}
+
+	template <typename FormatContext>
+	auto format(const b2Vec2& vec, FormatContext& ctx)
+	{
+		return format_to(ctx.out(), "{{{}, {}}}", vec.x, vec.y);
+	}
+};
 
 namespace astro
 {
