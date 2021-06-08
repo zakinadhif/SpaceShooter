@@ -14,6 +14,6 @@ class Entity;
 class World;
 
 Entity createPlayerShip(World& world, const sf::Vector2f& position, b2World* physicalWorld);
-Entity createAsteroid(const sf::Vector2f& position);
+Entity createAsteroid(World& world, const sf::Vector2f &position, b2World* physicalWorld);
 
 }
