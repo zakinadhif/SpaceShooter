@@ -20,19 +20,22 @@ ShipPhysics::ShipPhysics(b2Body* body)
 
 void ShipPhysics::fixedUpdate(Entity &entity, float deltaTime)
 {
-	const b2Vec2& shipLinearVelocity = m_body->GetLinearVelocity();
-	const b2Vec2& shipPosition = m_body->GetPosition();
-	float shipAngularVelocity = m_body->GetAngularVelocity();
-	float shipAngle = m_body->GetAngle();
+	const b2Vec2 shipLinearVelocity = m_body->GetLinearVelocity();
+	const b2Vec2 shipPosition = m_body->GetPosition();
+	const float shipAngularVelocity = m_body->GetAngularVelocity();
+	const float shipAngle = m_body->GetAngle();
 
-	b2Vec2 friction { -shipLinearVelocity.x * m_frictionConstant, -shipLinearVelocity.y *  m_frictionConstant };
+	// Friction effect
+	const b2Vec2 friction { -shipLinearVelocity.x * m_frictionConstant, -shipLinearVelocity.y *  m_frictionConstant };
 	m_body->ApplyForceToCenter(friction, false);
 
-	b2Vec2 force { m_direction.x * m_maxSpeed, m_direction.y * m_maxSpeed };
+	// Forward force effect
+	const b2Vec2 force { m_direction.x * m_maxSpeed, m_direction.y * m_maxSpeed };
 	m_body->ApplyForceToCenter(force, true);
-
-	b2Vec2 lookAtVector = m_pointToLookAt - shipPosition;
-	float desiredAngle = std::atan2(lookAtVector.y, lookAtVector.x) + thor::toRadian(90.f);
+	
+	// Rotate effect
+	const b2Vec2 lookAtVector = m_pointToLookAt - shipPosition;
+	const float desiredAngle = std::atan2(lookAtVector.y, lookAtVector.x) + thor::toRadian(90.f);
 
 	m_body->SetTransform(shipPosition, desiredAngle);
 
