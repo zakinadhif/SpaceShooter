@@ -55,22 +55,23 @@ std::vector<Triangle<OutputVectorType>> generateAsteroidTriangleVertices(const s
 
 	delaunator::Delaunator delaunator(unpackedCoords);
 
-	std::vector<Triangle<OutputVectorType>> triangles(unpackedCoords.size() / (3u*2u));
+	std::vector<Triangle<OutputVectorType>> triangles;
+	triangles.reserve(unpackedCoords.size() / (3u*2u));
 
-	for (std::size_t x = 0; x < triangles.size(); ++x)
+	for (std::size_t x = 0; x < delaunator.triangles.size(); x += 3)
 	{
 		OutputVectorType t1, t2, t3;
 
-		t1.x = delaunator.coords[x*6];
-		t1.y = delaunator.coords[x*6 + 1];
+		t1.x = delaunator.coords[2 * delaunator.triangles[x]];
+		t1.y = delaunator.coords[2 * delaunator.triangles[x] + 1];
 
-		t2.x = delaunator.coords[x*6 + 2];
-		t2.y = delaunator.coords[x*6 + 3];
+		t2.x = delaunator.coords[2 * delaunator.triangles[x + 1]];
+		t2.y = delaunator.coords[2 * delaunator.triangles[x + 1] + 1];
 
-		t3.x = delaunator.coords[x*6 + 4];
-		t3.y = delaunator.coords[x*6 + 5];
+		t3.x = delaunator.coords[2 * delaunator.triangles[x + 2]];
+		t3.y = delaunator.coords[2 * delaunator.triangles[x + 2] + 1];
 
-		triangles[x] = {t1, t2, t3};
+		triangles.push_back({t1, t2, t3});
 	}
 
 	return triangles;
