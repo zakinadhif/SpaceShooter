@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Utility/Box2dDebugDraw.hpp"
 #include "World/Entity.hpp"
 #include "World/CoordinateSpaceMapper.hpp"
 
@@ -37,12 +38,13 @@ private:
 	const int m_velocityIterations = 6;
 	const int m_positionIterations = 2;
 
-	b2World m_physicsWorld;
+	mutable b2World m_physicsWorld;
 	sf::View m_worldView;
 
 	sf::RenderTarget& m_mainWindow;
 
 	CoordinateSpaceMapper m_worldSpaceMapper;
+	Box2dDebugDraw m_box2dDebugDraw;
 
 	std::vector<Entity> m_entities;
 

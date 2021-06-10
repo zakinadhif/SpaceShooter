@@ -35,7 +35,10 @@ World::World(sf::RenderTarget& mainWindow)
 	, m_worldView({0.f, 0.f}, {12, 12})
 	, m_mainWindow(mainWindow)
 	, m_worldSpaceMapper(mainWindow, m_worldView)
+	, m_box2dDebugDraw(mainWindow)
 {
+	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
+
 	createPlayerShip({5,0});
 	createAsteroid({0,0});
 
@@ -144,6 +147,8 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		entity.draw(target, states);
 	}
+
+	m_physicsWorld.DebugDraw();
 
 	// target.draw(m_asteroid, states);
 
