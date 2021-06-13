@@ -45,10 +45,6 @@ private:
 
 	CoordinateSpaceMapper m_worldSpaceMapper;
 	Box2dDebugDraw m_box2dDebugDraw;
-
-	std::vector<Entity> m_entities;
-
-	thor::ConcaveShape m_asteroid;
 };
 
 }
