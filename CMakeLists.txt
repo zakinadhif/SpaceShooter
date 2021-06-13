@@ -24,6 +24,7 @@ find_package(spdlog REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
 find_package(ImGui-SFML REQUIRED)
+find_package(EnTT REQUIRED)
 
 target_include_directories(
 	"${PROJECT_NAME}" PRIVATE
@@ -43,4 +44,5 @@ target_link_libraries(
 	spdlog::spdlog
 	ImGui-SFML::ImGui-SFML
 	box2d::box2d
+	EnTT::EnTT
 	)
