@@ -11,6 +11,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <entt/entity/registry.hpp>
 #include <box2d/b2_world.h>
 
 namespace astro
@@ -45,6 +46,8 @@ private:
 
 	CoordinateSpaceMapper m_worldSpaceMapper;
 	Box2dDebugDraw m_box2dDebugDraw;
+
+	entt::registry m_registry;
 };
 
 }
