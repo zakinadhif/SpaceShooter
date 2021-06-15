@@ -4,3 +4,4 @@
 #include "MeshComponent.hpp"
 #include "RigidBodyComponent.hpp"
 #include "OwningMeshComponent.hpp"
+#include "NativeScriptComponent.hpp"
