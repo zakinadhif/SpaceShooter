@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Utility/Box2dDebugDraw.hpp"
-#include "World/Entity.hpp"
 #include "World/CoordinateSpaceMapper.hpp"
 
 #include <Thor/Shapes/ConcaveShape.hpp>
