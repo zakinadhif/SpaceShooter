@@ -2,6 +2,9 @@
 
 #include "World/ScriptableEntity.hpp"
 
+namespace astro
+{
+
 struct NativeScriptComponent
 {
 	ScriptableEntity* instance;
@@ -13,6 +16,8 @@ struct NativeScriptComponent
 	void bind()
 	{
 		instantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
-		destroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; }
+		destroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; };
 	}
 };
+
+} // namespace astro
