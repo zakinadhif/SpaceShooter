@@ -1,6 +1,7 @@
 #include "World/World.hpp"
 
 #include "Asteroid/PolygonsGenerator.hpp"
+#include "World/Components/NativeScriptComponent.hpp"
 #include "World/Entity.hpp"
 #include "World/EntityFactory.hpp"
 #include "World/Systems.hpp"
@@ -63,7 +64,23 @@ void World::handleEvent(const sf::Event& event)
 
 void World::update(float deltaTime)
 {
-	
+	{
+		auto view = m_registry.view<NativeScriptComponent>();
+
+		for (auto entity : view)
+		{
+			auto& nsc = view.get<NativeScriptComponent>(entity);
+
+			if (!nsc.instance)
+			{
+				nsc.instance = nsc.instantiateScript();
+				nsc.instance->m_entity = Entity{ entity, m_registry };
+				nsc.instance->onCreate();
+			}
+
+			nsc.instance->onUpdate(deltaTime);
+		}
+	}
 }
 
 void World::fixedUpdate(float deltaTime)
