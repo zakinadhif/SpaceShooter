@@ -1,19 +1,14 @@
 #pragma once
 
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
-
-#include <Thor/Resources/ResourceHolder.hpp>
+#include <entt/entity/fwd.hpp>
 
 class b2World;
 
 namespace astro
 {
 
-class Entity;
-class World;
+entt::entity spawnShip(entt::registry& registry, const sf::Vector2f& position, b2World* physicsWorld);
+entt::entity spawnAsteroid(entt::registry& registry, const sf::Vector2f& position, b2World* physicsWorld);
 
-Entity createPlayerShip(World& world, const sf::Vector2f& position, b2World* physicalWorld);
-Entity createAsteroid(World& world, const sf::Vector2f &position, b2World* physicalWorld);
-
-}
+} // namespace astro

@@ -1,48 +1,66 @@
 #include "World/EntityFactory.hpp"
 
-#include "World/World.hpp"
-#include "World/Entity.hpp"
-#include "World/PhysicsBodyFactory.hpp"
-
 #include "Asteroid/PolygonsGenerator.hpp"
 #include "Utility/VectorConverter.hpp"
+#include "World/Components/Components.hpp"
+#include "World/Components/RigidBodyComponent.hpp"
+#include "World/PhysicsBodyFactory.hpp"
 
-#include "World/Components/ShipGraphics.hpp"
-#include "World/Components/ShipInput.hpp"
-#include "World/Components/ShipPhysics.hpp"
-#include "World/Components/AsteroidGraphics.hpp"
-#include "World/Components/DefaultPhysics.hpp"
-#include "World/Components/NullInput.hpp"
-
+#include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 #include <box2d/box2d.h>
+#include <entt/entt.hpp>
+
+#include <array>
 
 namespace astro
 {
 
-Entity createPlayerShip(World& world, const sf::Vector2f &position, b2World* physicalWorld)
+entt::entity spawnShip(entt::registry& registry, const sf::Vector2f& position, b2World* physicsWorld)
 {
-	b2Body* physicalShipBody = createShipBody(physicalWorld, sfVec2ToB2Vec(position));
+	static std::array<sf::Vertex, 3> shipMesh
+	{
+		{
+			{{0.f, -0.5f}, sf::Color::White},
+			{{-0.5f, 0.5f}, sf::Color::White},
+			{{0.5f, 0.5f}, sf::Color::White}
+		}
+	};
 
-	ShipPhysics* shipPhysics = new ShipPhysics(physicalShipBody);
-	ShipGraphics* shipGraphics = new ShipGraphics(shipPhysics);
-	ShipInput* shipInput = new ShipInput(world.getWorldSpaceMapper());
+	auto entity = registry.create();
 
-	return Entity(world, Entity::Type::Ship, shipInput, shipPhysics, shipGraphics);
+	registry.emplace<MeshComponent>(entity, shipMesh.data(), shipMesh.size(), sf::Triangles);
+	registry.emplace<RigidBodyComponent>(entity, createShipBody(physicsWorld, sfVec2ToB2Vec(position)));
+
+	return entity;
 }
 
-Entity createAsteroid(World& world, const sf::Vector2f &position, b2World* physicalWorld)
+entt::entity spawnAsteroid(entt::registry& registry, const sf::Vector2f& position, b2World* physicsWorld)
 {
-	auto heights = generateAsteroidHeights(22, 0.5, 0.3);
-	auto outerVertices = generateAsteroidOuterVertices<sf::Vector2f>(heights, 1);
-	auto triangles = generateAsteroidTriangleVertices<b2Vec2, sf::Vector2f>(outerVertices);
+	auto entity = registry.create();
 
-	b2Body* body = createAsteroidBody(physicalWorld, sfVec2ToB2Vec(position), triangles);
+	const auto asteroidHeights = generateAsteroidHeights(22, 1.f, 0.3f);
+	const auto asteroidOuterVertices = generateAsteroidOuterVertices<sf::Vector2f>(asteroidHeights, 1.f);
+	const auto asteroidTriangles = generateAsteroidTriangleVertices<b2Vec2, sf::Vector2f>(asteroidOuterVertices);
 
-	DefaultPhysics* physics = new DefaultPhysics(body);
-	AsteroidGraphics* graphics = new AsteroidGraphics(outerVertices, physics);
-	NullInput* input = new NullInput();
+	std::vector<sf::Vertex> vertices(asteroidTriangles.size() * 3);
 
-	return Entity(world, Entity::Type::Asteroid, input, physics, graphics);
+	for (std::size_t x = 0; x < asteroidTriangles.size(); ++x)
+	{
+		vertices[x * 3]     = {{b2Vec2ToSfVec(asteroidTriangles[x][0])}, sf::Color::White};
+		vertices[x * 3 + 1] = {{b2Vec2ToSfVec(asteroidTriangles[x][1])}, sf::Color::White};
+		vertices[x * 3 + 2] = {{b2Vec2ToSfVec(asteroidTriangles[x][2])}, sf::Color::White};
+	}
+
+	auto& mesh = registry.emplace<OwningMeshComponent>(entity);
+	mesh.type = sf::Triangles;
+	mesh.vertices.swap(vertices);
+
+	registry.emplace<RigidBodyComponent>(entity, createAsteroidBody(physicsWorld, sfVec2ToB2Vec(position), asteroidTriangles));
+
+	return entity;
 }
 
-}
+} // namespace astro
