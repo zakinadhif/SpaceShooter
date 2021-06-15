@@ -1,6 +1,7 @@
 #include "World/World.hpp"
 
 #include "Asteroid/PolygonsGenerator.hpp"
+#include "World/Entity.hpp"
 #include "World/EntityFactory.hpp"
 #include "World/Systems.hpp"
 
@@ -40,9 +41,6 @@ World::World(sf::RenderTarget& mainWindow)
 	, m_box2dDebugDraw(mainWindow)
 {
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
-
-	createPlayerShip({5,0});
-	createAsteroid({0,0});
 }
 
 const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
@@ -50,14 +48,9 @@ const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
 	return m_worldSpaceMapper;
 }
 
-void World::createPlayerShip(const sf::Vector2f &position)
+Entity World::createEntity()
 {
-	spawnShip(m_registry, position, &m_physicsWorld);
-}
-
-void World::createAsteroid(const sf::Vector2f &position)
-{
-	spawnAsteroid(m_registry, position, &m_physicsWorld);
+	return Entity{ m_registry.create(), m_registry };
 }
 
 void World::handleEvent(const sf::Event& event)

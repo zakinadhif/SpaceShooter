@@ -25,8 +25,7 @@ public:
 
 	const CoordinateSpaceMapper& getWorldSpaceMapper() const;
 
-	void createPlayerShip(const sf::Vector2f& position);
-	void createAsteroid(const sf::Vector2f& position);
+	Entity createEntity();
 
 	void handleEvent(const sf::Event& handleEvent);
 	void update(float deltaTime);
