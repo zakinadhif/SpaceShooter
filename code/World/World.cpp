@@ -1,8 +1,10 @@
 #include "World/World.hpp"
 
-#include "World/EntityFactory.hpp"
 #include "Asteroid/PolygonsGenerator.hpp"
+#include "World/EntityFactory.hpp"
+#include "World/Systems.hpp"
 
+#include <entt/entt.hpp>
 #include <imgui.h>
 #include <spdlog/fmt/fmt.h>
 
@@ -50,16 +52,12 @@ const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
 
 void World::createPlayerShip(const sf::Vector2f &position)
 {
-	/* Entity entity = ::astro::createPlayerShip(*this, position, &m_physicsWorld);
-
-	m_entities.push_back(std::move(entity)); */
+	spawnShip(m_registry, position, &m_physicsWorld);
 }
 
 void World::createAsteroid(const sf::Vector2f &position)
 {
-	/* Entity entity = ::astro::createAsteroid(*this, position, &m_physicsWorld);
-
-	m_entities.push_back(std::move(entity)); */
+	spawnAsteroid(m_registry, position, &m_physicsWorld);
 }
 
 void World::handleEvent(const sf::Event& event)
@@ -72,10 +70,7 @@ void World::handleEvent(const sf::Event& event)
 
 void World::update(float deltaTime)
 {
-	/* for (auto& entity : m_entities)
-	{
-		entity.update(deltaTime);
-	} */
+	
 }
 
 void World::fixedUpdate(float deltaTime)
@@ -94,14 +89,9 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 	target.setView(m_worldView);
 
-	/* for (auto& entity : m_entities)
-	{
-		entity.draw(target, states);
-	} */
+	drawEntities(m_registry, target);
 
 	m_physicsWorld.DebugDraw();
-
-	// target.draw(m_asteroid, states);
 
 	target.setView(lastView);
 }
