@@ -4,6 +4,7 @@
 #include "World/Components/NativeScriptComponent.hpp"
 #include "World/Entity.hpp"
 #include "World/EntityFactory.hpp"
+#include "World/Scripts/ShipScript.hpp"
 #include "World/Systems.hpp"
 
 #include <entt/entt.hpp>
@@ -42,6 +43,11 @@ World::World(sf::RenderTarget& mainWindow)
 	, m_box2dDebugDraw(mainWindow)
 {
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
+
+	auto ship = Entity{ spawnShip(m_registry, {0,0}, &m_physicsWorld), m_registry };
+	auto& shipScript = ship.addComponent<NativeScriptComponent>();
+
+	shipScript.bind<ShipScript>();
 }
 
 const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
