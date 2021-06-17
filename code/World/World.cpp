@@ -1,16 +1,17 @@
 #include "World/World.hpp"
 
 #include "Asteroid/PolygonsGenerator.hpp"
-#include "World/Components/NativeScriptComponent.hpp"
 #include "World/Entity.hpp"
 #include "World/EntityFactory.hpp"
-#include "World/Scripts/ShipScript.hpp"
 #include "World/Systems.hpp"
 
-#include <entt/entity/fwd.hpp>
+#include "World/Components/NativeScriptComponent.hpp"
+#include "World/Components/RigidBodyComponent.hpp"
+#include "World/Scripts/ShipScript.hpp"
+
 #include <entt/entt.hpp>
+#include <spdlog/spdlog.h>
 #include <imgui.h>
-#include <spdlog/fmt/fmt.h>
 
 #include <iostream>
 
@@ -46,6 +47,7 @@ World::World(sf::RenderTarget& mainWindow)
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
 
 	m_registry.on_destroy<NativeScriptComponent>().connect<&World::deallocateNscInstance>();
+	m_registry.on_destroy<RigidBodyComponent>().connect<&World::deallocateB2BodyInstance>();
 
 	auto ship = Entity{ spawnShip(m_registry, {0,0}, &m_physicsWorld), m_registry };
 	auto& shipScript = ship.addComponent<NativeScriptComponent>();
@@ -80,22 +82,20 @@ void World::handleEvent(const sf::Event& event)
 
 void World::update(float deltaTime)
 {
+	auto view = m_registry.view<NativeScriptComponent>();
+
+	for (auto entity : view)
 	{
-		auto view = m_registry.view<NativeScriptComponent>();
+		auto& nsc = view.get<NativeScriptComponent>(entity);
 
-		for (auto entity : view)
+		if (!nsc.instance)
 		{
-			auto& nsc = view.get<NativeScriptComponent>(entity);
-
-			if (!nsc.instance)
-			{
-				nsc.instance = nsc.instantiateScript();
-				nsc.instance->m_entity = Entity{ entity, m_registry };
-				nsc.instance->onCreate();
-			}
-
-			nsc.instance->onUpdate(deltaTime);
+			nsc.instance = nsc.instantiateScript();
+			nsc.instance->m_entity = Entity{ entity, m_registry };
+			nsc.instance->onCreate();
 		}
+
+		nsc.instance->onUpdate(deltaTime);
 	}
 }
 
@@ -131,12 +131,23 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void World::deallocateNscInstance(entt::registry& registry, entt::entity entity)
 {
-	auto& nsc = registry.get<astro::NativeScriptComponent>(entity);
+	auto& nsc = registry.get<NativeScriptComponent>(entity);
 
 	if (nsc.instance)
 	{
 		nsc.instance->onDestroy();
 		nsc.destroyScript(&nsc);
+	}
+}
+
+void World::deallocateB2BodyInstance(entt::registry& registry, entt::entity entity)
+{
+	auto& rb = registry.get<RigidBodyComponent>(entity);
+
+	if (rb.body)
+	{
+		b2World* world = rb.body->GetWorld();
+		world->DestroyBody(rb.body);
 	}
 }
 

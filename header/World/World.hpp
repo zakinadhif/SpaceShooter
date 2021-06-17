@@ -51,6 +51,7 @@ private:
 
 private:
 	static void deallocateNscInstance(entt::registry& registry, entt::entity entity);
+	static void deallocateB2BodyInstance(entt::registry& registry, entt::entity entity);
 };
 
 }
