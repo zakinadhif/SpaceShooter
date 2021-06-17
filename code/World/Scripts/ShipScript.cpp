@@ -25,4 +25,14 @@ void ShipScript::onUpdate(float deltaTime)
 
 }
 
+void ShipScript::onFixedUpdate(float deltaTime)
+{
+
+}
+
+void ShipScript::onEvent(sf::Event event)
+{
+
+}
+
 } // namespace astro
