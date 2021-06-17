@@ -7,6 +7,7 @@
 #include "World/Scripts/ShipScript.hpp"
 #include "World/Systems.hpp"
 
+#include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <imgui.h>
 #include <spdlog/fmt/fmt.h>
@@ -44,6 +45,8 @@ World::World(sf::RenderTarget& mainWindow)
 {
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
 
+	m_registry.on_destroy<NativeScriptComponent>().connect<&World::deallocateNscInstance>();
+
 	auto ship = Entity{ spawnShip(m_registry, {0,0}, &m_physicsWorld), m_registry };
 	auto& shipScript = ship.addComponent<NativeScriptComponent>();
 
@@ -62,10 +65,17 @@ Entity World::createEntity()
 
 void World::handleEvent(const sf::Event& event)
 {
-	/* for (auto& entity : m_entities)
+	auto view = m_registry.view<NativeScriptComponent>();
+
+	for (auto entity : view)
 	{
-		entity.handleEvent(event);
-	} */
+		auto& nsc = view.get<NativeScriptComponent>(entity);
+
+		if (nsc.instance)
+		{
+			nsc.instance->onEvent(event);
+		}
+	}
 }
 
 void World::update(float deltaTime)
@@ -91,10 +101,17 @@ void World::update(float deltaTime)
 
 void World::fixedUpdate(float deltaTime)
 {
-	/* for (auto& entity : m_entities)
+	auto view = m_registry.view<NativeScriptComponent>();
+
+	for (auto entity : view)
 	{
-		entity.fixedUpdate(deltaTime);
-	} */
+		auto& nsc = view.get<NativeScriptComponent>(entity);
+
+		if (nsc.instance)
+		{
+			nsc.instance->onFixedUpdate(deltaTime);
+		}
+	}
 
 	m_physicsWorld.Step(deltaTime, m_velocityIterations, m_positionIterations);
 }
@@ -110,6 +127,22 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	m_physicsWorld.DebugDraw();
 
 	target.setView(lastView);
+}
+
+void World::deallocateNscInstance(entt::registry& registry, entt::entity entity)
+{
+	auto& nsc = registry.get<astro::NativeScriptComponent>(entity);
+
+	if (nsc.instance)
+	{
+		nsc.instance->onDestroy();
+		nsc.destroyScript(&nsc);
+	}
+}
+
+World::~World()
+{
+	m_registry.clear();
 }
 
 }

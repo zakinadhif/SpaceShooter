@@ -33,6 +33,8 @@ public:
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+	~World();
+
 private:
 	const int m_velocityIterations = 6;
 	const int m_positionIterations = 2;
@@ -46,6 +48,9 @@ private:
 	Box2dDebugDraw m_box2dDebugDraw;
 
 	entt::registry m_registry;
+
+private:
+	static void deallocateNscInstance(entt::registry& registry, entt::entity entity);
 };
 
 }
