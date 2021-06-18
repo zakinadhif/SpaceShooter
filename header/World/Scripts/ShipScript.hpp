@@ -13,7 +13,7 @@ namespace astro
 class ShipScript final : public ScriptableEntity
 {
 public:
-	ShipScript();
+	ShipScript(const CoordinateSpaceMapper& coordinateMapper);
 
 	void onCreate() override;
 	void onDestroy() override;
@@ -31,6 +31,7 @@ private:
 	float m_frictionConstant = 1.f;
 
 	b2Body* m_body { nullptr };
+	const CoordinateSpaceMapper* m_coordinateMapper { nullptr };
 };
 
 } // namespace astro

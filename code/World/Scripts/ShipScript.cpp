@@ -13,7 +13,8 @@
 namespace astro
 {
 
-ShipScript::ShipScript()
+ShipScript::ShipScript(const CoordinateSpaceMapper& coordinateMapper)
+	: m_coordinateMapper(&coordinateMapper)
 {
 }
 
@@ -86,6 +87,19 @@ void ShipScript::onFixedUpdate(float deltaTime)
 
 void ShipScript::onEvent(sf::Event event)
 {
+	switch (event.type)
+	{
+		case sf::Event::MouseMoved:
+		{
+			const auto x = event.mouseMove.x;
+			const auto y = event.mouseMove.y;
+			const sf::Vector2f mousePosition = m_coordinateMapper->mapToViewSpace({x, y});
+			m_pointToLookAt = sfVec2ToB2Vec(mousePosition);
+			break;
+		}
+		default:
+			break;
+	}
 }
 
 } // namespace astro
