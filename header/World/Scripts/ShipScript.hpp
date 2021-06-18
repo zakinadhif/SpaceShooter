@@ -1,5 +1,6 @@
 #pragma once
 
+#include "World/CoordinateSpaceMapper.hpp"
 #include "World/ScriptableEntity.hpp"
 
 #include "box2d/b2_math.h"
@@ -29,7 +30,7 @@ private:
 	float m_maxSpeed = 5.f;
 	float m_frictionConstant = 1.f;
 
-	b2Body* body;
+	b2Body* m_body { nullptr };
 };
 
 } // namespace astro
