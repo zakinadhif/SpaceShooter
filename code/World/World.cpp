@@ -52,7 +52,7 @@ World::World(sf::RenderTarget& mainWindow)
 	auto ship = Entity{ spawnShip(m_registry, {0,0}, &m_physicsWorld), m_registry };
 	auto& shipScript = ship.addComponent<NativeScriptComponent>();
 
-	shipScript.bind<ShipScript>();
+	shipScript.bind<ShipScript>(m_worldSpaceMapper);
 }
 
 const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
