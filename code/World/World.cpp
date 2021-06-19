@@ -53,6 +53,8 @@ World::World(sf::RenderTarget& mainWindow)
 	auto& shipScript = ship.addComponent<NativeScriptComponent>();
 
 	shipScript.bind<ShipScript>(m_worldSpaceMapper);
+
+	auto asteroid = Entity{ spawnAsteroid(m_registry, {0,1}, &m_physicsWorld), m_registry };
 }
 
 const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
