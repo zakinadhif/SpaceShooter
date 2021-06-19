@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Utility/Box2dDebugDraw.hpp"
-#include "World/Entity.hpp"
 #include "World/CoordinateSpaceMapper.hpp"
 
 #include <Thor/Shapes/ConcaveShape.hpp>
@@ -11,6 +10,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <entt/entity/registry.hpp>
 #include <box2d/b2_world.h>
 
 namespace astro
@@ -25,14 +25,15 @@ public:
 
 	const CoordinateSpaceMapper& getWorldSpaceMapper() const;
 
-	void createPlayerShip(const sf::Vector2f& position);
-	void createAsteroid(const sf::Vector2f& position);
+	Entity createEntity();
 
 	void handleEvent(const sf::Event& handleEvent);
 	void update(float deltaTime);
 	void fixedUpdate(float deltaTime);
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+	~World();
 
 private:
 	const int m_velocityIterations = 6;
@@ -46,9 +47,11 @@ private:
 	CoordinateSpaceMapper m_worldSpaceMapper;
 	Box2dDebugDraw m_box2dDebugDraw;
 
-	std::vector<Entity> m_entities;
+	entt::registry m_registry;
 
-	thor::ConcaveShape m_asteroid;
+private:
+	static void deallocateNscInstance(entt::registry& registry, entt::entity entity);
+	static void deallocateB2BodyInstance(entt::registry& registry, entt::entity entity);
 };
 
 }

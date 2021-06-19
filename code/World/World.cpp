@@ -1,10 +1,17 @@
 #include "World/World.hpp"
 
-#include "World/EntityFactory.hpp"
 #include "Asteroid/PolygonsGenerator.hpp"
+#include "World/Entity.hpp"
+#include "World/EntityFactory.hpp"
+#include "World/Systems.hpp"
 
+#include "World/Components/NativeScriptComponent.hpp"
+#include "World/Components/RigidBodyComponent.hpp"
+#include "World/Scripts/ShipScript.hpp"
+
+#include <entt/entt.hpp>
+#include <spdlog/spdlog.h>
 #include <imgui.h>
-#include <spdlog/fmt/fmt.h>
 
 #include <iostream>
 
@@ -39,25 +46,15 @@ World::World(sf::RenderTarget& mainWindow)
 {
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
 
-	createPlayerShip({5,0});
-	createAsteroid({0,0});
+	m_registry.on_destroy<NativeScriptComponent>().connect<&World::deallocateNscInstance>();
+	m_registry.on_destroy<RigidBodyComponent>().connect<&World::deallocateB2BodyInstance>();
 
-	/*
-	auto asteroidHeights = generateAsteroidHeights(22, 0.5, 0.3);
-	auto asteroidOuterVertices = generateAsteroidOuterVertices<sf::Vector2f>(
-			asteroidHeights, 1);
-	auto asteroidTriangles = generateAsteroidTriangleVertices<b2Vec2, sf::Vector2f>(asteroidOuterVertices);
+	auto ship = Entity{ spawnShip(m_registry, {0,0}, &m_physicsWorld), m_registry };
+	auto& shipScript = ship.addComponent<NativeScriptComponent>();
 
-	m_asteroid.setPointCount(asteroidOuterVertices.size());
+	shipScript.bind<ShipScript>(m_worldSpaceMapper);
 
-	for (std::size_t x = 0; x < m_asteroid.getPointCount(); ++x)
-	{
-		m_asteroid.setPoint(x, asteroidOuterVertices[x]);
-	}
-
-	m_asteroid.setFillColor(sf::Color::White);
-	m_asteroid.setPosition(0.f, 0.f);
-	*/
+	auto asteroid = Entity{ spawnAsteroid(m_registry, {0,1}, &m_physicsWorld), m_registry };
 }
 
 const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
@@ -65,73 +62,57 @@ const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
 	return m_worldSpaceMapper;
 }
 
-void World::createPlayerShip(const sf::Vector2f &position)
+Entity World::createEntity()
 {
-	Entity entity = ::astro::createPlayerShip(*this, position, &m_physicsWorld);
-
-	m_entities.push_back(std::move(entity));
-}
-
-void World::createAsteroid(const sf::Vector2f &position)
-{
-	Entity entity = ::astro::createAsteroid(*this, position, &m_physicsWorld);
-
-	m_entities.push_back(std::move(entity));
+	return Entity{ m_registry.create(), m_registry };
 }
 
 void World::handleEvent(const sf::Event& event)
 {
-	for (auto& entity : m_entities)
+	auto view = m_registry.view<NativeScriptComponent>();
+
+	for (auto entity : view)
 	{
-		entity.handleEvent(event);
+		auto& nsc = view.get<NativeScriptComponent>(entity);
+
+		if (nsc.instance)
+		{
+			nsc.instance->onEvent(event);
+		}
 	}
 }
 
 void World::update(float deltaTime)
 {
-	for (auto& entity : m_entities)
+	auto view = m_registry.view<NativeScriptComponent>();
+
+	for (auto entity : view)
 	{
-		entity.update(deltaTime);
-	}
+		auto& nsc = view.get<NativeScriptComponent>(entity);
 
-	/*
-	static float ridgesScaleFactor = 0.5f;
-	static float perlinIncrement = 0.3f;
-	static float baseHeight = 1.0f;
-	static int verticesCount = 22;
-	static bool regenerateAsteroid = false;
-
-	ImGui::Begin("Asteroid Generator");
-	ImGui::InputFloat("Ridges Scale Factor", &ridgesScaleFactor);
-	ImGui::InputFloat("Perlin Increment", &perlinIncrement);
-	ImGui::InputFloat("Base Height", &baseHeight);
-	ImGui::InputInt("Vertices Count", &verticesCount);
-
-	regenerateAsteroid = ImGui::Button("Regenerate");
-	ImGui::End();
-
-	if (regenerateAsteroid)
-	{
-		auto asteroidHeights = generateAsteroidHeights(static_cast<std::size_t>(verticesCount), ridgesScaleFactor, perlinIncrement);
-		auto asteroidOuterVertices = generateAsteroidOuterVertices<sf::Vector2f>(
-				asteroidHeights, baseHeight);
-		auto asteroidTriangles = generateAsteroidTriangleVertices<b2Vec2, sf::Vector2f>(asteroidOuterVertices);
-
-		m_asteroid.setPointCount(asteroidOuterVertices.size());
-
-		for (std::size_t x = 0; x < m_asteroid.getPointCount(); ++x)
+		if (!nsc.instance)
 		{
-			m_asteroid.setPoint(x, asteroidOuterVertices[x]);
+			nsc.instance = nsc.instantiateScript();
+			nsc.instance->m_entity = Entity{ entity, m_registry };
+			nsc.instance->onCreate();
 		}
+
+		nsc.instance->onUpdate(deltaTime);
 	}
-	*/
 }
 
 void World::fixedUpdate(float deltaTime)
 {
-	for (auto& entity : m_entities)
+	auto view = m_registry.view<NativeScriptComponent>();
+
+	for (auto entity : view)
 	{
-		entity.fixedUpdate(deltaTime);
+		auto& nsc = view.get<NativeScriptComponent>(entity);
+
+		if (nsc.instance)
+		{
+			nsc.instance->onFixedUpdate(deltaTime);
+		}
 	}
 
 	m_physicsWorld.Step(deltaTime, m_velocityIterations, m_positionIterations);
@@ -143,16 +124,38 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 	target.setView(m_worldView);
 
-	for (auto& entity : m_entities)
-	{
-		entity.draw(target, states);
-	}
+	drawEntities(m_registry, target);
 
 	m_physicsWorld.DebugDraw();
 
-	// target.draw(m_asteroid, states);
-
 	target.setView(lastView);
+}
+
+void World::deallocateNscInstance(entt::registry& registry, entt::entity entity)
+{
+	auto& nsc = registry.get<NativeScriptComponent>(entity);
+
+	if (nsc.instance)
+	{
+		nsc.instance->onDestroy();
+		nsc.destroyScript(&nsc);
+	}
+}
+
+void World::deallocateB2BodyInstance(entt::registry& registry, entt::entity entity)
+{
+	auto& rb = registry.get<RigidBodyComponent>(entity);
+
+	if (rb.body)
+	{
+		b2World* world = rb.body->GetWorld();
+		world->DestroyBody(rb.body);
+	}
+}
+
+World::~World()
+{
+	m_registry.clear();
 }
 
 }

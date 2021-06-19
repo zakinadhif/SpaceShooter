@@ -1,69 +1,58 @@
 #pragma once
 
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Window/Event.hpp>
+#include <entt/entt.hpp>
 
 namespace astro
 {
 
-class InputComponent;
-class PhysicsComponent;
-class GraphicsComponent;
-
-class World;
-
-struct EntityEvent;
-
-class Entity : public sf::Drawable
+class Entity
 {
 public:
-	enum class Type
+	Entity() = default;
+	Entity(entt::entity handle, entt::registry& registry);
+	Entity(const Entity& other) = default;
+
+	template<typename T, typename... Args>
+	T& addComponent(Args&&... args)
 	{
-		Nothing,
-		Ship,
-		Asteroid
-	};
+		return m_registry->emplace<T>(m_entityHandle, std::forward<Args>(args)...);
+	}
 
-public:
+	template<typename T>
+	T& getComponent()
+	{
+		return m_registry->get<T>(m_entityHandle);
+	}
 
-	Entity(
-		World& world,
-		Type type,
-		InputComponent* input,
-		PhysicsComponent* physics,
-		GraphicsComponent* graphics
-	);
+	template<typename T>
+	bool hasComponent()
+	{
+		return m_registry->has<T>(m_entityHandle);
+	}
 
-	Entity(Entity&& entity);
-	Entity(Entity& copy) = delete;
+	template<typename T>
+	void removeComponent()
+	{
+		m_registry->remove<T>(m_entityHandle);
+	}
 
-	Entity& operator=(const Entity& other) = delete;
-	Entity& operator=(Entity&& other) = delete;
+	operator bool() const { return m_entityHandle != entt::null; }
+	operator entt::entity() const { return m_entityHandle; }
+	operator uint32_t() const { return (uint32_t)m_entityHandle; }
 
-	void handleEvent(const sf::Event& event);
-	void update(float deltaTime);
-	void fixedUpdate(float deltaTime);
+	bool operator==(const Entity& other) const
+	{
+		return (m_entityHandle == other.m_entityHandle) && (m_registry == other.m_registry);
+	}
 
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
-	void sendEvent(EntityEvent event);
-
-	Type getType() const;
-
-	World& getWorld();
-	const World& getWorld() const;
-
-	~Entity();
+	bool operator!=(const Entity& other) const
+	{
+		return !(*this == other);
+	}
 
 private:
-	Type m_type { Type::Nothing };
-
-	InputComponent* m_input = nullptr;
-	PhysicsComponent* m_physics = nullptr;
-	GraphicsComponent* m_graphics = nullptr;
-
-	World& m_world;
+	entt::entity m_entityHandle { entt::null };
+	entt::registry* m_registry { nullptr };
 };
 
-}
+} // namespace astro
