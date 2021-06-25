@@ -27,7 +27,7 @@ public:
 	template<typename T>
 	bool hasComponent()
 	{
-		return m_registry->has<T>(m_entityHandle);
+		return m_registry->all_of<T>(m_entityHandle);
 	}
 
 	template<typename T>
