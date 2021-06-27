@@ -55,13 +55,13 @@ entt::entity spawnAsteroid(entt::registry& registry, const sf::Vector2f& positio
 		vertices[x * 3 + 2] = {{b2Vec2ToSfVec(asteroidTriangles[x][2])}, sf::Color::White};
 	}
 
-	registry.emplace<RigidBodyComponent>(entity, createAsteroidBody(physicsWorld, sfVec2ToB2Vec(position), asteroidTriangles));
-
 	toPixels(vertices.data(), vertices.size());
 
 	auto& mesh = registry.emplace<OwningMeshComponent>(entity);
 	mesh.type = sf::Triangles;
 	mesh.vertices.swap(vertices);
+
+	registry.emplace<RigidBodyComponent>(entity, createAsteroidBody(physicsWorld, sfVec2ToB2Vec(position), asteroidTriangles));
 
 	return entity;
 }
