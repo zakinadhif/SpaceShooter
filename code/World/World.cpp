@@ -1,6 +1,7 @@
 #include "World/World.hpp"
 
 #include "Asteroid/PolygonsGenerator.hpp"
+#include "Utility/Box2dDebugDraw.hpp"
 #include "World/Entity.hpp"
 #include "World/EntityFactory.hpp"
 #include "World/Systems.hpp"
@@ -39,12 +40,14 @@ namespace astro
 
 World::World(sf::RenderTarget& mainWindow)
 	: m_physicsWorld({0,0})
-	, m_worldView({0.f, 0.f}, {12, 12})
+	, m_worldView(mainWindow.getDefaultView())
 	, m_mainWindow(mainWindow)
 	, m_worldSpaceMapper(mainWindow, m_worldView)
 	, m_box2dDebugDraw(mainWindow)
 {
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
+
+	m_worldView.setCenter(0,0);
 
 	m_registry.on_destroy<NativeScriptComponent>().connect<&World::deallocateNscInstance>();
 	m_registry.on_destroy<RigidBodyComponent>().connect<&World::deallocateB2BodyInstance>();
