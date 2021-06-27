@@ -53,9 +53,9 @@ void Box2dDebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount,
 
 void Box2dDebugDraw::DrawCircle(const b2Vec2 &center, float radius, const b2Color &color)
 {
-	sf::CircleShape circle(radius * PPM);
-	circle.setOrigin(radius, radius);
-	circle.setPosition(center.x, center.y);
+	sf::CircleShape circle(toPixels(radius));
+	circle.setOrigin(toPixels(radius, radius));
+	circle.setPosition(toPixels(center));
 	circle.setFillColor(sf::Color::Transparent);
 	circle.setOutlineThickness(-1.f);
 	circle.setOutlineColor(b2ColorToSfColor(color));
@@ -68,9 +68,9 @@ void Box2dDebugDraw::DrawSolidCircle(const b2Vec2 &center, float radius, const b
 	b2Color fillColor = color;
 	fillColor.a = 0.5f;
 
-	sf::CircleShape circle(radius * PPM);
-	circle.setOrigin(radius, radius);
-	circle.setPosition(center.x, center.y);
+	sf::CircleShape circle(toPixels(radius));
+	circle.setOrigin(toPixels(radius, radius));
+	circle.setPosition(toPixels(center));
 	circle.setFillColor(b2ColorToSfColor(fillColor));
 	circle.setOutlineThickness(-1.f);
 	circle.setOutlineColor(b2ColorToSfColor(color));
@@ -96,7 +96,7 @@ void Box2dDebugDraw::DrawTransform(const b2Transform &xf)
 	float lineLength = 0.4f;
 
 	b2Vec2 xAxis = xf.p + lineLength * xf.q.GetXAxis();
-	
+
 	std::array<sf::Vertex, 2> redLine =
 	{
 		{

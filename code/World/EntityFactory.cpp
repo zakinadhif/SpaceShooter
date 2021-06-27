@@ -24,9 +24,9 @@ entt::entity spawnShip(entt::registry& registry, const sf::Vector2f& position, b
 	static std::array<sf::Vertex, 3> shipMesh
 	{
 		{
-			{{0.f * PPM, -0.5f * PPM}, sf::Color::White},
-			{{-0.5f * PPM, 0.5f * PPM}, sf::Color::White},
-			{{0.5f * PPM, 0.5f * PPM}, sf::Color::White}
+			{{toPixels(0.f, -0.5f)}, sf::Color::White},
+			{{toPixels(-0.5f, 0.5f)}, sf::Color::White},
+			{{toPixels(0.5f, 0.5f)}, sf::Color::White}
 		}
 	};
 
