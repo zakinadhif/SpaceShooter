@@ -8,18 +8,44 @@
 
 namespace astro
 {
+	constexpr float PPM = 48.f;
+
 	b2Vec2 toMeters(const sf::Vector2f& pixels)
 	{
-		const b2Vec2 inMeters {pixels.x / astro::PPM, pixels.y / astro::PPM};
+		const b2Vec2 inMeters {pixels.x / PPM, pixels.y / PPM};
 
 		return inMeters;
 	}
 
 	sf::Vector2f toPixels(const b2Vec2& meters)
 	{
-		const sf::Vector2f inPixels {meters.x * astro::PPM, meters.y * astro::PPM};
+		const sf::Vector2f inPixels {meters.x * PPM, meters.y * PPM};
 
 		return inPixels;
+	}
+
+	b2Vec2 toMeters(float x, float y)
+	{
+		const b2Vec2 inMeters {x / PPM, y / PPM};
+
+		return inMeters;
+	}
+
+	sf::Vector2f toPixels(float x, float y)
+	{
+		const sf::Vector2f inPixels {x * PPM, y * PPM};
+
+		return inPixels;
+	}
+
+	float toMeters(float pixels)
+	{
+		return pixels / PPM;
+	}
+
+	float toPixels(float meters)
+	{
+		return meters * PPM;
 	}
 
 	void toMeters(sf::Vertex *vertices, std::size_t size)
