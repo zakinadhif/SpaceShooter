@@ -1,0 +1,158 @@
+Renderer.1 {
+    BackgroundColor = transparent;
+    BackgroundColorDisabled = #E6E6E6;
+    BackgroundColorDown = transparent;
+    BackgroundColorHover = transparent;
+    BorderColor = #3C3C3C;
+    BorderColorDisabled = #7D7D7D;
+    BorderColorDown = black;
+    BorderColorFocused = #1E1EB4;
+    BorderColorHover = black;
+    Borders = (0, 0, 0, 0);
+    Font = "Programming_Projects/C++/SpaceShooter/assets/munro.ttf";
+    TextColor = black;
+    TextColorDisabled = #7D7D7D;
+    TextColorDown = black;
+    TextColorHover = black;
+    Texture = None;
+    TextureDisabled = None;
+    TextureDown = None;
+    TextureDownFocused = None;
+    TextureDownHover = None;
+    TextureFocused = None;
+    TextureHover = None;
+}
+
+Panel.MenuPanel {
+    Position = (&.width - width, 0);
+    Size = (40%, &.height);
+
+    Renderer {
+        BackgroundColor = #020F5265;
+        BorderColor = black;
+        TextureBackground = None;
+    }
+
+    Group.Group {
+        Position = ((&.width - width) / 2, (&.height - height) / 2);
+        Size = (80%, 40%);
+
+        Renderer {
+        }
+
+        Button.StartButton {
+            MouseCursor = Hand;
+            Position = ((&.width - width) / 2, (&.height - height) / (3 / 0));
+            Text = Start;
+            TextSize = 48;
+
+            Renderer {
+                BackgroundColor = transparent;
+                BackgroundColorDisabled = #E6E6E6;
+                BackgroundColorDown = transparent;
+                BackgroundColorHover = transparent;
+                BorderColor = #3C3C3C;
+                BorderColorDisabled = #7D7D7D;
+                BorderColorDown = black;
+                BorderColorFocused = #1E1EB4;
+                BorderColorHover = black;
+                Borders = (0, 0, 0, 0);
+                Font = "Programming_Projects/C++/SpaceShooter/assets/munro.ttf";
+                RoundedBorderRadius = 3;
+                TextColor = black;
+                TextColorDisabled = #7D7D7D;
+                TextColorDown = black;
+                TextColorHover = black;
+                Texture = None;
+                TextureDisabled = None;
+                TextureDown = None;
+                TextureDownFocused = None;
+                TextureDownHover = None;
+                TextureFocused = None;
+                TextureHover = None;
+            }
+        }
+
+        Button.ScoreboardButton {
+            MouseCursor = Hand;
+            Position = ((&.width - width) / 2, (&.height - height) / (3 / 1));
+            Text = Scoreboard;
+            TextSize = 48;
+
+            Renderer {
+                BackgroundColor = transparent;
+                BackgroundColorDisabled = #E6E6E6;
+                BackgroundColorDown = transparent;
+                BackgroundColorHover = transparent;
+                BorderColor = #3C3C3C;
+                BorderColorDisabled = #7D7D7D;
+                BorderColorDown = black;
+                BorderColorFocused = #1E1EB4;
+                BorderColorHover = black;
+                Borders = (0, 0, 0, 0);
+                Font = "Programming_Projects/C++/SpaceShooter/assets/munro.ttf";
+                TextColor = black;
+                TextColorDisabled = #7D7D7D;
+                TextColorDown = black;
+                TextColorHover = black;
+                Texture = None;
+                TextureDisabled = None;
+                TextureDown = None;
+                TextureDownFocused = None;
+                TextureDownHover = None;
+                TextureFocused = None;
+                TextureHover = None;
+            }
+        }
+
+        Button.SettingsButton {
+            MouseCursor = Hand;
+            Position = ((&.width - width) / 2, (&.height - height) / (3 / 2));
+            Renderer = &1;
+            Text = Settings;
+            TextSize = 48;
+        }
+
+        Button.ExitButton {
+            MouseCursor = Hand;
+            Position = ((&.width - width) / 2, (&.height - height) / (3 / 3));
+            Renderer = &1;
+            Text = Exit;
+            TextSize = 48;
+        }
+    }
+}
+
+Label.CaptionLabel {
+    AutoSize = true;
+    Position = (8, (&.height - height) - 8);
+    Size = (291.4, 24);
+    Text = "SpaceShooter by Ooflamp. MIT Licensed";
+    TextSize = 18;
+
+    Renderer {
+        BackgroundColor = transparent;
+        BorderColor = #3C3C3C;
+        Borders = (0, 0, 0, 0);
+        Font = "Programming_Projects/C++/SpaceShooter/assets/munro.ttf";
+        TextColor = #3C3C3C;
+        TextureBackground = None;
+    }
+}
+
+Label.VersionLabel {
+    AutoSize = true;
+    Position = (8, Caption.top - height);
+    Size = (106, 22);
+    Text = "Version X.XX.X";
+    TextSize = 17;
+
+    Renderer {
+        BackgroundColor = transparent;
+        BorderColor = #3C3C3C;
+        Borders = (0, 0, 0, 0);
+        Font = "Programming_Projects/C++/SpaceShooter/assets/munro.ttf";
+        TextColor = #3C3C3C;
+        TextureBackground = None;
+    }
+}
