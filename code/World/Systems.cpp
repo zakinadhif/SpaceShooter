@@ -18,12 +18,12 @@ void drawEntities(const entt::registry& registry, sf::RenderTarget& target)
 
 	for (const auto& entity : view)
 	{
-		const b2Body* const body = registry.get<RigidBodyComponent>(entity).body;
+		const auto& rbc = registry.get<RigidBodyComponent>(entity);
 
 		sf::Transform transform;
-		transform.translate(b2Vec2ToSfVec(body->GetPosition()));
-		transform.rotate(thor::toDegree(body->GetAngle()));
-		
+		transform.translate(rbc.getPosition());
+		transform.rotate(thor::toDegree(rbc.body->GetAngle()));
+
 		if (registry.all_of<MeshComponent>(entity))
 		{
 			const MeshComponent mesh = registry.get<MeshComponent>(entity);

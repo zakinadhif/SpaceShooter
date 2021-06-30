@@ -5,6 +5,7 @@
 #include "World/Components/Components.hpp"
 #include "World/Components/RigidBodyComponent.hpp"
 #include "World/PhysicsBodyFactory.hpp"
+#include "World/UnitScaling.hpp"
 
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Vertex.hpp>
@@ -23,9 +24,9 @@ entt::entity spawnShip(entt::registry& registry, const sf::Vector2f& position, b
 	static std::array<sf::Vertex, 3> shipMesh
 	{
 		{
-			{{0.f, -0.5f}, sf::Color::White},
-			{{-0.5f, 0.5f}, sf::Color::White},
-			{{0.5f, 0.5f}, sf::Color::White}
+			{{toPixels(0.f, -0.5f)}, sf::Color::White},
+			{{toPixels(-0.5f, 0.5f)}, sf::Color::White},
+			{{toPixels(0.5f, 0.5f)}, sf::Color::White}
 		}
 	};
 
@@ -53,6 +54,8 @@ entt::entity spawnAsteroid(entt::registry& registry, const sf::Vector2f& positio
 		vertices[x * 3 + 1] = {{b2Vec2ToSfVec(asteroidTriangles[x][1])}, sf::Color::White};
 		vertices[x * 3 + 2] = {{b2Vec2ToSfVec(asteroidTriangles[x][2])}, sf::Color::White};
 	}
+
+	toPixels(vertices.data(), vertices.size());
 
 	auto& mesh = registry.emplace<OwningMeshComponent>(entity);
 	mesh.type = sf::Triangles;

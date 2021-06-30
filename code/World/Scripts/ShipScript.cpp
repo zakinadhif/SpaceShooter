@@ -2,6 +2,7 @@
 
 #include "Utility/Keyboard.hpp"
 #include "Utility/VectorConverter.hpp"
+#include "World/UnitScaling.hpp"
 #include "World/Components/RigidBodyComponent.hpp"
 #include "World/CoordinateSpaceMapper.hpp"
 
@@ -93,8 +94,7 @@ void ShipScript::onEvent(sf::Event event)
 		{
 			const auto x = event.mouseMove.x;
 			const auto y = event.mouseMove.y;
-			const sf::Vector2f mousePosition = m_coordinateMapper->mapToViewSpace({x, y});
-			m_pointToLookAt = sfVec2ToB2Vec(mousePosition);
+			m_pointToLookAt = toMeters(m_coordinateMapper->mapToViewSpace({x, y}));
 			break;
 		}
 		default:

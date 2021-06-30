@@ -1,6 +1,7 @@
 #include "Utility/Box2dDebugDraw.hpp"
 #include "Utility/ColorConverter.hpp"
 #include "Utility/VectorConverter.hpp"
+#include "World/UnitScaling.hpp"
 
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -19,7 +20,7 @@ void Box2dDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, cons
 
 	for (int32 i = 0; i < vertexCount; ++i)
 	{
-		sf::Vector2f vertex = b2Vec2ToSfVec(vertices[i]);
+		sf::Vector2f vertex = toPixels(vertices[i]);
 		polygon.setPoint(i, vertex);
 	}
 
@@ -36,7 +37,7 @@ void Box2dDebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount,
 
 	for (int32 i = 0; i < vertexCount; ++i)
 	{
-		sf::Vector2f vertex = b2Vec2ToSfVec(vertices[i]);
+		sf::Vector2f vertex = toPixels(vertices[i]);
 		polygon.setPoint(i, vertex);
 	}
 
@@ -52,9 +53,9 @@ void Box2dDebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount,
 
 void Box2dDebugDraw::DrawCircle(const b2Vec2 &center, float radius, const b2Color &color)
 {
-	sf::CircleShape circle(radius);
-	circle.setOrigin(radius, radius);
-	circle.setPosition(center.x, center.y);
+	sf::CircleShape circle(toPixels(radius));
+	circle.setOrigin(toPixels(radius, radius));
+	circle.setPosition(toPixels(center));
 	circle.setFillColor(sf::Color::Transparent);
 	circle.setOutlineThickness(-1.f);
 	circle.setOutlineColor(b2ColorToSfColor(color));
@@ -67,9 +68,9 @@ void Box2dDebugDraw::DrawSolidCircle(const b2Vec2 &center, float radius, const b
 	b2Color fillColor = color;
 	fillColor.a = 0.5f;
 
-	sf::CircleShape circle(radius);
-	circle.setOrigin(radius, radius);
-	circle.setPosition(center.x, center.y);
+	sf::CircleShape circle(toPixels(radius));
+	circle.setOrigin(toPixels(radius, radius));
+	circle.setPosition(toPixels(center));
 	circle.setFillColor(b2ColorToSfColor(fillColor));
 	circle.setOutlineThickness(-1.f);
 	circle.setOutlineColor(b2ColorToSfColor(color));
@@ -82,8 +83,8 @@ void Box2dDebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Col
 	std::array<sf::Vertex, 2> line =
 	{
 		{
-			{{p1.x, p1.y}, b2ColorToSfColor(color)},
-			{{p2.x, p2.y}, b2ColorToSfColor(color)}
+			{{toPixels(p1)}, b2ColorToSfColor(color)},
+			{{toPixels(p2)}, b2ColorToSfColor(color)}
 		}
 	};
 
@@ -95,12 +96,12 @@ void Box2dDebugDraw::DrawTransform(const b2Transform &xf)
 	float lineLength = 0.4f;
 
 	b2Vec2 xAxis = xf.p + lineLength * xf.q.GetXAxis();
-	
+
 	std::array<sf::Vertex, 2> redLine =
 	{
 		{
-			{b2Vec2ToSfVec(xf.p), sf::Color::Red},
-			{b2Vec2ToSfVec(xAxis), sf::Color::Red}
+			{toPixels(xf.p), sf::Color::Red},
+			{toPixels(xAxis), sf::Color::Red}
 		}
 	};
 
@@ -109,8 +110,8 @@ void Box2dDebugDraw::DrawTransform(const b2Transform &xf)
 	std::array<sf::Vertex, 2> greenLine =
 	{
 		{
-			{b2Vec2ToSfVec(xf.p), sf::Color::Green},
-			{b2Vec2ToSfVec(yAxis), sf::Color::Green}
+			{toPixels(xf.p), sf::Color::Green},
+			{toPixels(yAxis), sf::Color::Green}
 		}
 	};
 
@@ -120,7 +121,7 @@ void Box2dDebugDraw::DrawTransform(const b2Transform &xf)
 
 void Box2dDebugDraw::DrawPoint(const b2Vec2 &p, float size, const b2Color &color)
 {
-	sf::Vertex point(b2Vec2ToSfVec(p), b2ColorToSfColor(color));
+	sf::Vertex point(toPixels(p), b2ColorToSfColor(color));
 
 	m_window.draw(&point, 1, sf::Points);
 }
