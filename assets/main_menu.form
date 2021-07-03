@@ -10,10 +10,10 @@ Renderer.1 {
     BorderColorHover = black;
     Borders = (0, 0, 0, 0);
     Font = "munro.ttf";
-    TextColor = black;
+    TextColor = #D8D8D8;
     TextColorDisabled = #7D7D7D;
-    TextColorDown = black;
-    TextColorHover = black;
+    TextColorDown = white;
+    TextColorHover = white;
     Texture = None;
     TextureDisabled = None;
     TextureDown = None;
@@ -28,7 +28,7 @@ Renderer.2 {
     BorderColor = #3C3C3C;
     Borders = (0, 0, 0, 0);
     Font = "munro.ttf";
-    TextColor = #3C3C3C;
+    TextColor = #DEDEDE;
     TextureBackground = None;
 }
 
