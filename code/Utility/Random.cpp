@@ -17,6 +17,11 @@ namespace zfge::Random
 		return uniform_int_dist(getEngine());
 	}
 
+	float getFloat(float min, float max)
+	{
+		return std::uniform_real_distribution{min, max}(getEngine());
+	}
+
 	int getInt(int min, int max)
 	{
 		return std::uniform_int_distribution{min, max}(getEngine());
