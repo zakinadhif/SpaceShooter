@@ -20,6 +20,7 @@ list(APPEND CMAKE_MODULE_PATH "/usr/local/cmake/Modules/")
 
 find_package(box2d 2.4 REQUIRED)
 find_package(Thor 2 REQUIRED)
+find_package(TGUI 0.9 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
@@ -41,6 +42,7 @@ target_link_libraries(
 	sfml-graphics
 	sfml-window
 	sfml-system
+	tgui
 	spdlog::spdlog
 	ImGui-SFML::ImGui-SFML
 	box2d::box2d
