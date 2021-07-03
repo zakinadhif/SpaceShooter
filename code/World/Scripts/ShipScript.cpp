@@ -80,6 +80,8 @@ void ShipScript::onFixedUpdate(float deltaTime)
 	m_body->ApplyForceToCenter(force, true);
 
 	// Rotate effect
+	m_body->SetAngularVelocity(0);
+
 	const b2Vec2 lookAtVector = m_pointToLookAt - shipPosition;
 	const float desiredAngle = std::atan2(lookAtVector.y, lookAtVector.x) + thor::toRadian(90.f);
 
