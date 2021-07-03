@@ -4,6 +4,9 @@
 
 #include "GameStateManager.hpp"
 #include "UserInterface/Widgets/Button.hpp"
+#include "UserInterface/Starfield.hpp"
+
+#include <TGUI/Backends/SFML.hpp>
 
 namespace astro
 {
@@ -20,8 +23,13 @@ public:
 private:
 	zfge::GameStateManager& m_gameStateManager;
 
-	Button m_startButton;
+	Starfield m_starfield;
+
+	mutable tgui::GuiSFML m_gui;
+
 	sf::RenderTarget& m_mainWindow;
+
+	void setVersionLabel(const std::string& versionString);
 };
 
 }
