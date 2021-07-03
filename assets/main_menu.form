@@ -34,7 +34,7 @@ Renderer.2 {
 
 Panel.MenuPanel {
     Position = (&.width - width, 0);
-    Size = (40%, &.height);
+    Size = (max(30%, 272), &.height);
 
     Renderer {
         BackgroundColor = #020F5265;
