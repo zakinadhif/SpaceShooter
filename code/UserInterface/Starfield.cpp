@@ -97,15 +97,15 @@ float Starfield::determineSpeed(sf::Vector2f velocity)
 	{
 		return std::abs(velocity.y);
 	}
-	
+
 	return std::abs(velocity.x);
 }
 
 std::tuple<Starfield::Layer, Starfield::LayerVelocity>
 Starfield::generateLayer(sf::Color color, sf::Vector2f size, sf::Vector2f viewVelocity, float dimmingFactor)
 {
-	// Generate starfield -- two times as big as the screen size so it can be scrolled infinitely
-	const sf::Vector2f starfieldSize     {size.x * 2, size.y * 2};
+	// Generate starfield
+	const sf::Vector2f starfieldSize     {size.x, size.y};
 	const sf::Vector2f starfieldViewSize {size.x, size.y};
 
 	const sf::Color starfieldColor = calculateDimmedColor(color, dimmingFactor);
@@ -118,7 +118,7 @@ Starfield::generateLayer(sf::Color color, sf::Vector2f size, sf::Vector2f viewVe
 
 sf::VertexArray Starfield::generateStars(sf::Color color, sf::Vector2f size)
 {
-	const std::size_t starCount = 500u;
+	const std::size_t starCount = 250u;
 
 	sf::VertexArray stars;
 	stars.setPrimitiveType(sf::Points);
@@ -175,6 +175,38 @@ void Starfield::regenerateAllLayers()
 		m_layers.push_back(layer);
 		m_layerVelocities.push_back(layerVelocity);
 	}
+}
+
+sf::View Starfield::calculateComplementaryView(sf::View view, sf::Vector2f velocity)
+{
+	sf::View complementaryView(view);
+
+	const sf::Vector2f viewCenter = view.getCenter();
+	const sf::Vector2f viewSize = view.getSize();
+
+	if (velocity.y < 0.f)
+	{
+		complementaryView.setCenter(viewCenter.x, viewCenter.y - viewSize.y);
+	}
+	else if (velocity.y > 1.f)
+	{
+		complementaryView.setCenter(viewCenter.x, viewCenter.y + viewSize.y);
+	}
+	else if (velocity.x < 0.f)
+	{
+		complementaryView.setCenter(viewCenter.x + viewSize.x, viewCenter.y);
+	}
+	else if (velocity.x > 0.f)
+	{
+		complementaryView.setCenter(viewCenter.x - viewSize.x, viewCenter.y);
+	}
+
+	return complementaryView;
+}
+
+bool Starfield::isViewOutsideStarfield(sf::View view, sf::Vector2f size)
+{
+
 }
 
 void Starfield::update(float deltaTime)
