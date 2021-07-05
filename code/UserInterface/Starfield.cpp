@@ -67,7 +67,7 @@ void Starfield::removeLayer(std::size_t index)
 	m_layerVelocities.erase(m_layerVelocities.begin() + index);
 }
 
-sf::Vector2f Starfield::determineVelocity(float speed, Direction direction)
+sf::Vector2f Starfield::determineVelocity(float speed, Direction direction) const
 {
 	// Calculate view movement velocity
 	sf::Vector2f velocity;
@@ -91,7 +91,7 @@ sf::Vector2f Starfield::determineVelocity(float speed, Direction direction)
 	return velocity;
 }
 
-float Starfield::determineSpeed(sf::Vector2f velocity)
+float Starfield::determineSpeed(sf::Vector2f velocity) const
 {
 	if (velocity.x == 0)
 	{
@@ -116,9 +116,9 @@ Starfield::generateLayer(sf::Color color, sf::Vector2f size, sf::Vector2f viewVe
 	return {{starfield, starfieldView}, {viewVelocity}};
 }
 
-sf::VertexArray Starfield::generateStars(sf::Color color, sf::Vector2f size)
+sf::VertexArray Starfield::generateStars(sf::Color color, sf::Vector2f size) const
 {
-	const std::size_t starCount = 250u;
+	const std::size_t starCount = 100u;
 
 	sf::VertexArray stars;
 	stars.setPrimitiveType(sf::Points);
@@ -177,7 +177,7 @@ void Starfield::regenerateAllLayers()
 	}
 }
 
-sf::View Starfield::calculateComplementaryView(sf::View view, sf::Vector2f velocity)
+sf::View Starfield::calculateComplementaryView(sf::View view, sf::Vector2f velocity) const
 {
 	sf::View complementaryView(view);
 
@@ -186,11 +186,11 @@ sf::View Starfield::calculateComplementaryView(sf::View view, sf::Vector2f veloc
 
 	if (velocity.y < 0.f)
 	{
-		complementaryView.setCenter(viewCenter.x, viewCenter.y - viewSize.y);
-	}
-	else if (velocity.y > 1.f)
-	{
 		complementaryView.setCenter(viewCenter.x, viewCenter.y + viewSize.y);
+	}
+	else if (velocity.y > 0.f)
+	{
+		complementaryView.setCenter(viewCenter.x, viewCenter.y - viewSize.y);
 	}
 	else if (velocity.x < 0.f)
 	{
@@ -204,9 +204,24 @@ sf::View Starfield::calculateComplementaryView(sf::View view, sf::Vector2f veloc
 	return complementaryView;
 }
 
-bool Starfield::isViewOutsideStarfield(sf::View view, sf::Vector2f size)
+bool Starfield::isViewOutsideStarfield(sf::View view, sf::Vector2f size) const
 {
+	const sf::Vector2f viewCenter = view.getCenter();
+	const sf::Vector2f viewSize = view.getSize();
 
+	const sf::Vector2f viewTopLeft {viewCenter.x - (viewSize.x / 2), viewCenter.y - (viewSize.y / 2)};
+
+	sf::FloatRect viewRect {viewTopLeft, viewSize};
+	sf::FloatRect starfieldRect {{0,0}, size};
+
+	return !viewRect.intersects(starfieldRect);
+}
+
+sf::Vector2f Starfield::calculateViewStartPosition(sf::Vector2f velocity, sf::Vector2f size) const
+{
+	sf::Vector2f startPosition {size.x / 2, size.y / 2};
+
+	return startPosition;
 }
 
 void Starfield::update(float deltaTime)
@@ -222,6 +237,12 @@ void Starfield::update(float deltaTime)
 		const auto velocity = m_layerVelocities.at(x);
 		auto& [_, view] = m_layers.at(x);
 
+		if (isViewOutsideStarfield(view, m_size))
+		{
+			sf::Vector2f viewStartPosition = calculateViewStartPosition(velocity, m_size);
+			view.setCenter(viewStartPosition);
+		}
+
 		view.move(velocity.x * deltaTime, velocity.y * deltaTime);
 	}
 }
@@ -230,9 +251,16 @@ void Starfield::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	sf::View oldView = target.getView();
 
-	for (const auto& [starfield, view] : m_layers)
+	for (std::size_t x = 0; x < m_layers.size(); ++x)
 	{
+		const auto& [starfield, view] = m_layers[x];
+		const auto velocity = m_layerVelocities[x];
+
 		target.setView(view);
+		target.draw(starfield);
+
+		sf::View complementaryView = calculateComplementaryView(view, velocity);
+		target.setView(complementaryView);
 		target.draw(starfield);
 	}
 

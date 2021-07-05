@@ -50,15 +50,17 @@ private:
 		sf::Vector2f viewVelocity,
 		float dimmingFactor = 0.f
 	);
-
-	sf::Vector2f determineVelocity(float speed, Direction direction);
-	float determineSpeed(sf::Vector2f velocity);
-
-	sf::VertexArray generateStars(sf::Color color, sf::Vector2f size);
 	void regenerateAllLayers();
 
-	sf::View calculateComplementaryView(sf::View view, sf::Vector2f velocity);
-	bool isViewOutsideStarfield(sf::View view, sf::Vector2f size);
+	sf::Vector2f determineVelocity(float speed, Direction direction) const;
+	float determineSpeed(sf::Vector2f velocity) const;
+
+	sf::VertexArray generateStars(sf::Color color, sf::Vector2f size) const;
+
+	sf::View calculateComplementaryView(sf::View view, sf::Vector2f velocity) const;
+	bool isViewOutsideStarfield(sf::View view, sf::Vector2f size) const;
+
+	sf::Vector2f calculateViewStartPosition(sf::Vector2f velocity, sf::Vector2f size) const;
 };
 
 }
