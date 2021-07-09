@@ -9,6 +9,8 @@
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 
+#include "World/Components/TransformComponent.hpp"
+
 namespace astro
 {
 
@@ -19,10 +21,17 @@ void drawEntities(const entt::registry& registry, sf::RenderTarget& target)
 	for (const auto& entity : view)
 	{
 		const auto& rbc = registry.get<RigidBodyComponent>(entity);
+		const TransformComponent* tc = registry.try_get<TransformComponent>(entity);
 
 		sf::Transform transform;
 		transform.translate(rbc.getPosition());
 		transform.rotate(thor::toDegree(rbc.body->GetAngle()));
+
+		if (tc)
+		{
+			const auto& graphicsTransform = tc->getTransform();
+			transform *= graphicsTransform;
+		}
 
 		if (registry.all_of<MeshComponent>(entity))
 		{
