@@ -2,6 +2,8 @@
 
 #include "Utility/Keyboard.hpp"
 #include "Utility/VectorConverter.hpp"
+#include "World/World.hpp"
+#include "World/Entity.hpp"
 #include "World/UnitScaling.hpp"
 #include "World/Components/RigidBodyComponent.hpp"
 #include "World/CoordinateSpaceMapper.hpp"
@@ -14,14 +16,17 @@
 namespace astro
 {
 
-ShipScript::ShipScript(const CoordinateSpaceMapper& coordinateMapper)
+ShipScript::ShipScript(const CoordinateSpaceMapper& coordinateMapper, World& world, b2World& physicsWorld)
 	: m_coordinateMapper(&coordinateMapper)
+	, m_bulletBuilder(world, physicsWorld)
 {
 }
 
 void ShipScript::onCreate()
 {
 	m_body = getComponent<RigidBodyComponent>().body;
+	m_bulletBuilder.setSize({5.f, 10.f});
+	m_bulletBuilder.setSpeed(100.f);
 
 	spdlog::info("A shipscript have just been instantiated.");
 }
@@ -33,9 +38,21 @@ void ShipScript::onDestroy()
 
 void ShipScript::onUpdate(float deltaTime)
 {
+	const auto& velocity = m_body->GetLinearVelocity();
+	const auto& center = m_body->GetLocalCenter();
+
 	ImGui::Begin("ShipInfo");
 	ImGui::LabelText("Rotation", "%f", m_body->GetAngle());
+	ImGui::LabelText("Velocity", "%f, %f", velocity.x, velocity.y);
+	ImGui::LabelText("Center", "%f, %f", center.x, center.y);
 	ImGui::End();
+
+	if (isTimeToShoot(deltaTime))
+	{
+		m_bulletBuilder.setAngle(m_body->GetAngle() - 1.57079632679f);
+		m_bulletBuilder.setPosition(calculateBulletStartPosition());
+		m_bulletBuilder.spawn();
+	}
 }
 
 void ShipScript::onFixedUpdate(float deltaTime)
@@ -102,6 +119,24 @@ void ShipScript::onEvent(sf::Event event)
 		default:
 			break;
 	}
+}
+
+bool ShipScript::isTimeToShoot(float deltaTime)
+{
+	m_weaponTimer += deltaTime;
+
+	if (m_weaponTimer >= m_weaponReloadSpeed)
+	{
+		m_weaponTimer -= m_weaponReloadSpeed;
+		return true;
+	}
+
+	return false;
+}
+
+sf::Vector2f ShipScript::calculateBulletStartPosition() const
+{
+	return toPixels(m_body->GetWorldPoint({0.f, -0.59f}));
 }
 
 } // namespace astro
