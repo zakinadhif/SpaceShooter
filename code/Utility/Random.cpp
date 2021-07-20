@@ -27,6 +27,11 @@ namespace zfge::Random
 		return std::uniform_int_distribution{min, max}(getEngine());
 	}
 
+	sf::Color getColor()
+	{
+		return sf::Color(getInt(0, 255), getInt(0,255), getInt(0,255));
+	}
+
 	std::mt19937& getEngine()
 	{
 		static std::mt19937* mt = new std::mt19937(std::random_device{}());

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SFML/Graphics/Color.hpp>
+
 #include <random>
 
 namespace zfge::Random
@@ -10,6 +12,8 @@ int   getInt();
 
 float getFloat(float min, float max);
 int   getInt(int min, int max);
+
+sf::Color getColor();
 
 std::mt19937& getEngine();
 
