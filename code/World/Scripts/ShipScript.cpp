@@ -26,26 +26,17 @@ void ShipScript::onCreate()
 {
 	m_body = getComponent<RigidBodyComponent>().body;
 	m_bulletBuilder.setSize({5.f, 10.f});
-	m_bulletBuilder.setSpeed(100.f);
-
-	spdlog::info("A shipscript have just been instantiated.");
+	m_bulletBuilder.setSpeed(200.f);
 }
 
 void ShipScript::onDestroy()
 {
-	spdlog::info("A shipscript instance have just been destroyed.");
 }
 
 void ShipScript::onUpdate(float deltaTime)
 {
 	const auto& velocity = m_body->GetLinearVelocity();
 	const auto& center = m_body->GetLocalCenter();
-
-	ImGui::Begin("ShipInfo");
-	ImGui::LabelText("Rotation", "%f", m_body->GetAngle());
-	ImGui::LabelText("Velocity", "%f, %f", velocity.x, velocity.y);
-	ImGui::LabelText("Center", "%f, %f", center.x, center.y);
-	ImGui::End();
 
 	if (isTimeToShoot(deltaTime))
 	{
