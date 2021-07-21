@@ -17,17 +17,12 @@ namespace astro
 AsteroidBuilder::AsteroidBuilder(World& world, b2World& physicsWorld)
 	: m_world(&world)
 	, m_physicsWorld(&physicsWorld)
+	, m_perlinNoise(std::random_device{}())
 {
-	m_perlinNoise.reseed(std::random_device{}());
 }
 
 Entity AsteroidBuilder::spawn()
 {
-	m_position = {0,0};
-	m_baseHeight = 1.0f;
-	m_linearVelocity = {20, 20};
-	m_angularVelocity = zfge::Random::getFloat(-0.5, 0.5);
-
 	return createAsteroid();
 }
 
