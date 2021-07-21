@@ -6,8 +6,10 @@
 #include "World/UnitScaling.hpp"
 #include "World/Components/OwningMeshComponent.hpp"
 #include "World/Components/RigidBodyComponent.hpp"
+#include "Utility/delaunator.hpp"
 
 #include <box2d/box2d.h>
+#include <Thor/Math.hpp>
 
 #include <cstdint>
 

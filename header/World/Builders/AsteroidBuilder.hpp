@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Asteroid/PolygonsGenerator.hpp"
 #include "Utility/PerlinNoise.hpp"
 
 #include <SFML/Graphics/Vertex.hpp>
@@ -17,6 +16,12 @@ namespace astro
 
 class World;
 class Entity;
+
+template <typename VectorType>
+using Triangle = std::array<VectorType, 3>;
+
+using Triangle2f = Triangle<sf::Vector2f>;
+using Triangleb2d = Triangle<b2Vec2>;
 
 class AsteroidBuilder
 {

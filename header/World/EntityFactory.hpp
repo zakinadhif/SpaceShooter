@@ -9,6 +9,5 @@ namespace astro
 {
 
 entt::entity spawnShip(entt::registry& registry, const sf::Vector2f& position, b2World* physicsWorld);
-entt::entity spawnAsteroid(entt::registry& registry, const sf::Vector2f& position, b2World* physicsWorld);
 
 } // namespace astro
