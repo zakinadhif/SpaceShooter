@@ -2,6 +2,7 @@
 
 #include "Utility/Box2dDebugDraw.hpp"
 #include "World/CoordinateSpaceMapper.hpp"
+#include "World/Builders/AsteroidBuilder.hpp"
 
 #include <Thor/Shapes/ConcaveShape.hpp>
 
@@ -48,6 +49,8 @@ private:
 	Box2dDebugDraw m_box2dDebugDraw;
 
 	entt::registry m_registry;
+
+	AsteroidBuilder m_asteroidBuilder;
 
 private:
 	static void deallocateNscInstance(entt::registry& registry, entt::entity entity);

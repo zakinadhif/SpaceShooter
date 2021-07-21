@@ -44,6 +44,7 @@ World::World(sf::RenderTarget& mainWindow)
 	, m_mainWindow(mainWindow)
 	, m_worldSpaceMapper(mainWindow, m_worldView)
 	, m_box2dDebugDraw(mainWindow)
+	, m_asteroidBuilder(*this, m_physicsWorld)
 {
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
 
@@ -52,12 +53,12 @@ World::World(sf::RenderTarget& mainWindow)
 	m_registry.on_destroy<NativeScriptComponent>().connect<&World::deallocateNscInstance>();
 	m_registry.on_destroy<RigidBodyComponent>().connect<&World::deallocateB2BodyInstance>();
 
-	auto ship = Entity{ spawnShip(m_registry, {0,0}, &m_physicsWorld), m_registry };
+	auto ship = Entity{ spawnShip(m_registry, {0, -2}, &m_physicsWorld), m_registry };
 	auto& shipScript = ship.addComponent<NativeScriptComponent>();
 
 	shipScript.bind<ShipScript>(m_worldSpaceMapper, *this, m_physicsWorld);
 
-	auto asteroid = Entity{ spawnAsteroid(m_registry, {0,1}, &m_physicsWorld), m_registry };
+	m_asteroidBuilder.spawn();
 }
 
 const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
