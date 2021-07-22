@@ -1,6 +1,5 @@
 #include "World/World.hpp"
 
-#include "Asteroid/PolygonsGenerator.hpp"
 #include "Utility/Box2dDebugDraw.hpp"
 #include "World/Entity.hpp"
 #include "World/EntityFactory.hpp"
