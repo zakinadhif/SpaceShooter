@@ -3,7 +3,6 @@
 #include "GameStates/GameState.hpp"
 
 #include "GameStateManager.hpp"
-#include "UserInterface/Widgets/Button.hpp"
 #include "UserInterface/Starfield.hpp"
 
 #include <TGUI/Backends/SFML.hpp>
