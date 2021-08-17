@@ -3,6 +3,7 @@
 #include "Utility/Box2dDebugDraw.hpp"
 #include "World/CoordinateSpaceMapper.hpp"
 #include "World/Builders/AsteroidBuilder.hpp"
+#include "World/ContactListener.hpp"
 
 #include <Thor/Shapes/ConcaveShape.hpp>
 
@@ -47,6 +48,7 @@ private:
 
 	CoordinateSpaceMapper m_worldSpaceMapper;
 	Box2dDebugDraw m_box2dDebugDraw;
+	ContactListener m_contactListener;
 
 	entt::registry m_registry;
 

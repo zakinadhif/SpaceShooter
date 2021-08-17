@@ -17,7 +17,7 @@
 namespace astro
 {
 
-entt::entity spawnShip(entt::registry& registry, const sf::Vector2f& position, b2World* physicsWorld)
+entt::entity spawnShip(World& world, const sf::Vector2f& position, b2World* physicsWorld)
 {
 	static std::array<sf::Vertex, 3> shipMesh
 	{
@@ -28,10 +28,12 @@ entt::entity spawnShip(entt::registry& registry, const sf::Vector2f& position, b
 		}
 	};
 
-	auto entity = registry.create();
+	Entity entity = world.createEntity();
 
-	registry.emplace<MeshComponent>(entity, shipMesh.data(), shipMesh.size(), sf::Triangles);
-	registry.emplace<RigidBodyComponent>(entity, createShipBody(physicsWorld, sfVec2ToB2Vec(position)));
+	entity.addComponent<MeshComponent>(shipMesh.data(), shipMesh.size(), sf::Triangles);
+	auto& rgc = entity.addComponent<RigidBodyComponent>(createShipBody(physicsWorld, sfVec2ToB2Vec(position)));
+
+	rgc.body->GetUserData().pointer = (uintptr_t) new Entity(entity);
 
 	return entity;
 }

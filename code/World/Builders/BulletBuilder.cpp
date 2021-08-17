@@ -62,8 +62,10 @@ Entity BulletBuilder::spawn()
 	Entity bullet = m_world->createEntity();
 
 	bullet.addComponent<MeshComponent>(rectangleMesh.data(), rectangleMesh.size(), sf::Quads);
-	bullet.addComponent<RigidBodyComponent>(body);
 	bullet.addComponent<BulletComponent>(m_bulletDamage);
+
+	auto& rgc = bullet.addComponent<RigidBodyComponent>(body);
+	rgc.body->GetUserData().pointer = (uintptr_t) new Entity(bullet);
 
 	auto& tc = bullet.addComponent<TransformComponent>();
 	tc.setScale(m_bulletSize);

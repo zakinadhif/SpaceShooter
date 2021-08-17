@@ -6,6 +6,7 @@
 #include "World/UnitScaling.hpp"
 #include "World/Components/OwningMeshComponent.hpp"
 #include "World/Components/RigidBodyComponent.hpp"
+#include "World/Components/AsteroidComponent.hpp"
 #include "Utility/delaunator.hpp"
 
 #include <box2d/box2d.h>
@@ -36,7 +37,8 @@ Entity AsteroidBuilder::createAsteroid()
 	const auto asteroidOuterVertices = generateAsteroidOuterVertices(asteroidHeights);
 	const auto asteroidTriangles = generateAsteroidTriangleVertices(asteroidOuterVertices);
 
-	entity.addComponent<RigidBodyComponent>(createAsteroidBody(asteroidTriangles));
+	auto& rgc = entity.addComponent<RigidBodyComponent>(createAsteroidBody(asteroidTriangles));
+	rgc.body->GetUserData().pointer = (uintptr_t)(new Entity(entity));
 
 	// Generate asteroid graphical vertices
 	std::vector<sf::Vertex> vertices(asteroidTriangles.size() * 3);
@@ -52,6 +54,8 @@ Entity AsteroidBuilder::createAsteroid()
 	auto& mesh = entity.addComponent<OwningMeshComponent>();
 	mesh.type = sf::Triangles;
 	mesh.vertices.swap(vertices);
+
+	entity.addComponent<AsteroidComponent>();
 
 	return entity;
 }

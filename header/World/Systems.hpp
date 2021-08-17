@@ -6,4 +6,5 @@
 namespace astro
 {
 	void drawEntities(const entt::registry& registry, sf::RenderTarget& target);
+	void clearShotAsteroids(entt::registry& registry);
 } // namespace astro

@@ -46,13 +46,14 @@ World::World(sf::RenderTarget& mainWindow)
 	, m_asteroidBuilder(*this, m_physicsWorld)
 {
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
+	m_physicsWorld.SetContactListener(&m_contactListener);
 
 	m_worldView.setCenter(0,0);
 
 	m_registry.on_destroy<NativeScriptComponent>().connect<&World::deallocateNscInstance>();
 	m_registry.on_destroy<RigidBodyComponent>().connect<&World::deallocateB2BodyInstance>();
 
-	auto ship = Entity{ spawnShip(m_registry, {0, -2}, &m_physicsWorld), m_registry };
+	auto ship = Entity{ spawnShip(*this, {0, -2}, &m_physicsWorld), m_registry };
 	auto& shipScript = ship.addComponent<NativeScriptComponent>();
 
 	shipScript.bind<ShipScript>(m_worldSpaceMapper, *this, m_physicsWorld);
@@ -102,6 +103,8 @@ void World::update(float deltaTime)
 
 		nsc.instance->onUpdate(deltaTime);
 	}
+
+	clearShotAsteroids(m_registry);
 }
 
 void World::fixedUpdate(float deltaTime)
@@ -151,6 +154,16 @@ void World::deallocateB2BodyInstance(entt::registry& registry, entt::entity enti
 
 	if (rb.body)
 	{
+		if (rb.body->GetUserData().pointer)
+		{
+			delete (Entity*) rb.body->GetUserData().pointer;
+			spdlog::info("A b2Body instance was destroyed with an userdata attached.");
+		}
+		else
+		{
+			spdlog::info("A b2Body instance was destroyed without an userdata attached.");
+		}
+
 		b2World* world = rb.body->GetWorld();
 		world->DestroyBody(rb.body);
 	}

@@ -1,8 +1,10 @@
 #include "World/Systems.hpp"
 #include "Utility/VectorConverter.hpp"
 #include "World/Components/MeshComponent.hpp"
+#include "World/Components/AsteroidComponent.hpp"
 #include "World/Components/OwningMeshComponent.hpp"
 #include "World/Components/RigidBodyComponent.hpp"
+#include "World/Components/BulletComponent.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Thor/Math/Trigonometry.hpp>
@@ -43,6 +45,21 @@ void drawEntities(const entt::registry& registry, sf::RenderTarget& target)
 		{
 			const OwningMeshComponent& mesh = registry.get<OwningMeshComponent>(entity);
 			target.draw(mesh.vertices.data(), mesh.vertices.size(), mesh.type, sf::RenderStates(transform));
+		}
+	}
+}
+
+void clearShotAsteroids(entt::registry &registry)
+{
+	auto view = registry.view<AsteroidComponent>();
+
+	for (auto& entity : view)
+	{
+		const auto& ac = view.get<AsteroidComponent>(entity);
+
+		if (ac.shouldBeDestroyed)
+		{
+			registry.destroy(entity);
 		}
 	}
 }
