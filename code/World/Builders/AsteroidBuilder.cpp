@@ -45,7 +45,7 @@ Entity AsteroidBuilder::createAsteroid()
 
 	for (std::size_t x = 0; x < asteroidTriangles.size(); ++x)
 	{
-		sf::Color color = zfge::Random::getColor();
+		sf::Color color = sf::Color::White;
 		vertices[x * 3]     = {asteroidTriangles[x][0], color};
 		vertices[x * 3 + 1] = {asteroidTriangles[x][1], color};
 		vertices[x * 3 + 2] = {asteroidTriangles[x][2], color};
