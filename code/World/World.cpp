@@ -105,6 +105,7 @@ void World::update(float deltaTime)
 	}
 
 	clearShotAsteroids(m_registry);
+	clearCollidedBullets(m_registry);
 }
 
 void World::fixedUpdate(float deltaTime)
