@@ -127,7 +127,7 @@ bool ShipScript::isTimeToShoot(float deltaTime)
 
 sf::Vector2f ShipScript::calculateBulletStartPosition() const
 {
-	return toPixels(m_body->GetWorldPoint({0.f, -0.59f}));
+	return toPixels(m_body->GetWorldPoint({0.f, -0.63f}));
 }
 
 } // namespace astro
