@@ -64,4 +64,19 @@ void clearShotAsteroids(entt::registry &registry)
 	}
 }
 
+void clearCollidedBullets(entt::registry& registry)
+{
+	auto view = registry.view<BulletComponent>();
+
+	for (auto& entity : view)
+	{
+		const auto& bc = view.get<BulletComponent>(entity);
+
+		if (bc.shouldBeDestroyed)
+		{
+			registry.destroy(entity);
+		}
+	}
+}
+
 } // namespace astro

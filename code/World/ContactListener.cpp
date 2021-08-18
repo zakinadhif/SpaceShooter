@@ -29,10 +29,12 @@ void ContactListener::BeginContact(b2Contact *contact)
 		if (entityA.hasComponent<AsteroidComponent>())
 		{
 			entityA.getComponent<AsteroidComponent>().shouldBeDestroyed = true;
+			entityB.getComponent<BulletComponent>().shouldBeDestroyed = true;
 		}
 		if (entityB.hasComponent<AsteroidComponent>())
 		{
 			entityB.getComponent<AsteroidComponent>().shouldBeDestroyed = true;
+			entityA.getComponent<BulletComponent>().shouldBeDestroyed = true;
 		}
 	}
 }
