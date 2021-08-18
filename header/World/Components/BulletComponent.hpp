@@ -7,6 +7,7 @@ namespace astro
 
 struct BulletComponent
 {
+	bool shouldBeDestroyed = false;
 	float damage {};
 };
 
