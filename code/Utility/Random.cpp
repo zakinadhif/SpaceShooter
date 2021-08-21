@@ -6,6 +6,12 @@ namespace zfge::Random
 {
 	static std::uniform_int_distribution<int> uniform_int_dist;
 	static std::uniform_real_distribution<float> uniform_float_distribution;
+	static std::normal_distribution<float> normal_float_distribution;
+
+	bool getTrue(float chance = 0.5)
+	{
+
+	}
 
 	float getFloat()
 	{
