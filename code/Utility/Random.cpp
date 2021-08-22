@@ -1,16 +1,20 @@
 #include "Utility/Random.hpp"
 
 #include <random>
+#include <cassert>
 
 namespace zfge::Random
 {
-	static std::uniform_int_distribution<int> uniform_int_dist;
+	static std::uniform_int_distribution<int> uniform_int_distribution;
 	static std::uniform_real_distribution<float> uniform_float_distribution;
-	static std::normal_distribution<float> normal_float_distribution;
+	static std::bernoulli_distribution bernoulli_distribution;
 
-	bool getTrue(float chance = 0.5)
+	bool getBool(double chanceToGetTrue = 0.5)
 	{
+		assert(chanceToGetTrue >= 0 && chanceToGetTrue <= 1 && "getBool() chanceToGetTrue parameter must be positive");
 
+		typedef decltype(bernoulli_distribution)::param_type param_type;
+		return bernoulli_distribution(getEngine(), param_type(chanceToGetTrue));
 	}
 
 	float getFloat()
@@ -20,17 +24,19 @@ namespace zfge::Random
 
 	int getInt()
 	{
-		return uniform_int_dist(getEngine());
+		return uniform_int_distribution(getEngine());
 	}
 
 	float getFloat(float min, float max)
 	{
-		return std::uniform_real_distribution{min, max}(getEngine());
+		typedef decltype(uniform_float_distribution)::param_type param_type;
+		return uniform_float_distribution(getEngine(), param_type(min, max));
 	}
 
 	int getInt(int min, int max)
 	{
-		return std::uniform_int_distribution{min, max}(getEngine());
+		typedef decltype(uniform_int_distribution)::param_type param_type;
+		return uniform_int_distribution(getEngine(), param_type(min, max));
 	}
 
 	sf::Color getColor()
