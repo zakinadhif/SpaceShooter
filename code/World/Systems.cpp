@@ -88,8 +88,9 @@ void spawnAsteroidsRandomly(World& world, AsteroidBuilder& builder, sf::FloatRec
 	float x = zfge::Random::getFloat(spawnArea.left, spawnArea.left + spawnArea.width);
 	float y = zfge::Random::getFloat(spawnArea.top, spawnArea.top + spawnArea.height);
 
-	enum Sides {Left, Right, Top, Bottom};
 
+
+	enum Sides {Left, Right, Top, Bottom};
 	Sides side = (Sides) zfge::Random::getInt(0, 3);
 
 	switch (side)
@@ -110,6 +111,9 @@ void spawnAsteroidsRandomly(World& world, AsteroidBuilder& builder, sf::FloatRec
 
 	builder.setPosition({x, y});
 	builder.setAngularVelocity(thor::toRadian(zfge::Random::getFloat(-30, 30)));
+	builder.setLinearVelocity({30.f, -120.f});
+
+	builder.spawn();
 }
 
 } // namespace astro

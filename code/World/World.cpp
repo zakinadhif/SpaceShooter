@@ -1,6 +1,7 @@
 #include "World/World.hpp"
 
 #include "Utility/Box2dDebugDraw.hpp"
+#include "Utility/Random.hpp"
 #include "World/Entity.hpp"
 #include "World/EntityFactory.hpp"
 #include "World/Systems.hpp"
@@ -106,6 +107,22 @@ void World::update(float deltaTime)
 
 	clearShotAsteroids(m_registry);
 	clearCollidedBullets(m_registry);
+	
+	const double asteroidSpawnChance = 0.01f;
+	if (zfge::Random::getBool(asteroidSpawnChance))
+	{
+		const auto size = m_worldView.getSize();
+		const auto center = m_worldView.getCenter();
+		const sf::FloatRect spawnArea
+		{
+			center.x - (size.x / 2),
+			center.y - (size.y / 2),
+			size.x,
+			size.y
+		};
+
+		spawnAsteroidsRandomly(*this, m_asteroidBuilder, spawnArea);
+	}
 }
 
 void World::fixedUpdate(float deltaTime)
