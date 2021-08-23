@@ -85,10 +85,18 @@ void clearCollidedBullets(entt::registry& registry)
 
 void spawnAsteroidsRandomly(World& world, AsteroidBuilder& builder, sf::FloatRect spawnArea)
 {
+	const float speedMin = 50.f;
+	const float speedMax = 150.f;
+	const float rotationSpeedMin = -30.f;
+	const float rotationSpeedMax = 30.f;
+
 	float x = zfge::Random::getFloat(spawnArea.left, spawnArea.left + spawnArea.width);
 	float y = zfge::Random::getFloat(spawnArea.top, spawnArea.top + spawnArea.height);
 
+	float velocityMagnitude = zfge::Random::getFloat(speedMin, speedMax);
+	float velocityAngle = 0.0f;
 
+	float rotationSpeed = zfge::Random::getFloat(rotationSpeedMin, rotationSpeedMax);
 
 	enum Sides {Left, Right, Top, Bottom};
 	Sides side = (Sides) zfge::Random::getInt(0, 3);
@@ -97,21 +105,37 @@ void spawnAsteroidsRandomly(World& world, AsteroidBuilder& builder, sf::FloatRec
 	{
 		case Left:
 			x = spawnArea.left;
+			velocityAngle += zfge::Random::getFloat(-90.f, 90.f);
+			// velocityAngle += 0.f;
 			break;
 		case Right:
 			x = spawnArea.left + spawnArea.width;
+			velocityAngle += zfge::Random::getFloat(90.f, 270.f);
+			// velocityAngle += 180.f;
 			break;
 		case Top:
 			y = spawnArea.top;
+			velocityAngle += zfge::Random::getFloat(180.f, 360.f);
+			// velocityAngle += 270.f;
 			break;
 		case Bottom:
 			y = spawnArea.top + spawnArea.height;
+			velocityAngle += zfge::Random::getFloat(0.f, 180.f);
+			// velocityAngle += 90.f;
 			break;
 	}
 
+	float _velocityAngle = thor::toRadian(velocityAngle);
+	sf::Vector2f velocity {
+		cos(_velocityAngle) * velocityMagnitude,
+		-sin(_velocityAngle) * velocityMagnitude
+	};
+
+	float _rotationSpeed = thor::toRadian(rotationSpeed);
+
 	builder.setPosition({x, y});
-	builder.setAngularVelocity(thor::toRadian(zfge::Random::getFloat(-30, 30)));
-	builder.setLinearVelocity({30.f, -120.f});
+	builder.setAngularVelocity(_rotationSpeed);
+	builder.setLinearVelocity(velocity);
 
 	builder.spawn();
 }
