@@ -16,7 +16,7 @@ set_target_properties(
 	CXX_STANDARD 17
 	)
 
-list(APPEND CMAKE_MODULE_PATH "/usr/local/cmake/Modules/")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
 find_package(box2d 2.4 REQUIRED)
 find_package(Thor 2 REQUIRED)
