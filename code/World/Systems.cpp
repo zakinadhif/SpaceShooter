@@ -2,12 +2,7 @@
 #include "World/Systems.hpp"
 #include "Utility/VectorConverter.hpp"
 #include "Utility/Random.hpp"
-#include "World/Components/MeshComponent.hpp"
-#include "World/Components/AsteroidComponent.hpp"
-#include "World/Components/OwningMeshComponent.hpp"
-#include "World/Components/RigidBodyComponent.hpp"
-#include "World/Components/TransformComponent.hpp"
-#include "World/Components/BulletComponent.hpp"
+#include "World/Components/Components.hpp"
 #include "World/Builders/AsteroidBuilder.hpp"
 #include "World/Entity.hpp"
 
@@ -16,6 +11,10 @@
 #include <Thor/Math/Trigonometry.hpp>
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
+#include <imgui-SFML.h>
+#include <imgui.h>
+
+#include <bitset>
 
 namespace astro
 {
@@ -138,6 +137,80 @@ void spawnAsteroidsRandomly(World& world, AsteroidBuilder& builder, sf::FloatRec
 	builder.setLinearVelocity(velocity);
 
 	builder.spawn();
+}
+
+namespace
+{
+
+template<typename Component, std::size_t size>
+void fillBitset(
+	std::bitset<size>& bitset,
+	std::size_t& index,
+	entt::registry& registry,
+	entt::entity entity
+)
+{
+	bitset[index] = registry.all_of<Component>(entity);
+	++index;
+}
+
+template<typename... Comps>
+std::bitset<sizeof...(Comps)> getComponentBitset(entt::registry& registry, entt::entity entity)
+{
+	std::bitset<sizeof...(Comps)> bitset {};
+	std::size_t index = 0;
+
+	(fillBitset<Comps>(bitset, index, registry, entity), ...);
+
+	return bitset;
+}
+
+}
+
+void displayComponentInspector(entt::registry& registry)
+{
+	constexpr std::size_t componentCount = 7;
+
+	// Name lookup table
+	static const std::array<std::string, componentCount> componentNames {
+		"IdentifierComponent",
+		"TransformComponent",
+		"MeshComponent",
+		"OwningMeshComponent",
+		"NativeScriptComponent",
+		"BulletComponent",
+		"AsteroidComponent"
+	};
+
+	// TODO(zndf): List entities. DONE.
+	// TODO(zndf): Write name component. DONE. (subtituted with IdentifierComponent)
+	// TODO(zndf): Write group component. DONE. (subtituted with IdentifierComponent)
+	// TODO(zndf): Search a way to be able to edit and get component content.
+
+	ImGui::Begin("Component Inspector");
+	registry.each([&registry](entt::entity entity){
+		std::bitset<componentCount> componentBitset = getComponentBitset<
+			IdentifierComponent,
+			TransformComponent,
+			MeshComponent,
+			OwningMeshComponent,
+			NativeScriptComponent,
+			BulletComponent,
+			AsteroidComponent
+		>(registry, entity);
+
+		std::string strbuf = std::to_string((std::uint32_t) entity);
+		ImGui::Text("Entity %s: ", strbuf.c_str());
+		
+		for (std::size_t i = 0; i < componentCount; ++i)
+		{
+			if (componentBitset[i])
+			{
+				ImGui::Text("%s", componentNames[i].c_str());
+			}
+		}
+	});
+	ImGui::End();
 }
 
 } // namespace astro

@@ -13,4 +13,5 @@ namespace astro
 	void clearShotAsteroids(entt::registry& registry);
 	void clearCollidedBullets(entt::registry& registry);
 	void spawnAsteroidsRandomly(World& world, AsteroidBuilder& builder, sf::FloatRect spawnArea);
+	void displayComponentInspector(entt::registry& registry);
 } // namespace astro
