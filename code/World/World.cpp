@@ -123,6 +123,8 @@ void World::update(float deltaTime)
 
 		spawnAsteroidsRandomly(*this, m_asteroidBuilder, spawnArea);
 	}
+
+	displayComponentInspector(m_registry);
 }
 
 void World::fixedUpdate(float deltaTime)
