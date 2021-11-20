@@ -2,13 +2,41 @@
 
 #include "World/Components/AsteroidComponent.hpp"
 #include "World/Components/BulletComponent.hpp"
+#include "World/Components/IdentifierComponent.hpp"
 #include "World/Entity.hpp"
+#include "World/EntityType.hpp"
 
 #include <box2d/b2_contact.h>
 #include <spdlog/spdlog.h>
 
 namespace astro
 {
+
+namespace
+{
+	bool asteroidAndBulletCollided(Entity a, Entity b)
+	{
+		return (a.hasComponent<BulletComponent>() && b.hasComponent<AsteroidComponent>())
+			|| (a.hasComponent<AsteroidComponent>() && b.hasComponent<BulletComponent>());
+	}
+
+	bool shipAndAsteroidCollided(Entity a, Entity b)
+	{
+		if (a.hasComponent<IdentifierComponent>())
+		{
+			auto& ic = a.getComponent<IdentifierComponent>();
+			return ic.type == EntityType::Ship && b.hasComponent<AsteroidComponent>();
+		}
+		else if (b.hasComponent<IdentifierComponent>())
+		{
+			auto& ic = b.getComponent<IdentifierComponent>();
+			return ic.type == EntityType::Ship && a.hasComponent<AsteroidComponent>();
+		}
+
+		return false;
+	}
+}
+
 
 ContactListener::ContactListener()
 {
@@ -22,8 +50,7 @@ void ContactListener::BeginContact(b2Contact *contact)
 	Entity entityA = *((Entity*) contact->GetFixtureA()->GetBody()->GetUserData().pointer);
 	Entity entityB = *((Entity*) contact->GetFixtureB()->GetBody()->GetUserData().pointer);
 
-	if ((entityA.hasComponent<BulletComponent>() && entityB.hasComponent<AsteroidComponent>())
-		|| (entityA.hasComponent<AsteroidComponent>() && entityB.hasComponent<BulletComponent>()))
+	if (asteroidAndBulletCollided(entityA, entityB))
 	{
 		spdlog::trace("A bullet and an asteroid has just been collided.");
 		if (entityA.hasComponent<AsteroidComponent>())
@@ -36,6 +63,11 @@ void ContactListener::BeginContact(b2Contact *contact)
 			entityB.getComponent<AsteroidComponent>().shouldBeDestroyed = true;
 			entityA.getComponent<BulletComponent>().shouldBeDestroyed = true;
 		}
+	}
+
+	if (shipAndAsteroidCollided(entityA, entityB))
+	{
+		spdlog::info("The ship had just collided");
 	}
 }
 
