@@ -2,7 +2,9 @@
 
 #include "Utility/VectorConverter.hpp"
 #include "World/Components/Components.hpp"
+#include "World/Components/IdentifierComponent.hpp"
 #include "World/Components/RigidBodyComponent.hpp"
+#include "World/EntityType.hpp"
 #include "World/PhysicsBodyFactory.hpp"
 #include "World/UnitScaling.hpp"
 
@@ -32,6 +34,10 @@ entt::entity spawnShip(World& world, const sf::Vector2f& position, b2World* phys
 
 	entity.addComponent<MeshComponent>(shipMesh.data(), shipMesh.size(), sf::Triangles);
 	auto& rgc = entity.addComponent<RigidBodyComponent>(createShipBody(physicsWorld, sfVec2ToB2Vec(position)));
+	auto& ic = entity.addComponent<IdentifierComponent>();
+
+	ic.type = EntityType::Ship;
+	ic.name = "PlayerShip";
 
 	rgc.body->GetUserData().pointer = (uintptr_t) new Entity(entity);
 
