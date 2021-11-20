@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.18.4)
 
 project(SpaceShooter)
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS code/*.cpp)
 
 add_executable("${PROJECT_NAME}" ${SOURCES})
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 add_compile_options(-Wall -Wextra -pedantic -Werror -Og)
 
 # Set to use C++17
