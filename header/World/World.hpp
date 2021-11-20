@@ -4,6 +4,7 @@
 #include "World/CoordinateSpaceMapper.hpp"
 #include "World/Builders/AsteroidBuilder.hpp"
 #include "World/ContactListener.hpp"
+#include "UserInterface/ScoreDisplay.hpp"
 
 #include <Thor/Shapes/ConcaveShape.hpp>
 
@@ -53,6 +54,9 @@ private:
 	entt::registry m_registry;
 
 	AsteroidBuilder m_asteroidBuilder;
+
+	ScoreDisplay m_scoreDisplay;
+	sf::Font m_munroFont;
 
 private:
 	static void deallocateNscInstance(entt::registry& registry, entt::entity entity);

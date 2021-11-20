@@ -8,6 +8,7 @@
 
 #include "World/Components/NativeScriptComponent.hpp"
 #include "World/Components/RigidBodyComponent.hpp"
+#include "World/Components/GameStateComponent.hpp"
 #include "World/Scripts/ShipScript.hpp"
 
 #include <entt/entt.hpp>
@@ -46,6 +47,15 @@ World::World(sf::RenderTarget& mainWindow)
 	, m_box2dDebugDraw(mainWindow)
 	, m_asteroidBuilder(*this, m_physicsWorld)
 {
+	m_registry.set<GameStateComponent>();
+
+	m_munroFont.loadFromFile("assets/munro.ttf");
+	m_scoreDisplay.setFont(m_munroFont);
+
+	auto& gameState = m_registry.ctx<GameStateComponent>();
+	gameState.screenHeight = m_mainWindow.getDefaultView().getSize().y;
+	gameState.screenWidth = m_mainWindow.getDefaultView().getSize().x;
+
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
 	m_physicsWorld.SetContactListener(&m_contactListener);
 
@@ -125,6 +135,7 @@ void World::update(float deltaTime)
 	}
 
 	displayComponentInspector(m_registry);
+	m_scoreDisplay.update(m_registry);
 }
 
 void World::fixedUpdate(float deltaTime)
@@ -151,6 +162,7 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.setView(m_worldView);
 
 	drawEntities(m_registry, target);
+	target.draw(m_scoreDisplay);
 
 	m_physicsWorld.DebugDraw();
 
