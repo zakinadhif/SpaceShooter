@@ -1,16 +1,22 @@
+#include "World/Components/IdentifierComponent.hpp"
+#include "World/Components/TransformComponent.hpp"
 #include "World/World.hpp"
 #include "World/Systems.hpp"
 #include "Utility/VectorConverter.hpp"
 #include "Utility/Random.hpp"
 #include "World/Components/Components.hpp"
+#include "World/Components/GameStateComponent.hpp"
 #include "World/Builders/AsteroidBuilder.hpp"
 #include "World/Entity.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Thor/Math/Trigonometry.hpp>
+#include <array>
 #include <box2d/box2d.h>
+#include <entt/core/fwd.hpp>
 #include <entt/entt.hpp>
+#include <spdlog/spdlog.h>
 #include <imgui-SFML.h>
 #include <imgui.h>
 
@@ -56,6 +62,9 @@ void clearShotAsteroids(entt::registry &registry)
 {
 	auto view = registry.view<AsteroidComponent>();
 
+	auto& gameState = registry.ctx<GameStateComponent>();
+	const float scoreBonus = 1.f;
+
 	for (auto& entity : view)
 	{
 		const auto& ac = view.get<AsteroidComponent>(entity);
@@ -63,6 +72,8 @@ void clearShotAsteroids(entt::registry &registry)
 		if (ac.shouldBeDestroyed)
 		{
 			registry.destroy(entity);
+			gameState.score += scoreBonus;
+			spdlog::info("Player score: {}", gameState.score);
 		}
 	}
 }
@@ -142,54 +153,39 @@ void spawnAsteroidsRandomly(World& world, AsteroidBuilder& builder, sf::FloatRec
 namespace
 {
 
-template<typename Component, std::size_t size>
-void fillBitset(
-	std::bitset<size>& bitset,
-	std::size_t& index,
+template<typename Component>
+Component* fillTuple(
 	entt::registry& registry,
 	entt::entity entity
 )
 {
-	bitset[index] = registry.all_of<Component>(entity);
-	++index;
+	Component* component = nullptr;
+
+	if (registry.all_of<Component>(entity))
+	{
+		component = &registry.get<Component>(entity);
+	}
+
+	return component;
 }
 
 template<typename... Comps>
-std::bitset<sizeof...(Comps)> getComponentBitset(entt::registry& registry, entt::entity entity)
+std::tuple<Comps*...> getComponentPointers(entt::registry& registry, entt::entity entity)
 {
-	std::bitset<sizeof...(Comps)> bitset {};
-	std::size_t index = 0;
-
-	(fillBitset<Comps>(bitset, index, registry, entity), ...);
-
-	return bitset;
+	return std::make_tuple(fillTuple<Comps>(registry, entity)...);
 }
 
 }
 
 void displayComponentInspector(entt::registry& registry)
 {
-	constexpr std::size_t componentCount = 7;
-
-	// Name lookup table
-	static const std::array<std::string, componentCount> componentNames {
-		"IdentifierComponent",
-		"TransformComponent",
-		"MeshComponent",
-		"OwningMeshComponent",
-		"NativeScriptComponent",
-		"BulletComponent",
-		"AsteroidComponent"
-	};
-
-	// TODO(zndf): List entities. DONE.
-	// TODO(zndf): Write name component. DONE. (subtituted with IdentifierComponent)
-	// TODO(zndf): Write group component. DONE. (subtituted with IdentifierComponent)
-	// TODO(zndf): Search a way to be able to edit and get component content.
+	const std::size_t componentCount = 7;
+	const uint32_t selectedEntity = registry.ctx<GameStateComponent>().selectedEntity;
 
 	ImGui::Begin("Component Inspector");
+
 	registry.each([&registry](entt::entity entity){
-		std::bitset<componentCount> componentBitset = getComponentBitset<
+		const auto componentPointers = getComponentPointers<
 			IdentifierComponent,
 			TransformComponent,
 			MeshComponent,
@@ -201,15 +197,13 @@ void displayComponentInspector(entt::registry& registry)
 
 		std::string strbuf = std::to_string((std::uint32_t) entity);
 		ImGui::Text("Entity %s: ", strbuf.c_str());
-		
-		for (std::size_t i = 0; i < componentCount; ++i)
+
+		if (auto tc = std::get<IdentifierComponent*>(componentPointers))
 		{
-			if (componentBitset[i])
-			{
-				ImGui::Text("%s", componentNames[i].c_str());
-			}
+			
 		}
 	});
+
 	ImGui::End();
 }
 
