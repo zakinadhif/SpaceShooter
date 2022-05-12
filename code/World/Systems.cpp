@@ -14,6 +14,7 @@
 #include <Thor/Math/Trigonometry.hpp>
 #include <array>
 #include <box2d/box2d.h>
+#include <cstdint>
 #include <entt/core/fwd.hpp>
 #include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
@@ -21,6 +22,8 @@
 #include <imgui.h>
 
 #include <bitset>
+#include <tuple>
+#include <utility>
 
 namespace astro
 {
@@ -175,6 +178,57 @@ std::tuple<Comps*...> getComponentPointers(entt::registry& registry, entt::entit
 	return std::make_tuple(fillTuple<Comps>(registry, entity)...);
 }
 
+void displayComponentInfo(IdentifierComponent* ic) {
+	if (ImGui::TreeNode("Identifier Component")) {
+		if (ic) {
+			ImGui::LabelText("Name", "%s", ic->name.c_str());
+			ImGui::LabelText("Type", "%d", (int) ic->type);
+		}
+		ImGui::TreePop();
+	}
+}
+void displayComponentInfo(TransformComponent*) {}
+void displayComponentInfo(MeshComponent*) {}
+void displayComponentInfo(OwningMeshComponent*) {}
+void displayComponentInfo(NativeScriptComponent*) {}
+void displayComponentInfo(BulletComponent*) {}
+void displayComponentInfo(AsteroidComponent*) {}
+
+template <std::size_t I = 0, typename... Tp>
+inline typename std::enable_if<I == sizeof...(Tp), void>::type displayComponentsInfo(const std::tuple<Tp...>& t)
+{
+
+}
+
+template <std::size_t I = 0, typename... Tp>
+inline typename std::enable_if<I < sizeof...(Tp), void>::type displayComponentsInfo(const std::tuple<Tp...>& t)
+{
+	displayComponentInfo(std::get<I>(t));
+	displayComponentsInfo<I + 1, Tp...>(t);
+}
+
+} // namespace
+
+void displayEntityList(entt::registry &registry) {
+	ImGui::Begin("Entity List");
+
+	auto& selectedEntity = registry.ctx<GameStateComponent>().selectedEntity;
+
+	registry.each([&](entt::entity entity) {
+		if (auto ic = registry.try_get<IdentifierComponent>(entity)) {
+			if (ImGui::Selectable(ic->name.c_str(), selectedEntity == (uint32_t) entity)) {
+				selectedEntity = (uint32_t) entity;
+			}
+		} else {
+			std::string strbuf = "Unnamed Entity: ";
+			strbuf += std::to_string((std::uint32_t) entity);
+			if (ImGui::Selectable(strbuf.c_str(), selectedEntity == (uint32_t) entity)) {
+				selectedEntity = (uint32_t) entity;
+			}
+		}
+	});
+
+	ImGui::End();
 }
 
 void displayComponentInspector(entt::registry& registry)
@@ -184,7 +238,9 @@ void displayComponentInspector(entt::registry& registry)
 
 	ImGui::Begin("Component Inspector");
 
-	registry.each([&registry](entt::entity entity){
+	entt::entity entity = (entt::entity) selectedEntity;
+
+	if (registry.valid(entity)) {
 		const auto componentPointers = getComponentPointers<
 			IdentifierComponent,
 			TransformComponent,
@@ -195,14 +251,13 @@ void displayComponentInspector(entt::registry& registry)
 			AsteroidComponent
 		>(registry, entity);
 
-		std::string strbuf = std::to_string((std::uint32_t) entity);
-		ImGui::Text("Entity %s: ", strbuf.c_str());
-
-		if (auto tc = std::get<IdentifierComponent*>(componentPointers))
-		{
-			
+		if (ImGui::TreeNode("Components", "Entity %d", (uint32_t) entity)) {
+			displayComponentsInfo(componentPointers);
+			ImGui::TreePop();
 		}
-	});
+	} else {
+		ImGui::Text("Selected entity is invalid");
+	}
 
 	ImGui::End();
 }

@@ -9,13 +9,6 @@ add_executable("${PROJECT_NAME}" ${SOURCES})
 
 add_compile_options(-Wall -Wextra -pedantic -Werror -Og)
 
-# Set to use C++17
-set_target_properties(
-	"${PROJECT_NAME}"
-	PROPERTIES
-	CXX_STANDARD 17
-	)
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
 find_package(box2d 2.4 REQUIRED)
@@ -27,6 +20,11 @@ find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
 find_package(ImGui-SFML REQUIRED)
 find_package(EnTT REQUIRED)
 find_package(CDT REQUIRED CONFIG)
+
+target_compile_features(
+	${PROJECT_NAME} PRIVATE
+	cxx_std_20
+	)
 
 target_include_directories(
 	"${PROJECT_NAME}" PRIVATE

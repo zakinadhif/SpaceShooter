@@ -135,6 +135,7 @@ void World::update(float deltaTime)
 	}
 
 	displayComponentInspector(m_registry);
+	displayEntityList(m_registry);
 	m_scoreDisplay.update(m_registry);
 }
 

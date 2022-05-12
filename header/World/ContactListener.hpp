@@ -1,6 +1,7 @@
 #pragma once
 
 #include <box2d/b2_world_callbacks.h>
+#include <functional>
 
 namespace astro
 {
