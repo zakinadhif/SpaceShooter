@@ -21,29 +21,34 @@ BulletBuilder::BulletBuilder(World& world, b2World& physicsWorld)
 
 }
 
-void BulletBuilder::setSpeed(float speed)
+BulletBuilder& BulletBuilder::setSpeed(float speed)
 {
 	m_bulletSpeed = speed;
+	return *this;
 }
 
-void BulletBuilder::setDamage(float damage)
+BulletBuilder& BulletBuilder::setDamage(float damage)
 {
 	m_bulletDamage = damage;
+	return *this;
 }
 
-void BulletBuilder::setSize(sf::Vector2f size)
+BulletBuilder& BulletBuilder::setSize(sf::Vector2f size)
 {
 	m_bulletSize = size;
+	return *this;
 }
 
-void BulletBuilder::setPosition(sf::Vector2f position)
+BulletBuilder& BulletBuilder::setPosition(sf::Vector2f position)
 {
 	m_bulletPosition = position;
+	return *this;
 }
 
-void BulletBuilder::setAngle(float angle)
+BulletBuilder& BulletBuilder::setAngle(float angle)
 {
 	m_bulletAngle = angle;
+	return *this;
 }
 
 Entity BulletBuilder::spawn()

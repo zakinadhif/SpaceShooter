@@ -16,13 +16,13 @@ class BulletBuilder
 public:
 	BulletBuilder(World& world, b2World& physicsWorld);
 
-	void setSpeed(float speed);
-	void setDamage(float damage);
+	BulletBuilder& setSpeed(float speed);
+	BulletBuilder& setDamage(float damage);
 
-	void setSize(sf::Vector2f size);
+	BulletBuilder& setSize(sf::Vector2f size);
 
-	void setPosition(sf::Vector2f position);
-	void setAngle(float angle);
+	BulletBuilder& setPosition(sf::Vector2f position);
+	BulletBuilder& setAngle(float angle);
 
 	Entity spawn();
 

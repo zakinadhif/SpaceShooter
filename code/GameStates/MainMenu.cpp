@@ -2,9 +2,12 @@
 
 #include "GameStateManager.hpp"
 #include "GameStates/PlayState.hpp"
+#include "Utility/SettingsManager.hpp"
 
-#include <TGUI/Widgets/Button.hpp>
-#include <TGUI/Widgets/Label.hpp>
+#include <TGUI/AllWidgets.hpp>
+#include <TGUI/String.hpp>
+#include <sstream>
+#include <string>
 
 namespace astro
 {
@@ -22,13 +25,62 @@ MainMenu::MainMenu(zfge::GameStateManager& gameStateManager, sf::RenderTarget& m
 
 	m_gui.loadWidgetsFromFile("assets/main_menu.form");
 
+	// Settings window
+	auto settingsWindow = tgui::ChildWindow::create("Settings");
+	{
+		settingsWindow->setVisible(false);
+		settingsWindow->setPosition("(parent.innersize - size) / 2");
+
+		auto fullscreenCheckbox = tgui::CheckBox::create("Fullscreen");
+		settingsWindow->add(fullscreenCheckbox, "FullscreenCheckbox");
+		fullscreenCheckbox->onCheck([]() {
+			SettingsManager::get().setFullscreen(true);
+		});
+		fullscreenCheckbox->onUncheck([]() {
+			SettingsManager::get().setFullscreen(false);
+		});
+
+		auto resolutionDropdown = tgui::ComboBox::create();
+		resolutionDropdown->setDefaultText("Resolution");
+		settingsWindow->add(resolutionDropdown, "ResolutionDropdown");
+		resolutionDropdown->setPosition(0, fullscreenCheckbox->getSize().y);
+
+		std::ostringstream ss;
+		int i = 0;
+		for (const auto& fullscreenMode : sf::VideoMode::getFullscreenModes()) {
+			ss.str(std::string());
+
+			ss << fullscreenMode.width << 'x' << fullscreenMode.height << " BPP:" << fullscreenMode.bitsPerPixel;
+
+			resolutionDropdown->addItem(ss.str(), std::to_string(i));
+			++i;
+		}
+
+		resolutionDropdown->onItemSelect([=](tgui::String itemText, tgui::String itemId) {
+			SettingsManager::get().setResolution(itemId.toUInt());
+		});
+
+		m_gui.add(settingsWindow, "SettingsWindow");
+	}
+
+	settingsWindow->onClosing([=](bool* abort) {
+		*abort = true;
+		settingsWindow->setVisible(false);
+	});
+	// End of settings window
+
 	setVersionLabel("0.00.1");
 
 	tgui::Button::Ptr startButton = m_gui.get<tgui::Button>("StartButton");
+	tgui::Button::Ptr settingsButton = m_gui.get<tgui::Button>("SettingsButton");
 	tgui::Button::Ptr exitButton = m_gui.get<tgui::Button>("ExitButton");
 
 	startButton->onClick([this](){
 		m_gameStateManager.push<PlayState>(m_gameStateManager, m_mainWindow);
+	});
+
+	settingsButton->onClick([=](){
+		settingsWindow->setVisible(true);
 	});
 
 	exitButton->onClick([this](){

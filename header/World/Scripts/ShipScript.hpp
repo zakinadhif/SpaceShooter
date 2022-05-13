@@ -43,6 +43,7 @@ private:
 	float m_weaponProjectileDamage = 1.f;
 
 	float m_weaponTimer = 1.f;
+	bool m_shouldShoot = false;
 
 	BulletBuilder m_bulletBuilder;
 

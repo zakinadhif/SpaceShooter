@@ -2,6 +2,7 @@
 
 #include "GameStates/MainMenu.hpp"
 #include "Utility/Keyboard.hpp"
+#include "Utility/SettingsManager.hpp"
 
 #include <imgui.h>
 #include <imgui-SFML.h>
@@ -14,6 +15,8 @@ Game::Game()
 {
 	m_window.setKeyRepeatEnabled(false);
 	m_window.setFramerateLimit(60);
+
+	SettingsManager::initialize(m_window);
 
 	ImGui::SFML::Init(m_window);
 
@@ -51,6 +54,7 @@ void Game::run()
 
 		ImGui::Begin("Game Loop Stats");
 		ImGui::LabelText("FPS", "%f", 1 / elapsed.asSeconds());
+		ImGui::LabelText("Frame Time", "%f", elapsed.asSeconds());
 		ImGui::End();
 
 		m_window.clear();

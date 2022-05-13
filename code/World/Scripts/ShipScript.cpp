@@ -8,6 +8,7 @@
 #include "World/Components/RigidBodyComponent.hpp"
 #include "World/CoordinateSpaceMapper.hpp"
 
+#include <SFML/Window/Mouse.hpp>
 #include <Thor/Math.hpp>
 #include <box2d/box2d.h>
 #include <imgui.h>
@@ -40,9 +41,10 @@ void ShipScript::onUpdate(float deltaTime)
 
 	if (isTimeToShoot(deltaTime))
 	{
-		m_bulletBuilder.setAngle(m_body->GetAngle() - 1.57079632679f);
-		m_bulletBuilder.setPosition(calculateBulletStartPosition());
-		m_bulletBuilder.spawn();
+		m_bulletBuilder.setAngle(m_body->GetAngle() - 1.57079632679f)
+			.setPosition(calculateBulletStartPosition())
+			.spawn();
+		m_shouldShoot = false;
 	}
 }
 
@@ -107,6 +109,13 @@ void ShipScript::onEvent(sf::Event event)
 			m_pointToLookAt = toMeters(m_coordinateMapper->mapToViewSpace({x, y}));
 			break;
 		}
+		case sf::Event::MouseButtonPressed:
+		{
+			if (event.mouseButton.button == sf::Mouse::Left) {
+				m_shouldShoot = true;
+			}
+			break;
+		}
 		default:
 			break;
 	}
@@ -114,15 +123,16 @@ void ShipScript::onEvent(sf::Event event)
 
 bool ShipScript::isTimeToShoot(float deltaTime)
 {
-	m_weaponTimer += deltaTime;
+	// m_weaponTimer += deltaTime;
 
-	if (m_weaponTimer >= m_weaponReloadSpeed)
-	{
-		m_weaponTimer -= m_weaponReloadSpeed;
-		return true;
-	}
+	// if (m_weaponTimer >= m_weaponReloadSpeed)
+	// {
+	// 	m_weaponTimer -= m_weaponReloadSpeed;
+	// 	return true;
+	// }
 
-	return false;
+	// return false;
+	return m_shouldShoot;
 }
 
 sf::Vector2f ShipScript::calculateBulletStartPosition() const
