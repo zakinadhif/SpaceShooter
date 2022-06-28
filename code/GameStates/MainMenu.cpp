@@ -25,50 +25,6 @@ MainMenu::MainMenu(zfge::GameStateManager& gameStateManager, sf::RenderTarget& m
 
 	m_gui.loadWidgetsFromFile("assets/main_menu.form");
 
-	// Settings window
-	auto settingsWindow = tgui::ChildWindow::create("Settings");
-	{
-		settingsWindow->setVisible(false);
-		settingsWindow->setPosition("(parent.innersize - size) / 2");
-
-		auto fullscreenCheckbox = tgui::CheckBox::create("Fullscreen");
-		settingsWindow->add(fullscreenCheckbox, "FullscreenCheckbox");
-		fullscreenCheckbox->onCheck([]() {
-			SettingsManager::get().setFullscreen(true);
-		});
-		fullscreenCheckbox->onUncheck([]() {
-			SettingsManager::get().setFullscreen(false);
-		});
-
-		auto resolutionDropdown = tgui::ComboBox::create();
-		resolutionDropdown->setDefaultText("Resolution");
-		settingsWindow->add(resolutionDropdown, "ResolutionDropdown");
-		resolutionDropdown->setPosition(0, fullscreenCheckbox->getSize().y);
-
-		std::ostringstream ss;
-		int i = 0;
-		for (const auto& fullscreenMode : sf::VideoMode::getFullscreenModes()) {
-			ss.str(std::string());
-
-			ss << fullscreenMode.width << 'x' << fullscreenMode.height << " BPP:" << fullscreenMode.bitsPerPixel;
-
-			resolutionDropdown->addItem(ss.str(), std::to_string(i));
-			++i;
-		}
-
-		resolutionDropdown->onItemSelect([=](tgui::String itemText, tgui::String itemId) {
-			SettingsManager::get().setResolution(itemId.toUInt());
-		});
-
-		m_gui.add(settingsWindow, "SettingsWindow");
-	}
-
-	settingsWindow->onClosing([=](bool* abort) {
-		*abort = true;
-		settingsWindow->setVisible(false);
-	});
-	// End of settings window
-
 	setVersionLabel("0.00.1");
 
 	tgui::Button::Ptr startButton = m_gui.get<tgui::Button>("StartButton");
@@ -79,9 +35,29 @@ MainMenu::MainMenu(zfge::GameStateManager& gameStateManager, sf::RenderTarget& m
 		m_gameStateManager.push<PlayState>(m_gameStateManager, m_mainWindow);
 	});
 
-	settingsButton->onClick([=](){
-		settingsWindow->setVisible(true);
-	});
+	{
+		tgui::Panel::Ptr settingsPanel = m_gui.get<tgui::Panel>("SettingsPanel");
+		tgui::Panel::Ptr menuPanel = m_gui.get<tgui::Panel>("MenuPanel");
+		settingsButton->onClick([settingsPanel, menuPanel](){
+			settingsPanel->setVisible(true);
+			menuPanel->setVisible(false);
+		});
+
+		tgui::Button::Ptr backToMainMenuButton = m_gui.get<tgui::Button>("BackToMainMenuButton");
+		backToMainMenuButton->onClick([settingsPanel, menuPanel](){
+			settingsPanel->setVisible(false);
+			menuPanel->setVisible(true);
+		});
+
+		// TODO(zndf): Complete the new settings UI
+		tgui::Button::Ptr resolutionButton = m_gui.get<tgui::Button>("ResolutionButton");
+		const sf::VideoMode& currentVideoMode = sf::VideoMode::getFullscreenModes().at(SettingsManager::get().getResolution());
+
+		std::stringstream ss;
+		ss << currentVideoMode.width << "x" << currentVideoMode.height << currentVideoMode.bitsPerPixel;
+
+		resolutionButton->setText(ss.str());
+	}
 
 	exitButton->onClick([this](){
 		m_gameStateManager.pop();

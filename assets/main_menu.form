@@ -23,6 +23,14 @@ Renderer.1 {
     TextureHover = None;
 }
 
+Renderer.3 {
+    BackgroundColor = transparent;
+    BorderColor = #3C3C3C;
+    Borders = (0, 0, 0, 0);
+    Font = "munro.ttf";
+    TextColor = #D8D8D8;
+}
+
 Renderer.2 {
     BackgroundColor = transparent;
     BorderColor = #3C3C3C;
@@ -83,6 +91,57 @@ Panel.MenuPanel {
             Size = (133, 40);
             Text = Exit;
             TextSize = 48;
+        }
+    }
+}
+
+Panel.SettingsPanel {
+    Position = (&.width - width, 0);
+    Size = (max(30%, 272), &.height);
+    Visible = False;
+
+    Renderer {
+        BackgroundColor = #020F5265;
+        BorderColor = black;
+        TextureBackground = None;
+    }
+
+    Group.Group {
+        Position = ((&.width - width) / 2, (&.height - height) / 2);
+        Size = (80%, 30%);
+
+        Renderer {
+        }
+
+        Label.SettingsLabel {
+            Text = "Settings";
+            Position = ((&.width - width) / 2, (&.height - height) / (4 / 1) - 10);
+            Renderer = &3;
+            TextSize = 48;
+        }
+
+        Button.ResolutionButton {
+            MouseCursor = Hand;
+            Position = ((&.width - width) / 2, (&.height - height) / (4 / 2));
+            Renderer = &1;
+            Text = "???x???";
+            TextSize = 32;
+        }
+
+        Button.FullscreenButton {
+            MouseCursor = Hand;
+            Position = ((&.width - width) / 2, (&.height - height) / (4 / 3));
+            Renderer = &1;
+            Text = "Fullscreen: No";
+            TextSize = 32;
+        }
+
+        Button.BackToMainMenuButton {
+            MouseCursor = Hand;
+            Position = ((&.width - width) / 2, (&.height - height) / (4 / 4));
+            Renderer = &1;
+            Text = "Back";
+            TextSize = 32;
         }
     }
 }

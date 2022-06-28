@@ -3,8 +3,9 @@
 #include "Utility/VectorConverter.hpp"
 #include "World/UnitScaling.hpp"
 
-#include <SFML/Graphics/ConvexShape.hpp>
-#include <SFML/Graphics/PrimitiveType.hpp>
+#include "SFML/Graphics.hpp"
+
+#include <array>
 
 namespace astro
 {
@@ -97,8 +98,7 @@ void Box2dDebugDraw::DrawTransform(const b2Transform &xf)
 
 	b2Vec2 xAxis = xf.p + lineLength * xf.q.GetXAxis();
 
-	std::array<sf::Vertex, 2> redLine =
-	{
+	std::array<sf::Vertex, 2> redLine = {
 		{
 			{toPixels(xf.p), sf::Color::Red},
 			{toPixels(xAxis), sf::Color::Red}

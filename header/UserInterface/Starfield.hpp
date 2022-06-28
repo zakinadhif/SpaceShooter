@@ -1,8 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/Graphics/View.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace astro
 {
