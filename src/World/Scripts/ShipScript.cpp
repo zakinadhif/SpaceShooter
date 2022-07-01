@@ -1,6 +1,6 @@
 #include "World/Scripts/ShipScript.hpp"
 
-#include "Utility/Keyboard.hpp"
+#include "Core/Keyboard.hpp"
 #include "Utility/VectorConverter.hpp"
 #include "World/World.hpp"
 #include "World/Entity.hpp"

@@ -1,4 +1,4 @@
-#include "Utility/Keyboard.hpp"
+#include "Keyboard.hpp"
 
 namespace enx
 {

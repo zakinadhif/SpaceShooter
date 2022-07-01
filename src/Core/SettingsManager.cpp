@@ -1,4 +1,4 @@
-#include "Utility/SettingsManager.hpp"
+#include "SettingsManager.hpp"
 
 #include <cassert>
 #include <iostream>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GameStates/GameState.hpp"
+#include "Core/GameState.hpp"
+#include "Core/GameStateManager.hpp"
 
-#include "GameStateManager.hpp"
 #include "World/World.hpp"
 
 namespace enx

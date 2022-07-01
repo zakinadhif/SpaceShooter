@@ -1,7 +1,7 @@
 #include "World/World.hpp"
 
 #include "Utility/Box2dDebugDraw.hpp"
-#include "Utility/Random.hpp"
+#include "Core/Random.hpp"
 #include "World/Entity.hpp"
 #include "World/Systems.hpp"
 

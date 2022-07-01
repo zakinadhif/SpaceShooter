@@ -3,7 +3,7 @@
 #include "World/World.hpp"
 #include "World/Systems.hpp"
 #include "Utility/VectorConverter.hpp"
-#include "Utility/Random.hpp"
+#include "Core/Random.hpp"
 #include "World/Components/Components.hpp"
 #include "World/Entity.hpp"
 

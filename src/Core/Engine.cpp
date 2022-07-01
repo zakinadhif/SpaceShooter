@@ -1,8 +1,8 @@
 #include "Engine.hpp"
 
 #include "GameStates/PlayState.hpp"
-#include "Utility/Keyboard.hpp"
-#include "Utility/SettingsManager.hpp"
+#include "Keyboard.hpp"
+#include "SettingsManager.hpp"
 
 #include <imgui.h>
 #include <imgui-SFML.h>

@@ -1,4 +1,4 @@
-#include "GameStates/GameState.hpp"
+#include "GameState.hpp"
 
 namespace zfge
 {
