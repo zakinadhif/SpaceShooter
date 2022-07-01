@@ -3,7 +3,7 @@
 #include <random>
 #include <cassert>
 
-namespace zfge::Random
+namespace enx::Random
 {
 	static std::uniform_int_distribution<int> uniform_int_distribution;
 	static std::uniform_real_distribution<float> uniform_float_distribution;

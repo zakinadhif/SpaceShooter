@@ -1,6 +1,6 @@
 #include "GameState.hpp"
 
-namespace zfge
+namespace enx
 {
 
 GameState::GameState()

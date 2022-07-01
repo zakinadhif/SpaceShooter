@@ -38,7 +38,7 @@ void Engine::run()
 
 	while (m_window.isOpen() && !m_gameStateManager.isEmpty())
 	{
-		zfge::GameState& currentState = m_gameStateManager.peek();
+		enx::GameState& currentState = m_gameStateManager.peek();
 
 		elapsed = timer.restart();
 		lag += elapsed;
@@ -75,7 +75,7 @@ void Engine::run()
 
 void Engine::handleEvents()
 {
-	zfge::GameState& currentState = m_gameStateManager.peek();
+	enx::GameState& currentState = m_gameStateManager.peek();
 
 	for (sf::Event event; m_window.pollEvent(event);)
 	{

@@ -6,7 +6,7 @@
 #include <vector>
 #include <queue>
 
-namespace zfge
+namespace enx
 {
 
 class GameStateManager

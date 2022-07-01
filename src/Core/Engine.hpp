@@ -20,7 +20,7 @@ public:
 private:
 	void handleEvents();
 
-	zfge::GameStateManager m_gameStateManager;
+	enx::GameStateManager m_gameStateManager;
 	sf::RenderWindow m_window;
 };
 

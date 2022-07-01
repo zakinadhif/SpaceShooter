@@ -3,7 +3,7 @@
 namespace enx
 {
 
-PlayState::PlayState(zfge::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow)
+PlayState::PlayState(enx::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow)
 	: m_gameStateManager(gameStateManager)
 	, m_world(mainWindow)
 {

@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace zfge
+namespace enx
 {
 
 GameStateManager::GameStateManager()

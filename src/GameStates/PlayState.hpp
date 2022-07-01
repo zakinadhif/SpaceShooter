@@ -8,10 +8,10 @@
 namespace enx
 {
 
-class PlayState final : public zfge::GameState
+class PlayState final : public enx::GameState
 {
 public:
-	PlayState(zfge::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow);
+	PlayState(enx::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow);
 
 	void handleEvent(sf::Event event) override;
 
@@ -21,7 +21,7 @@ public:
 	void draw(sf::RenderTarget& target) const override;
 
 private:
-	zfge::GameStateManager& m_gameStateManager;
+	enx::GameStateManager& m_gameStateManager;
 	World m_world;
 };
 

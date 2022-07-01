@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace zfge
+namespace enx
 {
 
 class GameState

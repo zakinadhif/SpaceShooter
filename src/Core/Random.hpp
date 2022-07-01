@@ -4,7 +4,7 @@
 
 #include <random>
 
-namespace zfge::Random
+namespace enx::Random
 {
 
 float getFloat();
