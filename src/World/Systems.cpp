@@ -9,7 +9,7 @@
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <Thor/Math/Trigonometry.hpp>
+#include <Thor/Math.hpp>
 #include <array>
 #include <box2d/box2d.h>
 #include <cstdint>

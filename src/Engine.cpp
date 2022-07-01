@@ -20,6 +20,9 @@ Engine::Engine()
 
 	ImGui::SFML::Init(m_window);
 
+	auto& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 	m_gameStateManager.push<PlayState>(m_gameStateManager, m_window);
 }
 
@@ -52,6 +55,7 @@ void Engine::run()
 			currentState.fixedUpdate(fixedUpdateInterval.asSeconds());
 		}
 
+		ImGui::DockSpaceOverViewport();
 		ImGui::Begin("Engine Loop Stats");
 		ImGui::LabelText("FPS", "%f", 1 / elapsed.asSeconds());
 		ImGui::LabelText("Frame Time", "%f", elapsed.asSeconds());

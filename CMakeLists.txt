@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.18.4)
 project(SpaceShooter)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS code/*.cpp)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
 add_executable("${PROJECT_NAME}" ${SOURCES})
 
@@ -30,7 +30,7 @@ target_include_directories(
 	"${PROJECT_NAME}" PRIVATE
 	"${YAML_CPP_INCLUDE_DIR}"
 	"${THOR_INCLUDE_DIR}"
-	header
+	src
 	)
 
 target_link_libraries(
