@@ -2,7 +2,7 @@
 
 #include <entt/entt.hpp>
 
-namespace astro
+namespace enx
 {
 
 class Entity
@@ -55,4 +55,4 @@ private:
 	entt::registry* m_registry { nullptr };
 };
 
-} // namespace astro
+} // namespace enx

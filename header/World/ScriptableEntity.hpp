@@ -4,7 +4,7 @@
 
 #include <SFML/Window/Event.hpp>
 
-namespace astro
+namespace enx
 {
 
 class ScriptableEntity

@@ -1,6 +1,6 @@
 #include "World/Entity.hpp"
 
-namespace astro
+namespace enx
 {
 
 Entity::Entity(entt::entity handle, entt::registry& registry)
@@ -9,4 +9,4 @@ Entity::Entity(entt::entity handle, entt::registry& registry)
 
 }
 
-} // namespace astro
+} // namespace enx

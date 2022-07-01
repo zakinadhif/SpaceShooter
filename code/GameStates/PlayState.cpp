@@ -1,6 +1,6 @@
 #include "GameStates/PlayState.hpp"
 
-namespace astro
+namespace enx
 {
 
 PlayState::PlayState(zfge::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow)

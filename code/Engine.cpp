@@ -1,16 +1,16 @@
-#include "Game.hpp"
+#include "Engine.hpp"
 
-#include "GameStates/MainMenu.hpp"
+#include "GameStates/PlayState.hpp"
 #include "Utility/Keyboard.hpp"
 #include "Utility/SettingsManager.hpp"
 
 #include <imgui.h>
 #include <imgui-SFML.h>
 
-namespace astro
+namespace enx
 {
 
-Game::Game()
+Engine::Engine()
 	: m_window(sf::VideoMode(600, 600), "SpaceShooter")
 {
 	m_window.setKeyRepeatEnabled(false);
@@ -20,10 +20,10 @@ Game::Game()
 
 	ImGui::SFML::Init(m_window);
 
-	m_gameStateManager.push<MainMenu>(m_gameStateManager, m_window);
+	m_gameStateManager.push<PlayState>(m_gameStateManager, m_window);
 }
 
-void Game::run()
+void Engine::run()
 {
 	m_gameStateManager.update();
 
@@ -52,7 +52,7 @@ void Game::run()
 			currentState.fixedUpdate(fixedUpdateInterval.asSeconds());
 		}
 
-		ImGui::Begin("Game Loop Stats");
+		ImGui::Begin("Engine Loop Stats");
 		ImGui::LabelText("FPS", "%f", 1 / elapsed.asSeconds());
 		ImGui::LabelText("Frame Time", "%f", elapsed.asSeconds());
 		ImGui::End();
@@ -69,7 +69,7 @@ void Game::run()
 		m_window.close();
 }
 
-void Game::handleEvents()
+void Engine::handleEvents()
 {
 	zfge::GameState& currentState = m_gameStateManager.peek();
 
@@ -86,7 +86,7 @@ void Game::handleEvents()
 	}
 }
 
-Game::~Game()
+Engine::~Engine()
 {
 	ImGui::SFML::Shutdown();
 }

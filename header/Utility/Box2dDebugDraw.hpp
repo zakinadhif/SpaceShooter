@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-namespace astro
+namespace enx
 {
 
 class Box2dDebugDraw final : public b2Draw
@@ -25,4 +25,4 @@ private:
 	sf::RenderTarget& m_window;
 };
 
-} // namespace astro
+} // namespace enx

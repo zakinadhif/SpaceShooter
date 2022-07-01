@@ -1,6 +1,6 @@
 #include "Utility/ColorConverter.hpp"
 
-namespace astro
+namespace enx
 {
 
 sf::Color b2ColorToSfColor(const b2Color &color)
@@ -23,4 +23,4 @@ b2Color sfColorToB2Color(const sf::Color &color)
 	);
 }
 
-} // namespace astro
+} // namespace enx

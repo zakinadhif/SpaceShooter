@@ -3,12 +3,10 @@
 #include "Utility/Box2dDebugDraw.hpp"
 #include "Utility/Random.hpp"
 #include "World/Entity.hpp"
-#include "World/EntityFactory.hpp"
 #include "World/Systems.hpp"
 
-#include "World/Components/NativeScriptComponent.hpp"
+#include "World/Components/Components.hpp"
 #include "World/Components/RigidBodyComponent.hpp"
-#include "World/Components/GameStateComponent.hpp"
 #include "World/Scripts/ShipScript.hpp"
 
 #include <entt/entt.hpp>
@@ -36,45 +34,29 @@ struct fmt::formatter<b2Vec2>
 	}
 };
 
-namespace astro
+namespace enx
 {
 
 World::World(sf::RenderTarget& mainWindow)
 	: m_physicsWorld({0,0})
 	, m_worldView(mainWindow.getDefaultView())
 	, m_mainWindow(mainWindow)
-	, m_worldSpaceMapper(mainWindow, m_worldView)
 	, m_box2dDebugDraw(mainWindow)
-	, m_asteroidBuilder(*this, m_physicsWorld)
 {
 	m_registry.set<GameStateComponent>();
 
 	m_munroFont.loadFromFile("assets/munro.ttf");
-	m_scoreDisplay.setFont(m_munroFont);
 
 	auto& gameState = m_registry.ctx<GameStateComponent>();
 	gameState.screenHeight = m_mainWindow.getDefaultView().getSize().y;
 	gameState.screenWidth = m_mainWindow.getDefaultView().getSize().x;
 
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
-	m_physicsWorld.SetContactListener(&m_contactListener);
 
 	m_worldView.setCenter(0,0);
 
 	m_registry.on_destroy<NativeScriptComponent>().connect<&World::deallocateNscInstance>();
 	m_registry.on_destroy<RigidBodyComponent>().connect<&World::deallocateB2BodyInstance>();
-
-	auto ship = Entity{ spawnShip(*this, {0, -2}, &m_physicsWorld), m_registry };
-	auto& shipScript = ship.addComponent<NativeScriptComponent>();
-
-	shipScript.bind<ShipScript>(m_worldSpaceMapper, *this, m_physicsWorld);
-
-	m_asteroidBuilder.spawn();
-}
-
-const CoordinateSpaceMapper& World::getWorldSpaceMapper() const
-{
-	return m_worldSpaceMapper;
 }
 
 Entity World::createEntity()
@@ -115,28 +97,8 @@ void World::update(float deltaTime)
 		nsc.instance->onUpdate(deltaTime);
 	}
 
-	clearShotAsteroids(m_registry);
-	clearCollidedBullets(m_registry);
-	
-	const double asteroidSpawnChance = 0.01f;
-	if (zfge::Random::getBool(asteroidSpawnChance))
-	{
-		const auto size = m_worldView.getSize();
-		const auto center = m_worldView.getCenter();
-		const sf::FloatRect spawnArea
-		{
-			center.x - (size.x / 2),
-			center.y - (size.y / 2),
-			size.x,
-			size.y
-		};
-
-		spawnAsteroidsRandomly(*this, m_asteroidBuilder, spawnArea);
-	}
-
 	displayComponentInspector(m_registry);
 	displayEntityList(m_registry);
-	m_scoreDisplay.update(m_registry);
 }
 
 void World::fixedUpdate(float deltaTime)
@@ -163,7 +125,6 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.setView(m_worldView);
 
 	drawEntities(m_registry, target);
-	target.draw(m_scoreDisplay);
 
 	m_physicsWorld.DebugDraw();
 

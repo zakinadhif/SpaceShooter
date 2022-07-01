@@ -11,7 +11,7 @@ namespace sf
 	typedef Vector2<float> Vector2f;
 }
 
-namespace astro
+namespace enx
 {
 	b2Vec2 toMeters(const sf::Vector2f& pixels);
 	sf::Vector2f toPixels(const b2Vec2& meters);

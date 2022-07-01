@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "Game.hpp"
+#include "Engine.hpp"
 
 int main()
 {
-	astro::Game game;
+	enx::Engine game;
 	game.run();
 }

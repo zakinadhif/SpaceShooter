@@ -5,7 +5,7 @@
 #include "GameStateManager.hpp"
 #include "World/World.hpp"
 
-namespace astro
+namespace enx
 {
 
 class PlayState final : public zfge::GameState

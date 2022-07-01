@@ -7,7 +7,7 @@
 
 #include <array>
 
-namespace astro
+namespace enx
 {
 
 Box2dDebugDraw::Box2dDebugDraw(sf::RenderTarget& window)
@@ -126,4 +126,4 @@ void Box2dDebugDraw::DrawPoint(const b2Vec2 &p, float size, const b2Color &color
 	m_window.draw(&point, 1, sf::Points);
 }
 
-} // namespace astro
+} // namespace enx

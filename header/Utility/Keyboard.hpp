@@ -4,7 +4,7 @@
 
 #include <array>
 
-namespace astro
+namespace enx
 {
 
 class Keyboard
@@ -19,7 +19,7 @@ private:
 
 	static std::array<bool, static_cast<std::size_t>(sf::Keyboard::Key::KeyCount)> m_states;
 
-	friend class Game;
+	friend class Engine;
 };
 
 }

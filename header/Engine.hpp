@@ -2,17 +2,20 @@
 
 #include "GameStateManager.hpp"
 
-namespace astro
+namespace enx
 {
 
-class Game
+class Engine
 {
 public:
-	Game();
+	Engine();
+
+	template<class T>
+	void pushGameState();
 
 	void run();
 
-	~Game();
+	~Engine();
 
 private:
 	void handleEvents();

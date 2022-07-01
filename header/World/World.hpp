@@ -1,10 +1,6 @@
 #pragma once
 
 #include "Utility/Box2dDebugDraw.hpp"
-#include "World/CoordinateSpaceMapper.hpp"
-#include "World/Builders/AsteroidBuilder.hpp"
-#include "World/ContactListener.hpp"
-#include "UserInterface/ScoreDisplay.hpp"
 
 #include <Thor/Shapes/ConcaveShape.hpp>
 
@@ -16,7 +12,7 @@
 #include <entt/entity/registry.hpp>
 #include <box2d/b2_world.h>
 
-namespace astro
+namespace enx
 {
 
 class Entity;
@@ -25,8 +21,6 @@ class World : public sf::Drawable
 {
 public:
 	World(sf::RenderTarget& mainWindow);
-
-	const CoordinateSpaceMapper& getWorldSpaceMapper() const;
 
 	Entity createEntity();
 
@@ -47,15 +41,9 @@ private:
 
 	sf::RenderTarget& m_mainWindow;
 
-	CoordinateSpaceMapper m_worldSpaceMapper;
 	Box2dDebugDraw m_box2dDebugDraw;
-	ContactListener m_contactListener;
 
 	entt::registry m_registry;
-
-	AsteroidBuilder m_asteroidBuilder;
-
-	ScoreDisplay m_scoreDisplay;
 	sf::Font m_munroFont;
 
 private:

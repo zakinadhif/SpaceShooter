@@ -5,7 +5,7 @@
 
 #include <box2d/box2d.h>
 
-namespace astro
+namespace enx
 {
 	void RigidBodyComponent::setTransform(const sf::Vector2f& position, float angle)
 	{

@@ -5,7 +5,7 @@
 class b2Body;
 class b2Transform;
 
-namespace astro
+namespace enx
 {
 
 struct RigidBodyComponent
@@ -39,4 +39,4 @@ struct RigidBodyComponent
 	sf::Vector2f getLinearVelocityFromLocalPoint(const sf::Vector2f& localPoint) const;
 };
 
-} // namespace astro
+} // namespace enx
