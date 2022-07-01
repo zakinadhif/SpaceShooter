@@ -1,6 +1,6 @@
 #pragma once
 
-#include "World/ScriptableEntity.hpp"
+#include "Scene/ScriptableEntity.hpp"
 
 #include "box2d/b2_math.h"
 
@@ -12,13 +12,13 @@ class b2World;
 namespace enx
 {
 
-class World;
+class Scene;
 class Entity;
 
 class ShipScript final : public ScriptableEntity
 {
 public:
-	ShipScript(World& world, b2World& physicsWorld);
+	ShipScript(Scene& world, b2World& physicsWorld);
 
 	void onCreate() override;
 	void onDestroy() override;

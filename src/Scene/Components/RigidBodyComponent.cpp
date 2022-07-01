@@ -1,5 +1,5 @@
-#include "World/Components/RigidBodyComponent.hpp"
-#include "World/UnitScaling.hpp"
+#include "Scene/Components/RigidBodyComponent.hpp"
+#include "Scene/UnitScaling.hpp"
 
 #include "Utility/VectorConverter.hpp"
 

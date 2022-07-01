@@ -1,11 +1,11 @@
-#include "World/Scripts/ShipScript.hpp"
+#include "Scene/Scripts/ShipScript.hpp"
 
 #include "Core/Keyboard.hpp"
 #include "Utility/VectorConverter.hpp"
-#include "World/World.hpp"
-#include "World/Entity.hpp"
-#include "World/UnitScaling.hpp"
-#include "World/Components/RigidBodyComponent.hpp"
+#include "Scene/Scene.hpp"
+#include "Scene/Entity.hpp"
+#include "Scene/UnitScaling.hpp"
+#include "Scene/Components/RigidBodyComponent.hpp"
 
 #include <SFML/Window/Mouse.hpp>
 #include <Thor/Math.hpp>
@@ -16,7 +16,7 @@
 namespace enx
 {
 
-ShipScript::ShipScript(World& world, b2World& physicsWorld)
+ShipScript::ShipScript(Scene& world, b2World& physicsWorld)
 //	: m_coordinateMapper(&coordinateMapper)
 //	, m_bulletBuilder(world, physicsWorld)
 {

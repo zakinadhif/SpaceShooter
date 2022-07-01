@@ -1,6 +1,6 @@
 #pragma once
 
-#include "World/ScriptableEntity.hpp"
+#include "Scene/ScriptableEntity.hpp"
 
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Vertex.hpp>

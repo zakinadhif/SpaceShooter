@@ -1,13 +1,13 @@
-#include "World/World.hpp"
+#include "Scene/Scene.hpp"
 
 #include "Utility/Box2dDebugDraw.hpp"
 #include "Core/Random.hpp"
-#include "World/Entity.hpp"
-#include "World/Systems.hpp"
+#include "Scene/Entity.hpp"
+#include "Scene/Systems.hpp"
 
-#include "World/Components/Components.hpp"
-#include "World/Components/RigidBodyComponent.hpp"
-#include "World/Scripts/ShipScript.hpp"
+#include "Scene/Components/Components.hpp"
+#include "Scene/Components/RigidBodyComponent.hpp"
+#include "Scene/Scripts/ShipScript.hpp"
 
 #include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
@@ -37,7 +37,7 @@ struct fmt::formatter<b2Vec2>
 namespace enx
 {
 
-World::World(sf::RenderTarget& mainWindow)
+Scene::Scene(sf::RenderTarget& mainWindow)
 	: m_physicsWorld({0,0})
 	, m_worldView(mainWindow.getDefaultView())
 	, m_mainWindow(mainWindow)
@@ -55,16 +55,16 @@ World::World(sf::RenderTarget& mainWindow)
 
 	m_worldView.setCenter(0,0);
 
-	m_registry.on_destroy<NativeScriptComponent>().connect<&World::deallocateNscInstance>();
-	m_registry.on_destroy<RigidBodyComponent>().connect<&World::deallocateB2BodyInstance>();
+	m_registry.on_destroy<NativeScriptComponent>().connect<&Scene::deallocateNscInstance>();
+	m_registry.on_destroy<RigidBodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
 }
 
-Entity World::createEntity()
+Entity Scene::createEntity()
 {
 	return Entity{ m_registry.create(), m_registry };
 }
 
-void World::handleEvent(const sf::Event& event)
+void Scene::handleEvent(const sf::Event& event)
 {
 	auto view = m_registry.view<NativeScriptComponent>();
 
@@ -79,7 +79,7 @@ void World::handleEvent(const sf::Event& event)
 	}
 }
 
-void World::update(float deltaTime)
+void Scene::update(float deltaTime)
 {
 	auto view = m_registry.view<NativeScriptComponent>();
 
@@ -101,7 +101,7 @@ void World::update(float deltaTime)
 	displayEntityList(m_registry);
 }
 
-void World::fixedUpdate(float deltaTime)
+void Scene::fixedUpdate(float deltaTime)
 {
 	auto view = m_registry.view<NativeScriptComponent>();
 
@@ -118,7 +118,7 @@ void World::fixedUpdate(float deltaTime)
 	m_physicsWorld.Step(deltaTime, m_velocityIterations, m_positionIterations);
 }
 
-void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	sf::View lastView = target.getView();
 
@@ -131,7 +131,7 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.setView(lastView);
 }
 
-void World::deallocateNscInstance(entt::registry& registry, entt::entity entity)
+void Scene::deallocateNscInstance(entt::registry& registry, entt::entity entity)
 {
 	auto& nsc = registry.get<NativeScriptComponent>(entity);
 
@@ -142,7 +142,7 @@ void World::deallocateNscInstance(entt::registry& registry, entt::entity entity)
 	}
 }
 
-void World::deallocateB2BodyInstance(entt::registry& registry, entt::entity entity)
+void Scene::deallocateB2BodyInstance(entt::registry& registry, entt::entity entity)
 {
 	auto& rb = registry.get<RigidBodyComponent>(entity);
 
@@ -163,7 +163,7 @@ void World::deallocateB2BodyInstance(entt::registry& registry, entt::entity enti
 	}
 }
 
-World::~World()
+Scene::~Scene()
 {
 	m_registry.clear();
 }

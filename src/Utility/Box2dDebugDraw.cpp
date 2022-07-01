@@ -1,7 +1,7 @@
 #include "Utility/Box2dDebugDraw.hpp"
 #include "Utility/ColorConverter.hpp"
 #include "Utility/VectorConverter.hpp"
-#include "World/UnitScaling.hpp"
+#include "Scene/UnitScaling.hpp"
 
 #include "SFML/Graphics.hpp"
 

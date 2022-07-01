@@ -1,4 +1,4 @@
-#include "World/Entity.hpp"
+#include "Scene/Entity.hpp"
 
 namespace enx
 {

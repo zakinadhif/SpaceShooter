@@ -3,7 +3,7 @@
 #include "Core/GameState.hpp"
 #include "Core/GameStateManager.hpp"
 
-#include "World/World.hpp"
+#include "Scene/Scene.hpp"
 
 namespace enx
 {
@@ -22,7 +22,7 @@ public:
 
 private:
 	enx::GameStateManager& m_gameStateManager;
-	World m_world;
+	Scene m_world;
 };
 
 }

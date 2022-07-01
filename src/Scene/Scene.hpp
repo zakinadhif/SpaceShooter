@@ -17,10 +17,10 @@ namespace enx
 
 class Entity;
 
-class World : public sf::Drawable
+class Scene : public sf::Drawable
 {
 public:
-	World(sf::RenderTarget& mainWindow);
+	Scene(sf::RenderTarget& mainWindow);
 
 	Entity createEntity();
 
@@ -30,7 +30,7 @@ public:
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	~World();
+	~Scene();
 
 private:
 	const int m_velocityIterations = 6;

@@ -1,11 +1,11 @@
-#include "World/Components/Components.hpp"
-#include "World/Components/RigidBodyComponent.hpp"
-#include "World/World.hpp"
-#include "World/Systems.hpp"
+#include "Scene/Components/Components.hpp"
+#include "Scene/Components/RigidBodyComponent.hpp"
+#include "Scene/Scene.hpp"
+#include "Scene/Systems.hpp"
 #include "Utility/VectorConverter.hpp"
 #include "Core/Random.hpp"
-#include "World/Components/Components.hpp"
-#include "World/Entity.hpp"
+#include "Scene/Components/Components.hpp"
+#include "Scene/Entity.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>

@@ -6,7 +6,7 @@
 
 namespace enx
 {
-	class World;
+	class Scene;
 
 	void drawEntities(const entt::registry& registry, sf::RenderTarget& target);
 	void displayComponentInspector(entt::registry& registry);

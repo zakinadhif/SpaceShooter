@@ -1,6 +1,6 @@
 #pragma once
 
-#include "World/Entity.hpp"
+#include "Scene/Entity.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -29,7 +29,7 @@ protected:
 
 private:
 	Entity m_entity;
-	friend class World;
+	friend class Scene;
 };
 
 }
