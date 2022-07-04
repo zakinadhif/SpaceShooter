@@ -1,8 +1,9 @@
 #include "Engine.hpp"
 
+#include "Core/Screen.hpp"
 #include "GameStates/PlayState.hpp"
 #include "Keyboard.hpp"
-#include "SettingsManager.hpp"
+#include "Screen.hpp"
 
 #include <imgui.h>
 #include <imgui-SFML.h>
@@ -11,12 +12,14 @@ namespace enx
 {
 
 Engine::Engine()
-	: m_window(sf::VideoMode(600, 600), "SpaceShooter")
 {
+	Screen::initialize(m_window);
+	Screen::setWindowSize({600, 600});
+	Screen::setTitle("Egienx");
+	Screen::apply();
+
 	m_window.setKeyRepeatEnabled(false);
 	m_window.setFramerateLimit(60);
-
-	SettingsManager::initialize(m_window);
 
 	ImGui::SFML::Init(m_window);
 

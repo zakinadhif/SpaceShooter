@@ -1,5 +1,5 @@
-- Rehaul directory structure
-  - Rename World into Scene
-- Separate engine from game state manager initialization (put gameStateManager initalization in CLIENT)
-- Write Screen
+- [x] Rehaul directory structure
+  - [x] Rename World into Scene
+- [x] Write Screen
 - Write Time
+- Separate engine from game state manager initialization (put gameStateManager initalization in CLIENT)
