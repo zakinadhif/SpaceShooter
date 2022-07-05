@@ -1,7 +1,10 @@
 #include "Engine.hpp"
 
+extern void initializeGameState(enx::Engine& engine);
+
 int main()
 {
-	enx::Engine game;
-	game.run();
+	enx::Engine engine;
+	initializeGameState(engine);
+	engine.run();
 }

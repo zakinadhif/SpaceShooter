@@ -25,8 +25,6 @@ Engine::Engine()
 
 	auto& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-	m_gameStateManager.push<PlayState>(m_gameStateManager, m_window);
 }
 
 void Engine::run()

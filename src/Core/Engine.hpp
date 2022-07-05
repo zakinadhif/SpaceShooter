@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GameStateManager.hpp"
+#include <cassert>
+#include <type_traits>
 
 namespace enx
 {
@@ -11,7 +13,7 @@ public:
 	Engine();
 
 	template<class T>
-	void pushGameState();
+	void attach();
 
 	void run();
 
@@ -20,8 +22,19 @@ public:
 private:
 	void handleEvents();
 
-	enx::GameStateManager m_gameStateManager;
+	GameStateManager m_gameStateManager;
 	sf::RenderWindow m_window;
 };
+
+template <class T>
+void Engine::attach()
+{
+	static_assert(
+		std::is_constructible<T, GameStateManager&, sf::RenderTarget&>{},
+		"GameState must be constructible with GameStateManager& and sf::RenderTarget&"
+	);
+
+	m_gameStateManager.push<T>(m_gameStateManager, m_window);
+}
 
 }
