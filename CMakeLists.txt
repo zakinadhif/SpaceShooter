@@ -1,13 +1,7 @@
 cmake_minimum_required(VERSION 3.18.4)
 
-project(SpaceShooter)
+project(Egienx)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
-
-add_executable("${PROJECT_NAME}" ${SOURCES})
-
-add_compile_options(-Wall -Wextra -pedantic -Werror -Og)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
@@ -18,26 +12,67 @@ find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
 find_package(ImGui-SFML REQUIRED)
 find_package(EnTT REQUIRED)
 
+# Egienx
+file(GLOB_RECURSE EGIENX_SOURCES CONFIGURE_DEPENDS src/Egienx/*.cpp)
+
+add_library(egienx ${EGIENX_SOURCES})
+
+target_compile_options(
+	egienx PRIVATE
+	-Wall -Wextra -pedantic -Og
+	)
+
 target_compile_features(
-	${PROJECT_NAME} PRIVATE
+	egienx PUBLIC
 	cxx_std_20
 	)
 
 target_include_directories(
-	"${PROJECT_NAME}" PRIVATE
+	egienx
+	PRIVATE
 	"${YAML_CPP_INCLUDE_DIR}"
-	src
+	PUBLIC
+	src/Egienx
 	)
 
 target_link_libraries(
-	"${PROJECT_NAME}"
-	PRIVATE
-	"${YAML_CPP_LIBRARIES}"
+	egienx
+	PUBLIC
 	sfml-graphics
 	sfml-window
 	sfml-system
+	PRIVATE
+	"${YAML_CPP_LIBRARIES}"
 	spdlog::spdlog
 	ImGui-SFML::ImGui-SFML
 	box2d::box2d
 	EnTT::EnTT
 	)
+
+# Egnitor
+file(GLOB_RECURSE EGNITOR_SOURCES CONFIGURE_DEPENDS src/Egnitor/*.cpp)
+
+add_executable(egnitor ${EGNITOR_SOURCES})
+
+target_compile_options(
+	egnitor PRIVATE
+	-Wall -Wextra -pedantic -Og
+	)
+
+target_compile_features(
+	egnitor PUBLIC
+	cxx_std_20
+	)
+
+target_include_directories(
+	egnitor
+	PRIVATE
+	src/Egnitor
+	)
+
+target_link_libraries(
+	egnitor
+	PRIVATE
+	egienx
+	)
+
