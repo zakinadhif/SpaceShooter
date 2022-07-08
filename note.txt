@@ -1,0 +1,2 @@
+- Minimize boilerplate codes in end user codes.
+- Choose the simplest way to code something.

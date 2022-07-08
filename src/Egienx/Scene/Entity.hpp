@@ -10,7 +10,9 @@ class Entity
 public:
 	Entity() = default;
 	Entity(entt::entity handle, entt::registry& registry);
+
 	Entity(const Entity& other) = default;
+	Entity& operator=(const Entity& other) = default;
 
 	template<typename T, typename... Args>
 	T& addComponent(Args&&... args)
