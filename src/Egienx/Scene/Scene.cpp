@@ -28,10 +28,6 @@ Scene::Scene(sf::RenderTarget& mainWindow)
 
 	m_munroFont.loadFromFile("assets/munro.ttf");
 
-	auto& gameState = m_registry.ctx<GameStateComponent>();
-	gameState.screenHeight = m_mainWindow.getDefaultView().getSize().y;
-	gameState.screenWidth = m_mainWindow.getDefaultView().getSize().x;
-
 	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
 
 	m_worldView.setCenter(0,0);

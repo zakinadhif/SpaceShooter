@@ -19,25 +19,15 @@ class Vertex;
 namespace enx
 {
 
-struct IdentifierComponent
+struct IDComponent
 {
-	std::string name;
+	uint64_t id {};
 };
-
-// struct IDComponent
-// {
-// 	UUID id;
-// };
 
 struct GameStateComponent
 {
-	float score = 0.f;
-	int health = 3.f;
-
-	int screenWidth = 0.f;
-	int screenHeight = 0.f;
-
-	uint32_t selectedEntity = 0;
+	uint64_t lastEntityId = 0;
+	uint64_t selectedEntity = 0;
 };
 
 struct TagComponent
@@ -76,5 +66,51 @@ struct NativeScriptComponent
 		destroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; };
 	}
 };
+
+struct RigidbodyComponent
+{
+	enum class BodyType { Static = 0, Dynamic, Kinematic };
+	BodyType type = BodyType::Static;
+	bool fixedRotation = false;
+
+	// Storage for runtime
+	void* runtimeBody = nullptr;
+};
+
+struct BoxColliderComponent
+{
+	sf::Vector2f offset = {};
+	sf::Vector2f size = { 0.5f, 0.5f };
+
+	float density = 1.0f;
+	float friction = 0.5f;
+	float restitution = 0.0f;
+	float restitutionThreshold = 0.5f;
+
+	void* runtimeFixture = nullptr;
+};
+
+struct CircleColliderComponent
+{
+	sf::Vector2f offset = {};
+	float radius = 0.5f;
+
+	float density = 1.0f;
+	float friction = 0.5f;
+	float restitution = 0.0f;
+	float restitutionThreshold = 0.5f;
+
+	void* runtimeFixture = nullptr;
+};
+
+template <typename... Components>
+struct ComponentGroup
+{
+};
+
+using AllComponents =
+	ComponentGroup<IDComponent, TagComponent, MeshComponent,
+		OwningMeshComponent, NativeScriptComponent, RigidbodyComponent,
+		BoxColliderComponent, CircleColliderComponent>;
 
 } // namespace enx
