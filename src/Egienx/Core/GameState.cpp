@@ -23,4 +23,9 @@ void GameState::handleEvent([[maybe_unused]] sf::Event event)
 
 }
 
+void GameState::imGuiDraw()
+{
+
+}
+
 }

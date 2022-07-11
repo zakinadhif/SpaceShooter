@@ -15,6 +15,7 @@ public:
 
 	virtual void handleEvent(sf::Event event);
 	virtual void draw(sf::RenderTarget& target) const = 0;
+	virtual void imGuiDraw();
 
 	virtual ~GameState() = default;
 };

@@ -19,6 +19,7 @@ public:
 	void fixedUpdate(float deltaTime) override;
 
 	void draw(sf::RenderTarget& target) const override;
+	void imGuiDraw() override;
 
 private:
 	enx::GameStateManager& m_gameStateManager;

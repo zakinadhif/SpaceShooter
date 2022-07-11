@@ -45,8 +45,6 @@ void Engine::run()
 
 		handleEvents();
 
-		ImGui::SFML::Update(m_window, elapsed);
-
 		currentState.update(elapsed.asSeconds());
 
 		while (lag >= fixedUpdateInterval)
@@ -55,15 +53,23 @@ void Engine::run()
 			currentState.fixedUpdate(fixedUpdateInterval.asSeconds());
 		}
 
+		sf::CircleShape shape;
+		shape.setRadius(100);
+
+		m_window.clear();
+
+		currentState.draw(m_window);
+
+		ImGui::SFML::Update(m_window, elapsed);
 		ImGui::DockSpaceOverViewport();
 		ImGui::Begin("Engine Loop Stats");
 		ImGui::LabelText("FPS", "%f", 1 / elapsed.asSeconds());
 		ImGui::LabelText("Frame Time", "%f", elapsed.asSeconds());
 		ImGui::End();
 
-		m_window.clear();
-		currentState.draw(m_window);
+		currentState.imGuiDraw();
 		ImGui::SFML::Render(m_window);
+
 		m_window.display();
 
 		m_gameStateManager.update();
@@ -76,17 +82,44 @@ void Engine::run()
 void Engine::handleEvents()
 {
 	enx::GameState& currentState = m_gameStateManager.peek();
+	ImGuiIO& io = ImGui::GetIO();
 
 	for (sf::Event event; m_window.pollEvent(event);)
 	{
+		bool shouldPass = true;
+
 		ImGui::SFML::ProcessEvent(event);
 
-		if (event.type == sf::Event::KeyPressed)
-			Keyboard::setKey(event.key.code, true);
-		else if (event.type == sf::Event::KeyReleased)
-			Keyboard::setKey(event.key.code, false);
+		switch(event.type) {
+			case sf::Event::KeyPressed:
+				if (io.WantCaptureKeyboard) {
+					shouldPass = false;
+				} else {
+					Keyboard::setKey(event.key.code, true);
+				}
+				break;
+			case sf::Event::KeyReleased:
+				if (io.WantCaptureKeyboard) {
+					shouldPass = false;
+				} else {
+					Keyboard::setKey(event.key.code, false);
+				}
+				break;
+			case sf::Event::MouseButtonPressed:
+				if (io.WantCaptureMouse) {
+					shouldPass = false;
+				}
+				break;
+			case sf::Event::MouseButtonReleased:
+				if (io.WantCaptureMouse) {
+					shouldPass = false;
+				}
+				break;
+			default:
+				break;
+		}
 
-		currentState.handleEvent(event);
+		if (shouldPass) currentState.handleEvent(event);
 	}
 }
 

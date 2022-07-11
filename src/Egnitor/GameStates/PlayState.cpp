@@ -39,7 +39,6 @@ void PlayState::update(float deltaTime)
 			m_world.updateScripts(deltaTime);
 			break;
 	}
-	m_world.drawEditorInterface();
 }
 
 void PlayState::fixedUpdate(float deltaTime)
@@ -56,6 +55,11 @@ void PlayState::fixedUpdate(float deltaTime)
 			m_world.fixedUpdatePhysics(deltaTime);
 			break;
 	}
+}
+
+void PlayState::imGuiDraw()
+{
+	m_world.drawEditorInterface();
 }
 
 void PlayState::draw(sf::RenderTarget& target) const
