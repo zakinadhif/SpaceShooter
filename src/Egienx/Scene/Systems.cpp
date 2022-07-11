@@ -84,14 +84,15 @@ std::tuple<Comps*...> getComponentPointers(entt::registry& registry, entt::entit
 	return std::make_tuple(fillTuple<Comps>(registry, entity)...);
 }
 
-void displayComponentInfo(IdentifierComponent* ic) {
+void displayComponentInfo(TagComponent* ic) {
 	if (ImGui::TreeNode("Identifier Component")) {
 		if (ic) {
-			ImGui::LabelText("Name", "%s", ic->name.c_str());
+			ImGui::LabelText("Name", "%s", ic->tag.c_str());
 		}
 		ImGui::TreePop();
 	}
 }
+void displayComponentInfo(IDComponent*) {}
 void displayComponentInfo(TransformComponent*) {}
 void displayComponentInfo(MeshComponent*) {}
 void displayComponentInfo(OwningMeshComponent*) {}
@@ -118,8 +119,9 @@ void displayEntityList(entt::registry &registry) {
 	auto& selectedEntity = registry.ctx<GameStateComponent>().selectedEntity;
 
 	registry.each([&](entt::entity entity) {
-		if (auto ic = registry.try_get<IdentifierComponent>(entity)) {
-			if (ImGui::Selectable(ic->name.c_str(), selectedEntity == (uint32_t) entity)) {
+		if (auto ic = registry.try_get<IDComponent>(entity)) {
+			std::string id = std::to_string(ic->id);
+			if (ImGui::Selectable(id.c_str(), selectedEntity == (uint32_t) entity)) {
 				selectedEntity = (uint32_t) entity;
 			}
 		} else {
@@ -145,7 +147,8 @@ void displayComponentInspector(entt::registry& registry)
 
 	if (registry.valid(entity)) {
 		const auto componentPointers = getComponentPointers<
-			IdentifierComponent,
+			IDComponent,
+			TagComponent,
 			TransformComponent,
 			MeshComponent,
 			OwningMeshComponent,

@@ -25,9 +25,12 @@ public:
 	Entity createEntity();
 
 	void handleEvent(const sf::Event& handleEvent);
-	void update(float deltaTime);
-	void fixedUpdate(float deltaTime);
 
+	void updateScripts(float deltaTime);
+	void fixedUpdateScripts(float deltaTime);
+	void fixedUpdatePhysics(float deltaTime);
+
+	void drawEditorInterface();
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	~Scene();

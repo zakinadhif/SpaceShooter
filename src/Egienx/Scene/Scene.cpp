@@ -56,7 +56,7 @@ void Scene::handleEvent(const sf::Event& event)
 	}
 }
 
-void Scene::update(float deltaTime)
+void Scene::updateScripts(float deltaTime)
 {
 	auto view = m_registry.view<NativeScriptComponent>();
 
@@ -73,12 +73,9 @@ void Scene::update(float deltaTime)
 
 		nsc.instance->onUpdate(deltaTime);
 	}
-
-	displayComponentInspector(m_registry);
-	displayEntityList(m_registry);
 }
 
-void Scene::fixedUpdate(float deltaTime)
+void Scene::fixedUpdateScripts(float deltaTime)
 {
 	auto view = m_registry.view<NativeScriptComponent>();
 
@@ -91,8 +88,17 @@ void Scene::fixedUpdate(float deltaTime)
 			nsc.instance->onFixedUpdate(deltaTime);
 		}
 	}
+}
 
+void Scene::fixedUpdatePhysics(float deltaTime)
+{
 	m_physicsWorld.Step(deltaTime, m_velocityIterations, m_positionIterations);
+}
+
+void Scene::drawEditorInterface()
+{
+	displayComponentInspector(m_registry);
+	displayEntityList(m_registry);
 }
 
 void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const

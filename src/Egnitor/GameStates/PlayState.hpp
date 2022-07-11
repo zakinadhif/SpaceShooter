@@ -23,6 +23,9 @@ public:
 private:
 	enx::GameStateManager& m_gameStateManager;
 	Scene m_world;
+
+	enum class SceneState { Edit = 0, Simulate, Runtime };
+	SceneState m_sceneState = SceneState::Simulate;
 };
 
 }
