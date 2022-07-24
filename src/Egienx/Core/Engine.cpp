@@ -64,6 +64,7 @@ void Engine::run()
 		m_gameStateManager.update();
 
 		Time::markEndOfFrame();
+		Keyboard::clearKeyStates();
 	}
 
 	if (m_window.isOpen())
