@@ -6,10 +6,10 @@
 #include "Core/Random.hpp"
 #include "Scene/Components/Components.hpp"
 #include "Scene/Entity.hpp"
+#include "Patch/Thor.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <Thor/Math.hpp>
 #include <array>
 #include <box2d/box2d.h>
 #include <cstdint>
@@ -116,7 +116,7 @@ inline typename std::enable_if<I < sizeof...(Tp), void>::type displayComponentsI
 void displayEntityList(entt::registry &registry) {
 	ImGui::Begin("Entity List");
 
-	auto& selectedEntity = registry.ctx<GameStateComponent>().selectedEntity;
+	auto& selectedEntity = registry.ctx().at<GameStateComponent>().selectedEntity;
 
 	registry.each([&](entt::entity entity) {
 		if (auto ic = registry.try_get<IDComponent>(entity)) {
@@ -139,7 +139,7 @@ void displayEntityList(entt::registry &registry) {
 void displayComponentInspector(entt::registry& registry)
 {
 	const std::size_t componentCount = 7;
-	const uint32_t selectedEntity = registry.ctx<GameStateComponent>().selectedEntity;
+	const uint32_t selectedEntity = registry.ctx().at<GameStateComponent>().selectedEntity;
 
 	ImGui::Begin("Component Inspector");
 

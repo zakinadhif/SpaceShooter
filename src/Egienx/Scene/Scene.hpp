@@ -2,14 +2,12 @@
 
 #include "Utility/Box2dDebugDraw.hpp"
 
-#include <Thor/Shapes/ConcaveShape.hpp>
-
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <entt/entity/registry.hpp>
+#include <entt/entt.hpp>
 #include <box2d/b2_world.h>
 
 namespace enx

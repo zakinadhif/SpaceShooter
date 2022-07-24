@@ -8,7 +8,6 @@
 #include "Scene/Components/RigidBodyComponent.hpp"
 
 #include <SFML/Window/Mouse.hpp>
-#include <Thor/Math.hpp>
 #include <box2d/box2d.h>
 #include <imgui.h>
 #include <spdlog/spdlog.h>

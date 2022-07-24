@@ -24,7 +24,7 @@ Scene::Scene(sf::RenderTarget& mainWindow)
 	, m_mainWindow(mainWindow)
 	, m_box2dDebugDraw(mainWindow)
 {
-	m_registry.set<GameStateComponent>();
+	m_registry.ctx().emplace<GameStateComponent>();
 
 	m_munroFont.loadFromFile("assets/munro.ttf");
 
