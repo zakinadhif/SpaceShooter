@@ -3,6 +3,7 @@
 #include "Core/Screen.hpp"
 #include "Keyboard.hpp"
 #include "Screen.hpp"
+#include "Time.hpp"
 
 #include <imgui.h>
 #include <imgui-SFML.h>
@@ -30,38 +31,29 @@ void Engine::run()
 {
 	m_gameStateManager.update();
 
-	const sf::Time fixedUpdateInterval = sf::seconds(1.0f / 60.0f);
-
-	sf::Clock timer;
-	sf::Time elapsed = sf::Time::Zero;
-	sf::Time lag = sf::Time::Zero;
-
 	while (m_window.isOpen() && !m_gameStateManager.isEmpty())
 	{
+		sf::Time deltaTime = Time::getDeltaTime();
 		enx::GameState& currentState = m_gameStateManager.peek();
-
-		elapsed = timer.restart();
-		lag += elapsed;
 
 		handleEvents();
 
-		currentState.update(elapsed.asSeconds());
+		currentState.update(deltaTime.asSeconds());
 
-		while (lag >= fixedUpdateInterval)
+		while (Time::shouldFixedUpdate())
 		{
-			lag -= fixedUpdateInterval;
-			currentState.fixedUpdate(fixedUpdateInterval.asSeconds());
+			currentState.fixedUpdate(Time::getFixedDeltaTime().asSeconds());
 		}
 
 		m_window.clear();
 
 		currentState.draw(m_window);
 
-		ImGui::SFML::Update(m_window, elapsed);
+		ImGui::SFML::Update(m_window, deltaTime);
 		ImGui::DockSpaceOverViewport();
 		ImGui::Begin("Engine Loop Stats");
-		ImGui::LabelText("FPS", "%f", 1 / elapsed.asSeconds());
-		ImGui::LabelText("Frame Time", "%f", elapsed.asSeconds());
+		ImGui::LabelText("FPS", "%f", 1 / deltaTime.asSeconds());
+		ImGui::LabelText("Frame Time", "%f", deltaTime.asSeconds());
 		ImGui::End();
 
 		currentState.imGuiDraw();
@@ -71,6 +63,7 @@ void Engine::run()
 
 		m_gameStateManager.update();
 
+		Time::markEndOfFrame();
 		Keyboard::clearKeyStates();
 	}
 
