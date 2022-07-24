@@ -9,14 +9,43 @@
 #include "Scene/Components/RigidBodyComponent.hpp"
 #include "Scene/Scripts/ShipScript.hpp"
 
+#include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
 #include <imgui.h>
 
 #include <iostream>
+#include <unordered_map>
 
 namespace enx
 {
+
+template<typename... Component>
+static void copyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<IDComponent::IDType, entt::entity>& enttMap)
+{
+	([&]()
+	{
+		auto view = src.view<Component>();
+		for (auto srcEntity : view)
+		{
+			entt::entity dstEntity = enttMap.at(src.get<IDComponent>(srcEntity).id);
+
+			auto& srcComponent = src.get<Component>(srcEntity);
+			dst.emplace_or_replace<Component>(dstEntity, srcComponent);
+		}
+	}(), ...);
+}
+
+template<typename... Component>
+static void copyComponent(
+		ComponentGroup<Component...>,
+		entt::registry& dst,
+		entt::registry& src,
+		const std::unordered_map<IDComponent::IDType, entt::entity>& enttMap
+		)
+{
+	copyComponent<Component...>(dst, src, enttMap);
+}
 
 Scene::Scene(sf::RenderTarget& mainWindow)
 	: m_physicsWorld({0,0})
@@ -36,9 +65,51 @@ Scene::Scene(sf::RenderTarget& mainWindow)
 	m_registry.on_destroy<RigidBodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
 }
 
-Entity Scene::createEntity()
+std::unique_ptr<Scene> Scene::clone(Scene& other)
 {
-	return Entity{ m_registry.create(), m_registry };
+	std::unique_ptr<Scene> newScene = std::make_unique<Scene>(m_mainWindow);
+	newScene->m_lastEntityId = m_lastEntityId;
+
+	auto& srcSceneRegistry = other.m_registry;
+	auto& dstSceneRegistry = newScene->m_registry;
+	std::unordered_map<IDComponent::IDType, entt::entity> enttMap;
+
+	// Create entities in new scene
+	auto idView = srcSceneRegistry.view<IDComponent>();
+	for (auto e : idView)
+	{
+		using IDType = IDComponent::IDType;
+
+		IDType id = srcSceneRegistry.get<IDComponent>(e).id;
+		const auto& name = srcSceneRegistry.get<TagComponent>(e).tag;
+		Entity newEntity = newScene->createEntityWithID(id, name);
+		enttMap[id] = (entt::entity) newEntity;
+	}
+
+	copyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
+
+	return newScene;
+}
+
+Entity Scene::createEntity(const std::string& name)
+{
+	return createEntityWithID(++m_lastEntityId, name);
+}
+
+Entity Scene::createEntityWithID(IDComponent::IDType id, const std::string& name)
+{
+	Entity entity = { m_registry.create(), m_registry };
+	entity.addComponent<IDComponent>(id);
+	entity.addComponent<TransformComponent>();
+	auto& tag = entity.addComponent<TagComponent>();
+
+	tag.tag = name.empty() ? std::string("Entity ") + std::to_string(id) : name;
+	return entity;
+}
+
+void Scene::restartPhysics()
+{
+
 }
 
 void Scene::handleEvent(const sf::Event& event)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Scene/Components/Components.hpp"
 #include "Utility/Box2dDebugDraw.hpp"
 
 #include <SFML/System/Vector2.hpp>
@@ -20,7 +21,12 @@ class Scene : public sf::Drawable
 public:
 	Scene(sf::RenderTarget& mainWindow);
 
-	Entity createEntity();
+	Entity createEntity(const std::string& name = "");
+	Entity createEntityWithID(IDComponent::IDType id, const std::string& name);
+
+	std::unique_ptr<Scene> clone(Scene& scene);
+
+	void restartPhysics();
 
 	void handleEvent(const sf::Event& handleEvent);
 
@@ -46,6 +52,8 @@ private:
 
 	entt::registry m_registry;
 	sf::Font m_munroFont;
+
+	uint64_t m_lastEntityId = 0;
 
 private:
 	static void deallocateNscInstance(entt::registry& registry, entt::entity entity);

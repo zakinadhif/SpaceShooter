@@ -21,7 +21,8 @@ namespace enx
 
 struct IDComponent
 {
-	uint64_t id {};
+	typedef uint64_t IDType;
+	IDType id {};
 };
 
 struct GameStateComponent
@@ -109,8 +110,8 @@ struct ComponentGroup
 };
 
 using AllComponents =
-	ComponentGroup<IDComponent, TagComponent, MeshComponent,
-		OwningMeshComponent, NativeScriptComponent, RigidbodyComponent,
+	ComponentGroup<MeshComponent, OwningMeshComponent,
+		NativeScriptComponent, RigidbodyComponent,
 		BoxColliderComponent, CircleColliderComponent>;
 
 } // namespace enx
