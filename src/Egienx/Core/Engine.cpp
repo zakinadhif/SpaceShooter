@@ -53,9 +53,6 @@ void Engine::run()
 			currentState.fixedUpdate(fixedUpdateInterval.asSeconds());
 		}
 
-		sf::CircleShape shape;
-		shape.setRadius(100);
-
 		m_window.clear();
 
 		currentState.draw(m_window);
@@ -73,6 +70,8 @@ void Engine::run()
 		m_window.display();
 
 		m_gameStateManager.update();
+
+		Keyboard::clearKeyStates();
 	}
 
 	if (m_window.isOpen())
