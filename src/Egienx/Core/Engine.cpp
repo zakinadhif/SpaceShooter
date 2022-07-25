@@ -50,12 +50,7 @@ void Engine::run()
 		currentState.draw(m_window);
 
 		ImGui::SFML::Update(m_window, deltaTime);
-		ImGui::DockSpaceOverViewport();
-		ImGui::Begin("Engine Loop Stats");
-		ImGui::LabelText("FPS", "%f", 1 / deltaTime.asSeconds());
-		ImGui::LabelText("Frame Time", "%f", deltaTime.asSeconds());
-		ImGui::End();
-
+		ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 		currentState.imGuiDraw();
 		ImGui::SFML::Render(m_window);
 

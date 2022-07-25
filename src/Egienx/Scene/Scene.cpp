@@ -3,15 +3,14 @@
 #include "Patch/Thor.hpp"
 #include "Utility/Box2dDebugDraw.hpp"
 #include "Core/Random.hpp"
+#include "Core/Time.hpp"
 #include "Scene/Entity.hpp"
 #include "Scene/Systems.hpp"
 
 #include "Scene/Components/Components.hpp"
 #include "Scene/Scripts/ShipScript.hpp"
-#include "box2d/b2_polygon_shape.h"
-#include "box2d/b2_world.h"
+#include "box2d/box2d.h"
 
-#include <box2d/b2_body.h>
 #include <cassert>
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
@@ -58,6 +57,14 @@ Scene::Scene(sf::RenderTarget& mainWindow)
 {
 	m_registry.ctx().emplace<GameStateComponent>();
 	m_worldView.setCenter(0,0);
+
+	m_box2dDebugDraw.SetFlags(
+		Box2dDebugDraw::e_shapeBit
+		| Box2dDebugDraw::e_jointBit
+		| Box2dDebugDraw::e_aabbBit
+		| Box2dDebugDraw::e_pairBit
+		| Box2dDebugDraw::e_centerOfMassBit
+	);
 
 	m_registry.on_destroy<NativeScriptComponent>().connect<&Scene::deallocateNscInstance>();
 	m_registry.on_destroy<RigidbodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
@@ -241,6 +248,12 @@ void Scene::fixedUpdatePhysics(float deltaTime)
 
 void Scene::drawEditorInterface()
 {
+	const auto& deltaTime = Time::getDeltaTime();
+	ImGui::Begin("Engine Loop Stats");
+	ImGui::LabelText("FPS", "%f", 1 / deltaTime.asSeconds());
+	ImGui::LabelText("Frame Time", "%f", deltaTime.asSeconds());
+	ImGui::End();
+
 	displayComponentInspector(m_registry);
 	displayEntityList(m_registry);
 }
