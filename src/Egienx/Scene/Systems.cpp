@@ -26,39 +26,6 @@
 namespace enx
 {
 
-void drawEntities(const entt::registry& registry, sf::RenderTarget& target)
-{
-	const auto view = registry.view<const RigidBodyComponent>();
-
-	for (const auto& entity : view)
-	{
-		const auto& rbc = registry.get<RigidBodyComponent>(entity);
-		const TransformComponent* tc = registry.try_get<TransformComponent>(entity);
-
-		sf::Transform transform;
-		transform.translate(rbc.getPosition());
-		transform.rotate(thor::toDegree(rbc.body->GetAngle()));
-
-		if (tc)
-		{
-			const auto& graphicsTransform = tc->getTransform();
-			transform *= graphicsTransform;
-		}
-
-		if (registry.all_of<MeshComponent>(entity))
-		{
-			const MeshComponent mesh = registry.get<MeshComponent>(entity);
-			target.draw(mesh.vertices, mesh.size, mesh.type, sf::RenderStates(transform));
-		}
-
-		if (registry.all_of<OwningMeshComponent>(entity))
-		{
-			const OwningMeshComponent& mesh = registry.get<OwningMeshComponent>(entity);
-			target.draw(mesh.vertices.data(), mesh.vertices.size(), mesh.type, sf::RenderStates(transform));
-		}
-	}
-}
-
 namespace
 {
 
@@ -84,16 +51,33 @@ std::tuple<Comps*...> getComponentPointers(entt::registry& registry, entt::entit
 	return std::make_tuple(fillTuple<Comps>(registry, entity)...);
 }
 
-void displayComponentInfo(TagComponent* ic) {
-	if (ImGui::TreeNode("Identifier Component")) {
-		if (ic) {
-			ImGui::LabelText("Name", "%s", ic->tag.c_str());
+void displayComponentInfo(TagComponent* tc) {
+	if (ImGui::TreeNode("Tag Component")) {
+		if (tc) {
+			ImGui::LabelText("Name", "%s", tc->tag.c_str());
 		}
 		ImGui::TreePop();
 	}
 }
-void displayComponentInfo(IDComponent*) {}
-void displayComponentInfo(TransformComponent*) {}
+void displayComponentInfo(IDComponent* ic) {
+	if (ImGui::TreeNode("ID Component")) {
+		if (ic) {
+			ImGui::LabelText("ID", "%i", ic->id);
+		}
+		ImGui::TreePop();
+	}
+}
+void displayComponentInfo(TransformComponent* tc) {
+	if (ImGui::TreeNode("Transform Component")) {
+		if (tc) {
+			ImGui::LabelText("Position", "%f, %f", tc->getPosition().x, tc->getPosition().y);
+			ImGui::LabelText("Scale", "%f, %f", tc->getScale().x, tc->getScale().y);
+			ImGui::LabelText("Rotation", "%f", tc->getRotation());
+			ImGui::LabelText("Origin", "%f, %f", tc->getOrigin().x, tc->getOrigin().y);
+		}
+		ImGui::TreePop();
+	}
+}
 void displayComponentInfo(MeshComponent*) {}
 void displayComponentInfo(OwningMeshComponent*) {}
 void displayComponentInfo(NativeScriptComponent*) {}
@@ -119,8 +103,11 @@ void displayEntityList(entt::registry &registry) {
 	auto& selectedEntity = registry.ctx().at<GameStateComponent>().selectedEntity;
 
 	registry.each([&](entt::entity entity) {
-		if (auto ic = registry.try_get<IDComponent>(entity)) {
-			std::string id = std::to_string(ic->id);
+		if (registry.all_of<IDComponent, TagComponent>(entity)) {
+			auto& ic = registry.get<IDComponent>(entity);
+			auto& tc = registry.get<TagComponent>(entity);
+
+			std::string id = tc.tag + " #" + std::to_string(ic.id);
 			if (ImGui::Selectable(id.c_str(), selectedEntity == (uint32_t) entity)) {
 				selectedEntity = (uint32_t) entity;
 			}
@@ -155,10 +142,7 @@ void displayComponentInspector(entt::registry& registry)
 			NativeScriptComponent
 		>(registry, entity);
 
-		if (ImGui::TreeNode("Components", "Entity %d", (uint32_t) entity)) {
-			displayComponentsInfo(componentPointers);
-			ImGui::TreePop();
-		}
+		displayComponentsInfo(componentPointers);
 	} else {
 		ImGui::Text("Selected entity is invalid");
 	}

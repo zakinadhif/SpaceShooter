@@ -6,6 +6,8 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 
+#include <box2d/b2_body.h>
+
 #include <vector>
 #include <bits/c++config.h>
 #include <functional>
@@ -70,12 +72,11 @@ struct NativeScriptComponent
 
 struct RigidbodyComponent
 {
-	enum class BodyType { Static = 0, Dynamic, Kinematic };
-	BodyType type = BodyType::Static;
+	b2BodyType type = b2_staticBody;
 	bool fixedRotation = false;
 
 	// Storage for runtime
-	void* runtimeBody = nullptr;
+	b2Body* runtimeBody = nullptr;
 };
 
 struct BoxColliderComponent
@@ -88,7 +89,7 @@ struct BoxColliderComponent
 	float restitution = 0.0f;
 	float restitutionThreshold = 0.5f;
 
-	void* runtimeFixture = nullptr;
+	b2Fixture* runtimeFixture = nullptr;
 };
 
 struct CircleColliderComponent
@@ -101,7 +102,7 @@ struct CircleColliderComponent
 	float restitution = 0.0f;
 	float restitutionThreshold = 0.5f;
 
-	void* runtimeFixture = nullptr;
+	b2Fixture* runtimeFixture = nullptr;
 };
 
 template <typename... Components>

@@ -5,13 +5,62 @@ namespace enx
 
 PlayState::PlayState(enx::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow)
 	: m_gameStateManager(gameStateManager)
-	, m_world(mainWindow)
+	, m_editorScene(std::make_unique<Scene>(mainWindow))
 {
+	m_activeScene = Scene::clone(*m_editorScene);
+
+	Entity e = m_activeScene->createEntity("ayam");
+	auto& rb = e.addComponent<RigidbodyComponent>();
+	auto& box = e.addComponent<BoxColliderComponent>();
+	box.size = {2.f, 2.f};
+	rb.type = b2_staticBody;
+	e.getComponent<TransformComponent>().setPosition({0.f, 0.f});
+
+	m_activeScene->startPhysics();
+}
+
+void PlayState::setScenePlay()
+{
+	if (m_sceneState == SceneState::Simulate)
+		setSceneStop();
+
+	m_sceneState = SceneState::Runtime;
+
+	m_activeScene = Scene::clone(*m_editorScene);
+	m_activeScene->startPhysics();
+
+	// m_sceneHierarchyPanel.setContext(m_activeScene);
+}
+
+void PlayState::setSceneSimulate()
+{
+	if (m_sceneState == SceneState::Simulate)
+		setSceneStop();
+
+	m_sceneState = SceneState::Runtime;
+
+	m_activeScene = Scene::clone(*m_editorScene);
+	m_activeScene->startPhysics();
+
+}
+
+void PlayState::setSceneStop()
+{
+	if (m_sceneState == SceneState::Runtime)
+		m_activeScene->stopPhysics();
+	else if (m_sceneState == SceneState::Simulate)
+		m_activeScene->stopPhysics();
+
+	m_sceneState = SceneState::Edit;
+
+	m_activeScene = Scene::clone(*m_editorScene);
+
+	// m_sceneHierarchyPanel.setContext(m_activeScene);
 }
 
 void PlayState::handleEvent(sf::Event event)
 {
-	m_world.handleEvent(event);
+	m_activeScene->handleEvent(event);
 
 	switch (event.type)
 	{
@@ -36,7 +85,7 @@ void PlayState::update(float deltaTime)
 		case SceneState::Simulate:
 			break;
 		case SceneState::Runtime:
-			m_world.updateScripts(deltaTime);
+			m_activeScene->updateScripts(deltaTime);
 			break;
 	}
 }
@@ -48,23 +97,23 @@ void PlayState::fixedUpdate(float deltaTime)
 		case SceneState::Edit:
 			break;
 		case SceneState::Simulate:
-			m_world.fixedUpdatePhysics(deltaTime);
+			m_activeScene->fixedUpdatePhysics(deltaTime);
 			break;
 		case SceneState::Runtime:
-			m_world.fixedUpdateScripts(deltaTime);
-			m_world.fixedUpdatePhysics(deltaTime);
+			m_activeScene->fixedUpdateScripts(deltaTime);
+			m_activeScene->fixedUpdatePhysics(deltaTime);
 			break;
 	}
 }
 
 void PlayState::imGuiDraw()
 {
-	m_world.drawEditorInterface();
+	m_activeScene->drawEditorInterface();
 }
 
 void PlayState::draw(sf::RenderTarget& target) const
 {
-	m_world.draw(target, sf::RenderStates::Default);
+	m_activeScene->draw(target, sf::RenderStates::Default);
 }
 
 }

@@ -1,14 +1,18 @@
 #include "Scene/Scene.hpp"
 
+#include "Patch/Thor.hpp"
 #include "Utility/Box2dDebugDraw.hpp"
 #include "Core/Random.hpp"
 #include "Scene/Entity.hpp"
 #include "Scene/Systems.hpp"
 
 #include "Scene/Components/Components.hpp"
-#include "Scene/Components/RigidBodyComponent.hpp"
 #include "Scene/Scripts/ShipScript.hpp"
+#include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_world.h"
 
+#include <box2d/b2_body.h>
+#include <cassert>
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
@@ -48,27 +52,21 @@ static void copyComponent(
 }
 
 Scene::Scene(sf::RenderTarget& mainWindow)
-	: m_physicsWorld({0,0})
-	, m_worldView(mainWindow.getDefaultView())
+	: m_worldView(mainWindow.getDefaultView())
 	, m_mainWindow(mainWindow)
 	, m_box2dDebugDraw(mainWindow)
 {
 	m_registry.ctx().emplace<GameStateComponent>();
-
-	m_munroFont.loadFromFile("assets/munro.ttf");
-
-	m_physicsWorld.SetDebugDraw(&m_box2dDebugDraw);
-
 	m_worldView.setCenter(0,0);
 
 	m_registry.on_destroy<NativeScriptComponent>().connect<&Scene::deallocateNscInstance>();
-	m_registry.on_destroy<RigidBodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
+	m_registry.on_destroy<RigidbodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
 }
 
 std::unique_ptr<Scene> Scene::clone(Scene& other)
 {
-	std::unique_ptr<Scene> newScene = std::make_unique<Scene>(m_mainWindow);
-	newScene->m_lastEntityId = m_lastEntityId;
+	std::unique_ptr<Scene> newScene = std::make_unique<Scene>(other.m_mainWindow);
+	newScene->m_lastEntityId = other.m_lastEntityId;
 
 	auto& srcSceneRegistry = other.m_registry;
 	auto& dstSceneRegistry = newScene->m_registry;
@@ -107,9 +105,71 @@ Entity Scene::createEntityWithID(IDComponent::IDType id, const std::string& name
 	return entity;
 }
 
-void Scene::restartPhysics()
+void Scene::startPhysics()
 {
+	m_physicsWorld = new b2World({0.0f, -9.8f});
 
+	m_physicsWorld->SetDebugDraw(&m_box2dDebugDraw);
+
+	auto view = m_registry.view<RigidbodyComponent>();
+	for (auto e : view)
+	{
+		Entity entity = { e, m_registry };
+		auto& transform = entity.getComponent<TransformComponent>();
+		auto& rb = entity.getComponent<RigidbodyComponent>();
+
+		b2BodyDef bodyDef;
+		bodyDef.type = rb.type;
+		bodyDef.position.Set(transform.getPosition().x, transform.getPosition().y);
+		bodyDef.angle = thor::toRadian(transform.getRotation());
+
+		b2Body* body = m_physicsWorld->CreateBody(&bodyDef);
+		body->SetFixedRotation(rb.fixedRotation);
+		rb.runtimeBody = body;
+
+		if (entity.hasComponent<BoxColliderComponent>())
+		{
+			auto& bc = entity.getComponent<BoxColliderComponent>();
+
+			b2PolygonShape boxShape;
+			boxShape.SetAsBox(bc.size.x * transform.getScale().x, bc.size.y * transform.getScale().y);
+
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &boxShape;
+			fixtureDef.density = bc.density;
+			fixtureDef.friction = bc.friction;
+			fixtureDef.restitution = bc.restitution;
+			fixtureDef.restitutionThreshold = bc.restitutionThreshold;
+
+			b2Fixture* fixture =  body->CreateFixture(&fixtureDef);
+			bc.runtimeFixture = fixture;
+		}
+
+		if (entity.hasComponent<CircleColliderComponent>())
+		{
+			auto& cc = entity.getComponent<CircleColliderComponent>();
+
+			b2CircleShape circleShape;
+			circleShape.m_p.Set(cc.offset.x, cc.offset.y);
+			circleShape.m_radius = transform.getScale().x * cc.radius;
+
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &circleShape;
+			fixtureDef.density = cc.density;
+			fixtureDef.friction = cc.friction;
+			fixtureDef.restitution = cc.restitution;
+			fixtureDef.restitutionThreshold = cc.restitutionThreshold;
+
+			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
+			cc.runtimeFixture = fixture;
+		}
+	}
+}
+
+void Scene::stopPhysics()
+{
+	delete m_physicsWorld;
+	m_physicsWorld = nullptr;
 }
 
 void Scene::handleEvent(const sf::Event& event)
@@ -163,7 +223,20 @@ void Scene::fixedUpdateScripts(float deltaTime)
 
 void Scene::fixedUpdatePhysics(float deltaTime)
 {
-	m_physicsWorld.Step(deltaTime, m_velocityIterations, m_positionIterations);
+	m_physicsWorld->Step(deltaTime, m_velocityIterations, m_positionIterations);
+
+	auto view = m_registry.view<RigidbodyComponent>();
+	for (auto e : view)
+	{
+		Entity entity = { e, m_registry };
+		auto& tc = entity.getComponent<TransformComponent>();
+		auto& rb = entity.getComponent<RigidbodyComponent>();
+
+		b2Body* body = rb.runtimeBody;
+		const auto& position = body->GetPosition();
+		tc.setPosition(position.x, position.y);
+		tc.setRotation(thor::toDegree(body->GetAngle()));
+	}
 }
 
 void Scene::drawEditorInterface()
@@ -178,9 +251,7 @@ void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 	target.setView(m_worldView);
 
-	drawEntities(m_registry, target);
-
-	m_physicsWorld.DebugDraw();
+	if (m_physicsWorld) m_physicsWorld->DebugDraw();
 
 	target.setView(lastView);
 }
@@ -198,22 +269,12 @@ void Scene::deallocateNscInstance(entt::registry& registry, entt::entity entity)
 
 void Scene::deallocateB2BodyInstance(entt::registry& registry, entt::entity entity)
 {
-	auto& rb = registry.get<RigidBodyComponent>(entity);
+	auto& rb = registry.get<RigidbodyComponent>(entity);
 
-	if (rb.body)
+	if (rb.runtimeBody)
 	{
-		if (rb.body->GetUserData().pointer)
-		{
-			delete (Entity*) rb.body->GetUserData().pointer;
-			spdlog::info("A b2Body instance was destroyed with an userdata attached.");
-		}
-		else
-		{
-			spdlog::info("A b2Body instance was destroyed without an userdata attached.");
-		}
-
-		b2World* world = rb.body->GetWorld();
-		world->DestroyBody(rb.body);
+		b2World* world = rb.runtimeBody->GetWorld();
+		world->DestroyBody(rb.runtimeBody);
 	}
 }
 

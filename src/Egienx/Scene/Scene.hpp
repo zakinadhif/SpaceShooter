@@ -24,9 +24,10 @@ public:
 	Entity createEntity(const std::string& name = "");
 	Entity createEntityWithID(IDComponent::IDType id, const std::string& name);
 
-	std::unique_ptr<Scene> clone(Scene& scene);
+	static std::unique_ptr<Scene> clone(Scene& scene);
 
-	void restartPhysics();
+	void startPhysics();
+	void stopPhysics();
 
 	void handleEvent(const sf::Event& handleEvent);
 
@@ -43,7 +44,7 @@ private:
 	const int m_velocityIterations = 6;
 	const int m_positionIterations = 2;
 
-	mutable b2World m_physicsWorld;
+	b2World* m_physicsWorld {};
 	sf::View m_worldView;
 
 	sf::RenderTarget& m_mainWindow;

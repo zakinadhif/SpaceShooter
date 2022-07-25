@@ -13,6 +13,10 @@ class PlayState final : public enx::GameState
 public:
 	PlayState(enx::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow);
 
+	void setScenePlay();
+	void setSceneSimulate();
+	void setSceneStop();
+
 	void handleEvent(sf::Event event) override;
 
 	void update(float deltaTime) override;
@@ -23,7 +27,9 @@ public:
 
 private:
 	enx::GameStateManager& m_gameStateManager;
-	Scene m_world;
+
+	std::unique_ptr<Scene> m_activeScene;
+	std::unique_ptr<Scene> m_editorScene;
 
 	enum class SceneState { Edit = 0, Simulate, Runtime };
 	SceneState m_sceneState = SceneState::Simulate;
