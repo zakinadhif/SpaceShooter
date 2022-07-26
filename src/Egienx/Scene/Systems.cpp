@@ -29,70 +29,60 @@ namespace enx
 namespace
 {
 
-template<typename Component>
-Component* fillTuple(
+void displayComponentForm(TagComponent& tc) {
+	if (ImGui::TreeNode("Tag Component")) {
+		ImGui::LabelText("Name", "%s", tc.tag.c_str());
+		ImGui::TreePop();
+	}
+}
+
+void displayComponentForm(IDComponent& ic) {
+	if (ImGui::TreeNode("ID Component")) {
+		ImGui::LabelText("ID", "%lu", ic.id);
+		ImGui::TreePop();
+	}
+}
+
+void displayComponentForm(TransformComponent& tc) {
+	if (ImGui::TreeNode("Transform Component")) {
+		ImGui::LabelText("Position", "%f, %f", tc.getPosition().x, tc.getPosition().y);
+		ImGui::LabelText("Scale", "%f, %f", tc.getScale().x, tc.getScale().y);
+		ImGui::LabelText("Rotation", "%f", tc.getRotation());
+		ImGui::LabelText("Origin", "%f, %f", tc.getOrigin().x, tc.getOrigin().y);
+		ImGui::TreePop();
+	}
+}
+
+void displayComponentForm([[maybe_unused]] MeshComponent& mc) {}
+void displayComponentForm([[maybe_unused]] OwningMeshComponent& omc) {}
+void displayComponentForm([[maybe_unused]] NativeScriptComponent& nsc) {}
+void displayComponentForm([[maybe_unused]] RigidbodyComponent& rbc) {}
+void displayComponentForm([[maybe_unused]] BoxColliderComponent& bcc) {}
+void displayComponentForm([[maybe_unused]] CircleColliderComponent& ccc) {}
+
+template<typename... Component>
+void displayComponentForms(
 	entt::registry& registry,
 	entt::entity entity
 )
 {
-	Component* component = nullptr;
-
-	if (registry.all_of<Component>(entity))
+	([&]()
 	{
-		component = &registry.get<Component>(entity);
-	}
-
-	return component;
-}
-
-template<typename... Comps>
-std::tuple<Comps*...> getComponentPointers(entt::registry& registry, entt::entity entity)
-{
-	return std::make_tuple(fillTuple<Comps>(registry, entity)...);
-}
-
-void displayComponentInfo(TagComponent* tc) {
-	if (ImGui::TreeNode("Tag Component")) {
-		if (tc) {
-			ImGui::LabelText("Name", "%s", tc->tag.c_str());
+		if (registry.all_of<Component>(entity))
+		{
+			displayComponentForm(registry.get<Component>(entity));
 		}
-		ImGui::TreePop();
-	}
+	}(), ...);
 }
-void displayComponentInfo(IDComponent* ic) {
-	if (ImGui::TreeNode("ID Component")) {
-		if (ic) {
-			ImGui::LabelText("ID", "%i", ic->id);
-		}
-		ImGui::TreePop();
-	}
-}
-void displayComponentInfo(TransformComponent* tc) {
-	if (ImGui::TreeNode("Transform Component")) {
-		if (tc) {
-			ImGui::LabelText("Position", "%f, %f", tc->getPosition().x, tc->getPosition().y);
-			ImGui::LabelText("Scale", "%f, %f", tc->getScale().x, tc->getScale().y);
-			ImGui::LabelText("Rotation", "%f", tc->getRotation());
-			ImGui::LabelText("Origin", "%f, %f", tc->getOrigin().x, tc->getOrigin().y);
-		}
-		ImGui::TreePop();
-	}
-}
-void displayComponentInfo(MeshComponent*) {}
-void displayComponentInfo(OwningMeshComponent*) {}
-void displayComponentInfo(NativeScriptComponent*) {}
 
-template <std::size_t I = 0, typename... Tp>
-inline typename std::enable_if<I == sizeof...(Tp), void>::type displayComponentsInfo(const std::tuple<Tp...>& t)
+template<typename... Component>
+void displayComponentForms(
+	ComponentGroup<Component...>,
+	entt::registry& registry,
+	entt::entity entity
+)
 {
-
-}
-
-template <std::size_t I = 0, typename... Tp>
-inline typename std::enable_if<I < sizeof...(Tp), void>::type displayComponentsInfo(const std::tuple<Tp...>& t)
-{
-	displayComponentInfo(std::get<I>(t));
-	displayComponentsInfo<I + 1, Tp...>(t);
+	displayComponentForms<Component...>(registry, entity);
 }
 
 } // namespace
@@ -125,7 +115,6 @@ void displayEntityList(entt::registry &registry) {
 
 void displayComponentInspector(entt::registry& registry)
 {
-	const std::size_t componentCount = 7;
 	const uint32_t selectedEntity = registry.ctx().at<GameStateComponent>().selectedEntity;
 
 	ImGui::Begin("Component Inspector");
@@ -133,18 +122,9 @@ void displayComponentInspector(entt::registry& registry)
 	entt::entity entity = (entt::entity) selectedEntity;
 
 	if (registry.valid(entity)) {
-		const auto componentPointers = getComponentPointers<
-			IDComponent,
-			TagComponent,
-			TransformComponent,
-			MeshComponent,
-			OwningMeshComponent,
-			NativeScriptComponent
-		>(registry, entity);
-
-		displayComponentsInfo(componentPointers);
+		displayComponentForms(ImplComponents{}, registry, entity);
 	} else {
-		ImGui::Text("Selected entity is invalid");
+		ImGui::Text("No entity selected");
 	}
 
 	ImGui::End();

@@ -115,4 +115,11 @@ using AllComponents =
 		NativeScriptComponent, RigidbodyComponent,
 		BoxColliderComponent, CircleColliderComponent>;
 
+using ImplComponents =
+	ComponentGroup<IDComponent, TagComponent,
+		TransformComponent, MeshComponent,
+		OwningMeshComponent, NativeScriptComponent,
+		RigidbodyComponent, BoxColliderComponent,
+		CircleColliderComponent>;
+
 } // namespace enx
