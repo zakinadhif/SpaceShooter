@@ -1,5 +1,7 @@
 - [x] Rehaul directory structure
   - [x] Rename World into Scene
 - [x] Write Screen
-- [-] Write Time
+- [x] Write Time
 - [x] Separate engine from game state manager initialization (put gameStateManager initalization in CLIENT)
+- [x] Rewrite component inspector
+- [ ] Fix unit scaling
