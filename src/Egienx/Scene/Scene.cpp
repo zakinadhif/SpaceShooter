@@ -1,6 +1,7 @@
 #include "Scene/Scene.hpp"
 
 #include "Patch/Thor.hpp"
+#include "Scene/UnitScaling.hpp"
 #include "Utility/Box2dDebugDraw.hpp"
 #include "Core/Random.hpp"
 #include "Core/Time.hpp"
@@ -9,6 +10,7 @@
 
 #include "Scene/Components/Components.hpp"
 #include "Scene/Scripts/ShipScript.hpp"
+#include "Utility/VectorConverter.hpp"
 #include "box2d/box2d.h"
 
 #include <cassert>
@@ -57,6 +59,7 @@ Scene::Scene(sf::RenderTarget& mainWindow)
 {
 	m_registry.ctx().emplace<GameStateComponent>();
 	m_worldView.setCenter(0,0);
+	m_worldView.setSize(b2Vec2ToSfVec(toMeters(m_worldView.getSize())));
 
 	m_box2dDebugDraw.SetFlags(
 		Box2dDebugDraw::e_shapeBit
