@@ -22,10 +22,10 @@ protected:
 	virtual void onCreate() {}
 	virtual void onDestroy() {}
 
-	virtual void onUpdate(float deltaTime) {}
-	virtual void onFixedUpdate(float deltaTime) {}
+	virtual void onUpdate([[maybe_unused]] float deltaTime) {}
+	virtual void onFixedUpdate([[maybe_unused]] float deltaTime) {}
 
-	virtual void onEvent(sf::Event event) {}
+	virtual void onEvent([[maybe_unused]] sf::Event event) {}
 
 private:
 	Entity m_entity;
