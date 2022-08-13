@@ -40,6 +40,8 @@ public:
 
 	~Scene();
 
+	friend class EntityInspectorPanel;
+
 private:
 	const int m_velocityIterations = 6;
 	const int m_positionIterations = 2;
@@ -55,6 +57,8 @@ private:
 	sf::Font m_munroFont;
 
 	uint64_t m_lastEntityId = 0;
+
+	bool m_isPhysicsStarted = false;
 
 private:
 	static void deallocateNscInstance(entt::registry& registry, entt::entity entity);

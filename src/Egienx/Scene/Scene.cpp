@@ -150,6 +150,8 @@ Entity Scene::createEntityWithID(IDComponent::IDType id, const std::string& name
 //       entities).
 void Scene::startPhysics()
 {
+	assert(!m_isPhysicsStarted);
+
 	m_physicsWorld = new b2World({0.0f, -9.8f});
 
 	m_physicsWorld->SetDebugDraw(&m_box2dDebugDraw);
@@ -281,6 +283,7 @@ void Scene::fixedUpdateScripts(float deltaTime)
 // also steps up the physics world.
 void Scene::fixedUpdatePhysics(float deltaTime)
 {
+	assert(m_isPhysicsStarted);
 	m_physicsWorld->Step(deltaTime, m_velocityIterations, m_positionIterations);
 
 	auto view = m_registry.view<RigidbodyComponent>();
@@ -346,12 +349,14 @@ void Scene::deallocateB2BodyInstance(entt::registry& registry, entt::entity enti
 	{
 		b2World* world = rb.runtimeBody->GetWorld();
 		world->DestroyBody(rb.runtimeBody);
+		rb.runtimeBody = nullptr;
 	}
 }
 
 Scene::~Scene()
 {
 	m_registry.clear();
+	stopPhysics();
 }
 
 }
