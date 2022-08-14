@@ -35,11 +35,11 @@ public:
 	void fixedUpdateScripts(float deltaTime);
 	void fixedUpdatePhysics(float deltaTime);
 
-	void drawEditorInterface();
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	~Scene();
 
+	friend class SceneInspectorPanel;
 	friend class EntityInspectorPanel;
 
 private:

@@ -86,10 +86,10 @@ target_link_libraries(
 	sfml-graphics
 	sfml-window
 	sfml-system
+	ImGui-SFML::ImGui-SFML
 	PRIVATE
 	"${YAML_CPP_LIBRARIES}"
 	spdlog::spdlog
-	ImGui-SFML::ImGui-SFML
 	box2d
 	EnTT::EnTT
 	)

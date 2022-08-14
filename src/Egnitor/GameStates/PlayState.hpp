@@ -3,6 +3,7 @@
 #include "Core/GameState.hpp"
 #include "Core/GameStateManager.hpp"
 
+#include "Panels/SceneInspectorPanel.hpp"
 #include "Scene/Scene.hpp"
 
 namespace enx
@@ -33,6 +34,8 @@ private:
 
 	enum class SceneState { Edit = 0, Simulate, Runtime };
 	SceneState m_sceneState = SceneState::Simulate;
+
+	SceneInspectorPanel m_sceneInspectorPanel;
 };
 
 }

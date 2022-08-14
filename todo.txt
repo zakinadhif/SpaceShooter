@@ -5,4 +5,5 @@
 - [x] Separate engine from game state manager initialization (put gameStateManager initalization in CLIENT)
 - [x] Rewrite component inspector
 - [x] Fix unit scaling
-- [ ] Separate ImGui calls from `Scene`
+- [x] Separate ImGui calls from `Scene`
+- [ ] Fix physics world, related entity components and box2d body deallocation problems.

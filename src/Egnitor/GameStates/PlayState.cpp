@@ -6,6 +6,7 @@ namespace enx
 PlayState::PlayState(enx::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow)
 	: m_gameStateManager(gameStateManager)
 	, m_editorScene(std::make_unique<Scene>(mainWindow))
+	, m_sceneInspectorPanel(*this)
 {
 	m_activeScene = Scene::clone(*m_editorScene);
 
@@ -17,6 +18,7 @@ PlayState::PlayState(enx::GameStateManager& gameStateManager, sf::RenderTarget& 
 	e.getComponent<TransformComponent>().setPosition({0.f, 0.f});
 
 	m_activeScene->startPhysics();
+	m_sceneInspectorPanel.setContext(*m_activeScene);
 }
 
 void PlayState::setScenePlay()
@@ -29,7 +31,7 @@ void PlayState::setScenePlay()
 	m_activeScene = Scene::clone(*m_editorScene);
 	m_activeScene->startPhysics();
 
-	// m_sceneHierarchyPanel.setContext(m_activeScene);
+	m_sceneInspectorPanel.setContext(*m_activeScene);
 }
 
 void PlayState::setSceneSimulate()
@@ -42,6 +44,7 @@ void PlayState::setSceneSimulate()
 	m_activeScene = Scene::clone(*m_editorScene);
 	m_activeScene->startPhysics();
 
+	m_sceneInspectorPanel.setContext(*m_activeScene);
 }
 
 void PlayState::setSceneStop()
@@ -55,7 +58,7 @@ void PlayState::setSceneStop()
 
 	m_activeScene = Scene::clone(*m_editorScene);
 
-	// m_sceneHierarchyPanel.setContext(m_activeScene);
+	m_sceneInspectorPanel.setContext(*m_activeScene);
 }
 
 void PlayState::handleEvent(sf::Event event)
@@ -108,7 +111,7 @@ void PlayState::fixedUpdate(float deltaTime)
 
 void PlayState::imGuiDraw()
 {
-	m_activeScene->drawEditorInterface();
+	m_sceneInspectorPanel.draw();
 }
 
 void PlayState::draw(sf::RenderTarget& target) const
