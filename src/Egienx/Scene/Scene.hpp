@@ -2,6 +2,7 @@
 
 #include "Scene/Components/Components.hpp"
 #include "Utility/Box2dDebugDraw.hpp"
+#include "entt/signal/sigh.hpp"
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
@@ -61,6 +62,9 @@ private:
 	bool m_isPhysicsStarted = false;
 
 private:
+	entt::connection m_nscDeallocatorConnection {};
+	entt::connection m_rbcDeallocatorConnection {};
+
 	static void deallocateNscInstance(entt::registry& registry, entt::entity entity);
 	static void deallocateB2BodyInstance(entt::registry& registry, entt::entity entity);
 };

@@ -75,8 +75,8 @@ Scene::Scene(sf::RenderTarget& mainWindow)
 	// TODO(zndf): Consider what happens to b2Body runtime instances stored in
 	// RigidbodyComponent when stopPhysics is called and its implication to the
 	// deallocators.
-	m_registry.on_destroy<NativeScriptComponent>().connect<&Scene::deallocateNscInstance>();
-	m_registry.on_destroy<RigidbodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
+	m_nscDeallocatorConnection = m_registry.on_destroy<NativeScriptComponent>().connect<&Scene::deallocateNscInstance>();
+	m_rbcDeallocatorConnection = m_registry.on_destroy<RigidbodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
 }
 
 // Clones self to a new instance of Scene.
@@ -216,7 +216,9 @@ void Scene::startPhysics()
 	m_isPhysicsStarted = true;
 }
 
-// Deletes physics world.
+// Deletes physics world. Never call any physics update after deleting, doing
+// so may result in a crash.
+//
 // NOTE: deleting nullptr is a well defined behavior, the operator will just do
 //       nothing.
 void Scene::stopPhysics()
@@ -343,6 +345,10 @@ void Scene::deallocateB2BodyInstance(entt::registry& registry, entt::entity enti
 
 Scene::~Scene()
 {
+	// Since box2d runtime body references might already be freed, rbc deallocator
+	// needs to be disconnected / released so double freeing doesn't happen.
+	m_rbcDeallocatorConnection.release();
+
 	m_registry.clear();
 	stopPhysics();
 }

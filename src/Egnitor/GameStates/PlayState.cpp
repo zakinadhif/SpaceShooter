@@ -8,14 +8,14 @@ PlayState::PlayState(enx::GameStateManager& gameStateManager, sf::RenderTarget& 
 	, m_editorScene(std::make_unique<Scene>(mainWindow))
 	, m_sceneInspectorPanel(*this)
 {
-	m_activeScene = Scene::clone(*m_editorScene);
-
-	Entity e = m_activeScene->createEntity("ayam");
+	Entity e = m_editorScene->createEntity("ayam");
 	auto& rb = e.addComponent<RigidbodyComponent>();
 	auto& box = e.addComponent<BoxColliderComponent>();
 	box.size = {2.f, 2.f};
 	rb.type = b2_staticBody;
 	e.getComponent<TransformComponent>().setPosition({0.f, 0.f});
+
+	m_activeScene = Scene::clone(*m_editorScene);
 
 	m_activeScene->startPhysics();
 	m_sceneInspectorPanel.setContext(*m_activeScene);
