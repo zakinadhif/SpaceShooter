@@ -75,8 +75,8 @@ Scene::Scene(sf::RenderTarget& mainWindow)
 	// TODO(zndf): Consider what happens to b2Body runtime instances stored in
 	// RigidbodyComponent when stopPhysics is called and its implication to the
 	// deallocators.
-	m_registry.on_destroy<NativeScriptComponent>().connect<&Scene::deallocateNscInstance>();
-	m_registry.on_destroy<RigidbodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
+	m_nscDeallocatorConnection = m_registry.on_destroy<NativeScriptComponent>().connect<&Scene::deallocateNscInstance>();
+	m_rbcDeallocatorConnection = m_registry.on_destroy<RigidbodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
 }
 
 // Clones self to a new instance of Scene.
@@ -212,15 +212,20 @@ void Scene::startPhysics()
 			cc.runtimeFixture = fixture;
 		}
 	}
+
+	m_isPhysicsStarted = true;
 }
 
-// Deletes physics world.
+// Deletes physics world. Never call any physics update after deleting, doing
+// so may result in a crash.
+//
 // NOTE: deleting nullptr is a well defined behavior, the operator will just do
 //       nothing.
 void Scene::stopPhysics()
 {
 	delete m_physicsWorld;
 	m_physicsWorld = nullptr;
+	m_isPhysicsStarted = false;
 }
 
 // Dispatch events to NativeScript components
@@ -300,21 +305,6 @@ void Scene::fixedUpdatePhysics(float deltaTime)
 	}
 }
 
-// Draws FPS, Frame Time indicator, and Scene Inspectors
-// TODO(zndf): should've been moved to its own class
-void Scene::drawEditorInterface()
-{
-	const auto& deltaTime = Time::getDeltaTime();
-	ImGui::Begin("Engine Loop Stats");
-	ImGui::LabelText("FPS", "%f", 1 / deltaTime.asSeconds());
-	ImGui::LabelText("Frame Time", "%f", deltaTime.asSeconds());
-	ImGui::End();
-
-	displayComponentInspector(m_registry);
-	displayEntityList(m_registry);
-}
-
-// Draws scene with m_worldView view
 void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	sf::View lastView = target.getView();
@@ -355,6 +345,10 @@ void Scene::deallocateB2BodyInstance(entt::registry& registry, entt::entity enti
 
 Scene::~Scene()
 {
+	// Since box2d runtime body references might already be freed, rbc deallocator
+	// needs to be disconnected / released so double freeing doesn't happen.
+	m_rbcDeallocatorConnection.release();
+
 	m_registry.clear();
 	stopPhysics();
 }
