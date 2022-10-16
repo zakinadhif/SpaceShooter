@@ -7,21 +7,39 @@
 
 #include <imgui.h>
 #include <imgui-SFML.h>
+#include <spdlog/spdlog.h>
 
 namespace enx
 {
 
 Engine::Engine()
 {
+}
+
+void Engine::setInitialWindowSize(const sf::Vector2u &size)
+{
+	m_initialWindowSize = size;
+}
+
+void Engine::setInitialWindowTitle(const sf::String &title)
+{
+	m_initialWindowTitle = title;
+}
+
+void Engine::initialize()
+{
 	Screen::initialize(m_window);
-	Screen::setWindowSize({600, 600});
-	Screen::setTitle("Egienx");
+	Screen::setSize(m_initialWindowSize);
+	Screen::setTitle(m_initialWindowTitle);
 	Screen::apply();
 
 	m_window.setKeyRepeatEnabled(false);
 	m_window.setFramerateLimit(60);
 
-	ImGui::SFML::Init(m_window);
+	if (!ImGui::SFML::Init(m_window)) {
+		spdlog::error("[Core::Engine::initialize] Couldn't initialize ImGui-SFML");
+		exit(-1);
+	}
 
 	auto& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;

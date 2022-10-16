@@ -12,6 +12,10 @@ class Engine
 public:
 	Engine();
 
+	void setInitialWindowSize(const sf::Vector2u& size);
+	void setInitialWindowTitle(const sf::String& title);
+	void initialize();
+
 	template<class T>
 	void attach();
 
@@ -21,6 +25,9 @@ public:
 
 private:
 	void handleEvents();
+
+	sf::Vector2u m_initialWindowSize {200u, 200u};
+	sf::String m_initialWindowTitle {};
 
 	GameStateManager m_gameStateManager;
 	sf::RenderWindow m_window;

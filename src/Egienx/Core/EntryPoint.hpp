@@ -6,5 +6,6 @@ int main()
 {
 	enx::Engine engine;
 	initializeGameState(engine);
+	engine.initialize();
 	engine.run();
 }
