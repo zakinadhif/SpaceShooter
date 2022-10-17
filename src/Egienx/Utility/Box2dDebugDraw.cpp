@@ -1,9 +1,11 @@
 #include "Utility/Box2dDebugDraw.hpp"
+#include "SFML/Graphics/RenderStates.hpp"
 #include "Utility/ColorConverter.hpp"
 #include "Utility/VectorConverter.hpp"
 #include "Scene/UnitScaling.hpp"
 
 #include "SFML/Graphics.hpp"
+#include "spdlog/spdlog.h"
 
 #include <array>
 
@@ -11,8 +13,12 @@ namespace enx
 {
 
 Box2dDebugDraw::Box2dDebugDraw(sf::RenderTarget& window)
-	: m_window(window)
+	: m_debugShader(), m_window(window)
 {
+	if (!m_debugShader.loadFromFile( "assets/shaders/debug.vert.glsl", "assets/shaders/debug.frag.glsl")) {
+		spdlog::error("[Utility::Box2dDebugDraw] Couldn't load debug shaders");
+		exit(-1);
+	}
 }
 
 void Box2dDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color &color)
@@ -29,7 +35,7 @@ void Box2dDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, cons
 	polygon.setFillColor(sf::Color::Transparent);
 	polygon.setOutlineColor(b2ColorToSfColor(color));
 
-	m_window.draw(polygon);
+	m_window.draw(polygon, &m_debugShader);
 }
 
 void Box2dDebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color)
@@ -49,7 +55,7 @@ void Box2dDebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount,
 	polygon.setFillColor(b2ColorToSfColor(fillColor));
 	polygon.setOutlineColor(b2ColorToSfColor(color));
 
-	m_window.draw(polygon);
+	m_window.draw(polygon, &m_debugShader);
 }
 
 void Box2dDebugDraw::DrawCircle(const b2Vec2 &center, float radius, const b2Color &color)
@@ -61,7 +67,7 @@ void Box2dDebugDraw::DrawCircle(const b2Vec2 &center, float radius, const b2Colo
 	circle.setOutlineThickness(-1.f);
 	circle.setOutlineColor(b2ColorToSfColor(color));
 
-	m_window.draw(circle);
+	m_window.draw(circle, &m_debugShader);
 }
 
 void Box2dDebugDraw::DrawSolidCircle(const b2Vec2 &center, float radius, const b2Vec2 &axis, const b2Color &color)
@@ -76,7 +82,7 @@ void Box2dDebugDraw::DrawSolidCircle(const b2Vec2 &center, float radius, const b
 	circle.setOutlineThickness(-1.f);
 	circle.setOutlineColor(b2ColorToSfColor(color));
 
-	m_window.draw(circle);
+	m_window.draw(circle, &m_debugShader);
 }
 
 void Box2dDebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color)
@@ -89,7 +95,7 @@ void Box2dDebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Col
 		}
 	};
 
-	m_window.draw(line.data(), 2, sf::Lines);
+	m_window.draw(line.data(), 2, sf::Lines, &m_debugShader);
 }
 
 void Box2dDebugDraw::DrawTransform(const b2Transform &xf)
@@ -115,15 +121,15 @@ void Box2dDebugDraw::DrawTransform(const b2Transform &xf)
 		}
 	};
 
-	m_window.draw(redLine.data(), 2, sf::Lines);
-	m_window.draw(greenLine.data(), 2, sf::Lines);
+	m_window.draw(redLine.data(), 2, sf::Lines, &m_debugShader);
+	m_window.draw(greenLine.data(), 2, sf::Lines, &m_debugShader);
 }
 
 void Box2dDebugDraw::DrawPoint(const b2Vec2 &p, float size, const b2Color &color)
 {
 	sf::Vertex point(b2Vec2ToSfVec(p), b2ColorToSfColor(color));
 
-	m_window.draw(&point, 1, sf::Points);
+	m_window.draw(&point, 1, sf::Points, &m_debugShader);
 }
 
 } // namespace enx

@@ -22,6 +22,7 @@ public:
 	void DrawPoint(const b2Vec2 &p, float size, const b2Color &color) override;
 
 private:
+	sf::Shader m_debugShader;
 	sf::RenderTarget& m_window;
 };
 
