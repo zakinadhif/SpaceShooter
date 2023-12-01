@@ -13,8 +13,8 @@ FetchContent_Declare(
 
 FetchContent_Declare(
   imgui-sfml
-  GIT_REPOSITORY "https://github.com/eliasdaler/imgui-sfml.git"
-  GIT_TAG        master
+  GIT_REPOSITORY "https://github.com/SFML/imgui-sfml.git"
+  GIT_TAG        2.6.x
 )
 
 FetchContent_Declare(
@@ -43,19 +43,21 @@ FetchContent_Declare(
 FetchContent_Declare(
   SFML
   GIT_REPOSITORY "https://github.com/SFML/SFML.git"
-  GIT_TAG 2.5.1
+  GIT_TAG 2.6.x
 )
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
+FetchContent_MakeAvailable(SFML)
 FetchContent_MakeAvailable(imgui)
 set(IMGUI_DIR ${imgui_SOURCE_DIR})
+set(IMGUI_SFML_FIND_SFML OFF)
+set(IMGUI_SFML_IMGUI_DEMO ON)
 FetchContent_MakeAvailable(imgui-sfml)
 FetchContent_MakeAvailable(entt)
 FetchContent_MakeAvailable(box2d)
 FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(yaml-cpp)
-FetchContent_MakeAvailable(SFML)
 
 # Egienx
 file(GLOB_RECURSE EGIENX_SOURCES CONFIGURE_DEPENDS src/Egienx/*.cpp)
@@ -88,9 +90,9 @@ target_link_libraries(
 	sfml-system
 	ImGui-SFML::ImGui-SFML
 	spdlog::spdlog
+	box2d
 	PRIVATE
 	"${YAML_CPP_LIBRARIES}"
-	box2d
 	EnTT::EnTT
 	)
 
