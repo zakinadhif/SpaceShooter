@@ -2,8 +2,6 @@
 
 #include "Scene/ScriptableEntity.hpp"
 
-#include "box2d/b2_math.h"
-
 #include <SFML/System/Clock.hpp>
 
 class b2Body;

@@ -6,8 +6,6 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 
-#include <box2d/b2_body.h>
-
 #include <vector>
 #include <bits/c++config.h>
 #include <functional>
@@ -70,56 +68,22 @@ struct NativeScriptComponent
 	}
 };
 
-struct RigidbodyComponent
-{
-	b2BodyType type = b2_staticBody;
-	bool fixedRotation = false;
-
-	// Storage for runtime
-	b2Body* runtimeBody = nullptr;
-};
-
-struct BoxColliderComponent
-{
-	sf::Vector2f offset = {};
-	sf::Vector2f size = { 0.5f, 0.5f };
-
-	float density = 1.0f;
-	float friction = 0.5f;
-	float restitution = 0.0f;
-	float restitutionThreshold = 0.5f;
-
-	b2Fixture* runtimeFixture = nullptr;
-};
-
-struct CircleColliderComponent
-{
-	sf::Vector2f offset = {};
-	float radius = 0.5f;
-
-	float density = 1.0f;
-	float friction = 0.5f;
-	float restitution = 0.0f;
-	float restitutionThreshold = 0.5f;
-
-	b2Fixture* runtimeFixture = nullptr;
-};
-
 template <typename... Components>
 struct ComponentGroup
 {
 };
 
 using AllComponents =
-	ComponentGroup<MeshComponent, OwningMeshComponent,
-		NativeScriptComponent, RigidbodyComponent,
-		BoxColliderComponent, CircleColliderComponent>;
+	ComponentGroup<
+    MeshComponent,
+    OwningMeshComponent,
+		NativeScriptComponent
+  >;
 
 using ImplComponents =
 	ComponentGroup<IDComponent, TagComponent,
 		TransformComponent, MeshComponent,
-		OwningMeshComponent, NativeScriptComponent,
-		RigidbodyComponent, BoxColliderComponent,
-		CircleColliderComponent>;
+		OwningMeshComponent, NativeScriptComponent
+  >;
 
 } // namespace enx

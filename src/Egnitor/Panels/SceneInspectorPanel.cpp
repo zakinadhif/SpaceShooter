@@ -25,29 +25,6 @@ void SceneInspectorPanel::setContext(Scene &scene)
 	m_scene = &scene;
 }
 
-void SceneInspectorPanel::displaySceneControlOverlay()
-{
-	static int corner = 0;
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration
-		| ImGuiWindowFlags_AlwaysAutoResize
-		| ImGuiWindowFlags_NoSavedSettings
-		| ImGuiWindowFlags_NoFocusOnAppearing
-		| ImGuiWindowFlags_NoNav;
-
-	if (ImGui::Begin("Scene Control Overlay", NULL, window_flags))
-	{
-		if (ImGui::SmallButton("simulate"))
-		{
-			m_editor->setSceneSimulate();
-		}
-		if (ImGui::SmallButton("stop"))
-		{
-			m_editor->setSceneStop();
-		}
-	}
-	ImGui::End();
-}
-
 void SceneInspectorPanel::draw()
 {
 	if (!m_scene) return;
@@ -60,7 +37,6 @@ void SceneInspectorPanel::draw()
 
 	displayComponentInspector(m_scene->m_registry);
 	displayEntityList(m_scene->m_registry);
-	displaySceneControlOverlay();
 }
 
 }

@@ -1,27 +1,15 @@
 #include "Scene/Components/Components.hpp"
-#include "Scene/Components/RigidBodyComponent.hpp"
-#include "Scene/Scene.hpp"
 #include "Scene/Systems.hpp"
-#include "Utility/VectorConverter.hpp"
-#include "Core/Random.hpp"
 #include "Scene/Components/Components.hpp"
-#include "Scene/Entity.hpp"
-#include "Patch/Thor.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <array>
-#include <box2d/box2d.h>
 #include <cstdint>
 #include <entt/core/fwd.hpp>
 #include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
 #include <imgui-SFML.h>
 #include <imgui.h>
-
-#include <bitset>
-#include <tuple>
-#include <utility>
 
 namespace enx
 {
@@ -56,9 +44,6 @@ void displayComponentForm(TransformComponent& tc) {
 void displayComponentForm([[maybe_unused]] MeshComponent& mc) {}
 void displayComponentForm([[maybe_unused]] OwningMeshComponent& omc) {}
 void displayComponentForm([[maybe_unused]] NativeScriptComponent& nsc) {}
-void displayComponentForm([[maybe_unused]] RigidbodyComponent& rbc) {}
-void displayComponentForm([[maybe_unused]] BoxColliderComponent& bcc) {}
-void displayComponentForm([[maybe_unused]] CircleColliderComponent& ccc) {}
 
 template<typename... Component>
 void displayComponentForms(

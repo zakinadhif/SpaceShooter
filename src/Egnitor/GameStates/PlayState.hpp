@@ -14,10 +14,6 @@ class PlayState final : public enx::GameState
 public:
 	PlayState(enx::GameStateManager& gameStateManager, sf::RenderTarget& mainWindow);
 
-	void setScenePlay();
-	void setSceneSimulate();
-	void setSceneStop();
-
 	void handleEvent(sf::Event event) override;
 
 	void update(float deltaTime) override;

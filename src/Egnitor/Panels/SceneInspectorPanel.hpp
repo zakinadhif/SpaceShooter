@@ -26,8 +26,6 @@ public:
 private:
 	Scene* m_scene = nullptr;
 	PlayState* m_editor = nullptr;
-
-	void displaySceneControlOverlay();
 };
 
 }

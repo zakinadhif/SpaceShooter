@@ -1,14 +1,14 @@
 #include "Scene/Scripts/ShipScript.hpp"
 
 #include "Core/Keyboard.hpp"
-#include "Utility/VectorConverter.hpp"
+// #include "Utility/VectorConverter.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Entity.hpp"
-#include "Scene/UnitScaling.hpp"
-#include "Scene/Components/RigidBodyComponent.hpp"
+// #include "Scene/UnitScaling.hpp"
+// #include "Scene/Components/RigidBodyComponent.hpp"
 
 #include <SFML/Window/Mouse.hpp>
-#include <box2d/box2d.h>
+// #include <box2d/box2d.h>
 #include <imgui.h>
 #include <spdlog/spdlog.h>
 

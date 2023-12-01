@@ -1,5 +1,4 @@
 #include "GameStates/PlayState.hpp"
-#include <box2d/b2_body.h>
 #include <spdlog/spdlog.h>
 
 namespace enx
@@ -11,58 +10,7 @@ PlayState::PlayState(enx::GameStateManager& gameStateManager, sf::RenderTarget& 
 	, m_sceneInspectorPanel(*this)
 {
 	Entity e = m_editorScene->createEntity("ayam");
-	auto& rb = e.addComponent<RigidbodyComponent>();
-	auto& box = e.addComponent<BoxColliderComponent>();
-	box.size = {2.f, 2.f};
-	rb.type = b2_dynamicBody;
 	e.getComponent<TransformComponent>().setPosition({0.f, 0.f});
-
-	m_activeScene = Scene::clone(*m_editorScene);
-
-	m_activeScene->startPhysics();
-	m_sceneInspectorPanel.setContext(*m_activeScene);
-}
-
-void PlayState::setScenePlay()
-{
-	spdlog::info("[Egnitor::PlayState] Playing scene");
-
-	if (m_sceneState == SceneState::Simulate)
-		setSceneStop();
-
-	m_sceneState = SceneState::Runtime;
-
-	m_activeScene = Scene::clone(*m_editorScene);
-	m_activeScene->startPhysics();
-
-	m_sceneInspectorPanel.setContext(*m_activeScene);
-}
-
-void PlayState::setSceneSimulate()
-{
-	spdlog::info("[Egnitor::PlayState] Simulating scene");
-
-	if (m_sceneState == SceneState::Simulate)
-		setSceneStop();
-
-	m_sceneState = SceneState::Runtime;
-
-	m_activeScene = Scene::clone(*m_editorScene);
-	m_activeScene->startPhysics();
-
-	m_sceneInspectorPanel.setContext(*m_activeScene);
-}
-
-void PlayState::setSceneStop()
-{
-	spdlog::info("[Egnitor::PlayState] Stopping scene");
-
-	if (m_sceneState == SceneState::Runtime)
-		m_activeScene->stopPhysics();
-	else if (m_sceneState == SceneState::Simulate)
-		m_activeScene->stopPhysics();
-
-	m_sceneState = SceneState::Edit;
 
 	m_activeScene = Scene::clone(*m_editorScene);
 
@@ -108,11 +56,9 @@ void PlayState::fixedUpdate(float deltaTime)
 		case SceneState::Edit:
 			break;
 		case SceneState::Simulate:
-			m_activeScene->fixedUpdatePhysics(deltaTime);
 			break;
 		case SceneState::Runtime:
 			m_activeScene->fixedUpdateScripts(deltaTime);
-			m_activeScene->fixedUpdatePhysics(deltaTime);
 			break;
 	}
 }

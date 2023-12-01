@@ -1,25 +1,13 @@
 #include "Scene/Scene.hpp"
 
-#include "Patch/Thor.hpp"
-#include "Scene/UnitScaling.hpp"
-#include "Utility/Box2dDebugDraw.hpp"
-#include "Core/Random.hpp"
-#include "Core/Time.hpp"
 #include "Scene/Entity.hpp"
 #include "Scene/Systems.hpp"
-
 #include "Scene/Components/Components.hpp"
-#include "Scene/Scripts/ShipScript.hpp"
-#include "Utility/VectorConverter.hpp"
-#include "box2d/box2d.h"
 
-#include <cassert>
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
 #include <imgui.h>
-
-#include <iostream>
 #include <unordered_map>
 
 namespace enx
@@ -55,28 +43,10 @@ static void copyComponent(
 Scene::Scene(sf::RenderTarget& mainWindow)
 	: m_worldView(mainWindow.getDefaultView())
 	, m_mainWindow(mainWindow)
-	, m_box2dDebugDraw(mainWindow)
 {
 	m_registry.ctx().emplace<GameStateComponent>();
-	m_worldView.setCenter(0,0);
-	m_worldView.setSize(b2Vec2ToSfVec(toMeters(m_worldView.getSize())));
 
-	// Initializes box2d debug draw interface.
-	m_box2dDebugDraw.SetFlags(
-		Box2dDebugDraw::e_shapeBit
-		| Box2dDebugDraw::e_jointBit
-		| Box2dDebugDraw::e_aabbBit
-		| Box2dDebugDraw::e_pairBit
-		| Box2dDebugDraw::e_centerOfMassBit
-	);
-
-	// Attach event-driven deallocators.
-	//
-	// TODO(zndf): Consider what happens to b2Body runtime instances stored in
-	// RigidbodyComponent when stopPhysics is called and its implication to the
-	// deallocators.
 	m_nscDeallocatorConnection = m_registry.on_destroy<NativeScriptComponent>().connect<&Scene::deallocateNscInstance>();
-	m_rbcDeallocatorConnection = m_registry.on_destroy<RigidbodyComponent>().connect<&Scene::deallocateB2BodyInstance>();
 }
 
 // Clones self to a new instance of Scene.
@@ -138,96 +108,6 @@ Entity Scene::createEntityWithID(IDComponent::IDType id, const std::string& name
 	return entity;
 }
 
-// Bootstraps entity rigidbody runtime instances.
-//
-// NOTE: m_physicsWorld must already be freed before calling this method,
-//       failure to do so would leak the memory.
-// NOTE: As of now, both startPhysics and stopPhysics should only be called once
-//       in a Scene's whole lifetime. Since in _not_ doing so would risk having
-//       dangling references to freed b2Body runtime instances inside the
-//       Scene's registry (Since calling stopPhysics doesn't remove all
-//       RigidbodyComponent, and ShapeColliderComponents from preexisting
-//       entities).
-void Scene::startPhysics()
-{
-	assert(!m_isPhysicsStarted);
-
-	m_physicsWorld = new b2World({0.0f, -9.8f});
-
-	m_physicsWorld->SetDebugDraw(&m_box2dDebugDraw);
-
-	auto view = m_registry.view<RigidbodyComponent>();
-	for (auto e : view)
-	{
-		// Initializes runtime b2body with configuration contained in RigidbodyComponent
-		Entity entity = { e, m_registry };
-		auto& transform = entity.getComponent<TransformComponent>();
-		auto& rb = entity.getComponent<RigidbodyComponent>();
-
-		b2BodyDef bodyDef;
-		bodyDef.type = rb.type;
-		bodyDef.position.Set(transform.getPosition().x, transform.getPosition().y);
-		bodyDef.angle = thor::toRadian(transform.getRotation());
-
-		b2Body* body = m_physicsWorld->CreateBody(&bodyDef);
-		body->SetFixedRotation(rb.fixedRotation);
-		rb.runtimeBody = body;
-
-		// Initializes the runtime b2body fixtures with configuration contained in
-		// ShapeColliderComponents (ex. BoxColliderComponent)
-		if (entity.hasComponent<BoxColliderComponent>())
-		{
-			auto& bc = entity.getComponent<BoxColliderComponent>();
-
-			b2PolygonShape boxShape;
-			boxShape.SetAsBox(bc.size.x * transform.getScale().x, bc.size.y * transform.getScale().y);
-
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &boxShape;
-			fixtureDef.density = bc.density;
-			fixtureDef.friction = bc.friction;
-			fixtureDef.restitution = bc.restitution;
-			fixtureDef.restitutionThreshold = bc.restitutionThreshold;
-
-			b2Fixture* fixture =  body->CreateFixture(&fixtureDef);
-			bc.runtimeFixture = fixture;
-		}
-
-		if (entity.hasComponent<CircleColliderComponent>())
-		{
-			auto& cc = entity.getComponent<CircleColliderComponent>();
-
-			b2CircleShape circleShape;
-			circleShape.m_p.Set(cc.offset.x, cc.offset.y);
-			circleShape.m_radius = transform.getScale().x * cc.radius;
-
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &circleShape;
-			fixtureDef.density = cc.density;
-			fixtureDef.friction = cc.friction;
-			fixtureDef.restitution = cc.restitution;
-			fixtureDef.restitutionThreshold = cc.restitutionThreshold;
-
-			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
-			cc.runtimeFixture = fixture;
-		}
-	}
-
-	m_isPhysicsStarted = true;
-}
-
-// Deletes physics world. Never call any physics update after deleting, doing
-// so may result in a crash.
-//
-// NOTE: deleting nullptr is a well defined behavior, the operator will just do
-//       nothing.
-void Scene::stopPhysics()
-{
-	delete m_physicsWorld;
-	m_physicsWorld = nullptr;
-	m_isPhysicsStarted = false;
-}
-
 // Dispatch events to NativeScript components
 void Scene::handleEvent(const sf::Event& event)
 {
@@ -281,37 +161,12 @@ void Scene::fixedUpdateScripts(float deltaTime)
 	}
 }
 
-// Syncs entity's rigidbody transform with its independent TransformComponent
-// since the render system (as in ECS) relies in TransformComponent and not
-// rigidbody's tranform.
-//
-// also steps up the physics world.
-void Scene::fixedUpdatePhysics(float deltaTime)
-{
-	assert(m_isPhysicsStarted);
-	m_physicsWorld->Step(deltaTime, m_velocityIterations, m_positionIterations);
-
-	auto view = m_registry.view<RigidbodyComponent>();
-	for (auto e : view)
-	{
-		Entity entity = { e, m_registry };
-		auto& tc = entity.getComponent<TransformComponent>();
-		auto& rb = entity.getComponent<RigidbodyComponent>();
-
-		b2Body* body = rb.runtimeBody;
-		const auto& position = body->GetPosition();
-		tc.setPosition(position.x, position.y);
-		tc.setRotation(thor::toDegree(body->GetAngle()));
-	}
-}
-
 void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	sf::View lastView = target.getView();
 
 	target.setView(m_worldView);
 
-	if (m_physicsWorld) m_physicsWorld->DebugDraw();
 
 	target.setView(lastView);
 }
@@ -329,28 +184,9 @@ void Scene::deallocateNscInstance(entt::registry& registry, entt::entity entity)
 	}
 }
 
-// An entt event-driven function that deallocates b2Body instances automatically
-// when the RigidBodyComponent it is contained in is destroyed.
-void Scene::deallocateB2BodyInstance(entt::registry& registry, entt::entity entity)
-{
-	auto& rb = registry.get<RigidbodyComponent>(entity);
-
-	if (rb.runtimeBody)
-	{
-		b2World* world = rb.runtimeBody->GetWorld();
-		world->DestroyBody(rb.runtimeBody);
-		rb.runtimeBody = nullptr;
-	}
-}
-
 Scene::~Scene()
 {
-	// Since box2d runtime body references might already be freed, rbc deallocator
-	// needs to be disconnected / released so double freeing doesn't happen.
-	m_rbcDeallocatorConnection.release();
-
 	m_registry.clear();
-	stopPhysics();
 }
 
 }
