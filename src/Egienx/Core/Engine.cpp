@@ -47,34 +47,29 @@ void Engine::initialize()
 
 void Engine::run()
 {
-	m_gameStateManager.update();
-
-	while (m_window.isOpen() && !m_gameStateManager.isEmpty())
+	while (m_window.isOpen() && m_scene.get())
 	{
 		sf::Time deltaTime = Time::getDeltaTime();
-		enx::GameState& currentState = m_gameStateManager.peek();
+
+		ImGui::SFML::Update(m_window, deltaTime);
+		ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
 		handleEvents();
 
-		currentState.update(deltaTime.asSeconds());
+    m_scene->updateScripts(deltaTime.asSeconds());
 
 		while (Time::shouldFixedUpdate())
 		{
-			currentState.fixedUpdate(Time::getFixedDeltaTime().asSeconds());
+			m_scene->fixedUpdateScripts(Time::getFixedDeltaTime().asSeconds());
 		}
 
 		m_window.clear();
 
-		currentState.draw(m_window);
+		m_scene->draw(m_window, sf::RenderStates::Default);
 
-		ImGui::SFML::Update(m_window, deltaTime);
-		ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
-		currentState.imGuiDraw();
 		ImGui::SFML::Render(m_window);
 
 		m_window.display();
-
-		m_gameStateManager.update();
 
 		Time::markEndOfFrame();
 		Keyboard::clearKeyStates();
@@ -86,7 +81,6 @@ void Engine::run()
 
 void Engine::handleEvents()
 {
-	enx::GameState& currentState = m_gameStateManager.peek();
 	ImGuiIO& io = ImGui::GetIO();
 
 	for (sf::Event event; m_window.pollEvent(event);)
@@ -124,7 +118,7 @@ void Engine::handleEvents()
 				break;
 		}
 
-		if (shouldPass) currentState.handleEvent(event);
+		if (shouldPass) m_scene->handleEvent(event);
 	}
 }
 

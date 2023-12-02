@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GameStateManager.hpp"
-#include <cassert>
-#include <type_traits>
+#include "Scene/Scene.hpp"
+
+#include <SFML/Graphics.hpp>
 
 namespace enx
 {
@@ -16,9 +16,6 @@ public:
 	void setInitialWindowTitle(const sf::String& title);
 	void initialize();
 
-	template<class T>
-	void attach();
-
 	void run();
 
 	~Engine();
@@ -29,19 +26,8 @@ private:
 	sf::Vector2u m_initialWindowSize {200u, 200u};
 	sf::String m_initialWindowTitle {};
 
-	GameStateManager m_gameStateManager;
+  std::unique_ptr<Scene> m_scene;
 	sf::RenderWindow m_window;
 };
-
-template <class T>
-void Engine::attach()
-{
-	static_assert(
-		std::is_constructible<T, GameStateManager&, sf::RenderTarget&>{},
-		"GameState must be constructible with GameStateManager& and sf::RenderTarget&"
-	);
-
-	m_gameStateManager.push<T>(m_gameStateManager, m_window);
-}
 
 }
