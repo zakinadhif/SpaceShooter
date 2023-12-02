@@ -6,4 +6,6 @@
 - [x] Rewrite component inspector
 - [x] Fix unit scaling
 - [x] Separate ImGui calls from `Scene`
-- [ ] Fix physics world, related entity components and box2d body deallocation problems.
+- [x] Fix physics world, related entity components and box2d body deallocation problems.
+- [ ] Write scene serializer / deserializer
+- [ ] Write scripting interface
